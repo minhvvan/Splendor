@@ -16,10 +16,16 @@ class STEAMTEST_API UHUDMultMenu : public UUserWidget
 		
 protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UBorder* BorderMenuBtn;
+	
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UButton* BtnHostGame;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnSearchGame;
+	class UButton* BtnSearchGame;	
+	
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UTextBlock* TxtSearchGame;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UButton* BtnConnection;
@@ -29,6 +35,13 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UButton* BtnBack;
+
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UBorder* BorderServerList;
+
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UScrollBox* SclServerList;
+
 protected:
 	virtual void NativeOnInitialized();
 
@@ -47,7 +60,9 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void SetConnectionText();
-	
+
 public:
-	
+	class UScrollBox* GetScrollServer() { return SclServerList;	}
+
+	void PreSessionSearch();
 };

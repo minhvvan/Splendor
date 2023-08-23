@@ -5,7 +5,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Components/ScrollBox.h"
+#include "Components/Border.h"
 #include "SteamTestGameInstance.h"
+#include "Components/SlateWrapperTypes.h"
+#include "OnlineSessionSettings.h"
+#include "HUDServerRow.h"
+
 
 void UHUDMultMenu::NativeOnInitialized()
 {
@@ -60,4 +66,12 @@ void UHUDMultMenu::SetConnectionText()
 			TxtConnection->SetText(FText::FromString("Online"));
 		}
 	}
+}
+
+void UHUDMultMenu::PreSessionSearch()
+{
+	BorderServerList->SetVisibility(ESlateVisibility::Visible);
+	BorderMenuBtn->SetIsEnabled(false);
+
+	TxtSearchGame->SetText(FText::FromString("Searching...."));
 }

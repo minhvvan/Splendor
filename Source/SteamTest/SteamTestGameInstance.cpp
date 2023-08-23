@@ -6,13 +6,17 @@
 #include "Kismet/GameplayStatics.h"
 #include "SG_PlayerProfile.h"
 #include "HUDMainMenu.h"
+#include "HUDMultMenu.h"
+#include "HUDServerRow.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
+#include "Components/ScrollBox.h"
 
 
 USteamTestGameInstance::USteamTestGameInstance(): OnCreateSessionCompleteDelegate(FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete))
 												, OnFindSessionCompleteDelegate(FOnFindSessionsCompleteDelegate::CreateUObject(this, &ThisClass::OnFindSessionComplete))
+												, OnJoinSessionCompleteDelegate(FOnJoinSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnJoinSessionComplete))
 {
 	ConstructorHelpers::FClassFinder<UUserWidget> MAIN(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Widget/WBP_MainMenu.WBP_MainMenu_C'"));
 	if (MAIN.Succeeded())
@@ -26,6 +30,12 @@ USteamTestGameInstance::USteamTestGameInstance(): OnCreateSessionCompleteDelegat
 		MultMenuClass = MULT.Class;
 	}
 
+	ConstructorHelpers::FClassFinder<UUserWidget> ROW(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Widget/WBP_ServerRow.WBP_ServerRow_C'"));
+	if (ROW.Succeeded())
+	{
+		ServerRowClass = ROW.Class;
+	}
+
 	PlayerInfo = new FPlayerProfile();
 }
 
@@ -33,7 +43,7 @@ void USteamTestGameInstance::ShowMainMenu()
 {
 	if (!WidgetMainMenu)
 	{
-		WidgetMainMenu = CreateWidget(GetWorld(), MainMenuClass);
+		WidgetMainMenu = Cast<UHUDMainMenu>(CreateWidget(GetWorld(), MainMenuClass));
 	}
 
 	if (UGameplayStatics::DoesSaveGameExist(PlayerProfileSlot, 0))
@@ -53,7 +63,7 @@ void USteamTestGameInstance::ShowMultMenu()
 {
 	if (!WidgetMultMenu)
 	{
-		WidgetMultMenu = CreateWidget(GetWorld(), MultMenuClass);
+		WidgetMultMenu = Cast<UHUDMultMenu>(CreateWidget(GetWorld(), MultMenuClass));
 	}
 
 	WidgetMultMenu->AddToViewport();
@@ -78,7 +88,7 @@ void USteamTestGameInstance::LoadGame()
 	if (LoadGameInstance)
 	{
 		LoadGameInstance->Print();
-		Cast<UHUDMainMenu>(WidgetMainMenu)->SetPlayerName(LoadGameInstance->PlayPfofile.PlayerName);
+		WidgetMainMenu->SetPlayerName(LoadGameInstance->PlayPfofile.PlayerName);
 	}
 	else
 	{
@@ -174,6 +184,26 @@ void USteamTestGameInstance::FindSession()
 	}
 }
 
+void USteamTestGameInstance::JoinSession(int32 idx)
+{
+	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
+	if (OnlineSubsystem)
+	{
+		OnlineSessionInterface = OnlineSubsystem->GetSessionInterface();
+
+		if (OnlineSessionInterface)
+		{
+			// Set the Handle again
+			OnlineSessionInterface->AddOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
+
+			const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+			auto SessionName = FName(SessionSearch->SearchResults[idx].Session.OwningUserName);
+			auto Result = SessionSearch->SearchResults[idx];
+			OnlineSessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), SessionName, Result);
+		}
+	}
+}
+
 void USteamTestGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
 {
 	if (bWasSuccessful) // 세션 생성 성공
@@ -202,44 +232,61 @@ void USteamTestGameInstance::OnCreateSessionComplete(FName SessionName, bool bWa
 
 void USteamTestGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, FString(TEXT("======== Search Result ========")));
-	}
+	GEngine->AddOnScreenDebugMessage(
+		-1,
+		15,
+		FColor::Blue,
+		FString::Printf(TEXT("Num: %d"), SessionSearch->SearchResults.Num()));
 
-
-	UE_LOG(LogTemp, Warning, TEXT("Num: %d"), SessionSearch->SearchResults.Num());
+	OnFindSessionCompleteDelegate.Unbind();
 
 	for (auto Result : SessionSearch->SearchResults)
 	{
+		auto ServerRow = Cast<UHUDServerRow>(CreateWidget(GetWorld(), ServerRowClass));
 
-		FString Id = Result.GetSessionIdStr();
-		FString User = Result.Session.OwningUserName;
+		int max = Result.Session.SessionSettings.NumPublicConnections;
+		int current = max - Result.Session.NumOpenPublicConnections;
 
-		// 매치 타입 확인하기
-		FString MatchType;
-		Result.Session.SessionSettings.Get(FName("MatchType"), MatchType);
+		ServerRow->SetServerName("aa");
+		//ServerRow->SetServerName(Result.Session.OwningUserName);
+		ServerRow->SetNumPlayer(current, max);
+		ServerRow->SetPing(Result.PingInMs);
 
-		// 찾은 세션의 정보 출력하기
-		if (GEngine)
+		if (WidgetMultMenu)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, FString::Printf(TEXT("Session ID : %s / Owner : %s"), *Id, *User));
+			WidgetMultMenu->PreSessionSearch();
+
+			auto Scroll = WidgetMultMenu->GetScrollServer();
+			if (IsValid(Scroll))
+			{
+				Scroll->AddChild(ServerRow);
+			}
 		}
+	}
+}
 
-		// 세션의 매치 타입이 "FreeForAll"일 경우 세션 참가
-		//if (MatchType == FString("FreeForAll"))
-		//{
-		//	if (GEngine)
-		//	{
-		//		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan, FString::Printf(TEXT("Joining Match Type : %s"), *MatchType));
-		//	}
+void USteamTestGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("OnJoinSessionComplete %s, %d"), *SessionName.ToString(), static_cast<int32>(Result)));
 
-		//	// Join Session Complete Delegate 등록 
-		//	OnlineSessionInterface->AddOnJoinSessionCompleteDelegate_Handle(JoinSessionCompleteDelegate);
+	// Get the OnlineSubsystem we want to work with
+	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+	if (OnlineSub)
+	{
+		// Get SessionInterface from the OnlineSubsystem
+		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 
+		if (Sessions.IsValid())
+		{
+			//Sessions->ClearOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
 
-		//	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-		//	OnlineSessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, Result);
-		//}
+			APlayerController* const PlayerController = GetFirstLocalPlayerController();
+			FString TravelURL;
+
+			if (PlayerController && Sessions->GetResolvedConnectString(SessionName, TravelURL))
+			{
+				PlayerController->ClientTravel(TravelURL, ETravelType::TRAVEL_Absolute);
+			}
+		}
 	}
 }

@@ -47,11 +47,14 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> MultMenuClass;
 
-	UPROPERTY(VisibleAnywhere)
-	UUserWidget* WidgetMainMenu;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> ServerRowClass;
 
 	UPROPERTY(VisibleAnywhere)
-	UUserWidget* WidgetMultMenu;
+	class UHUDMainMenu* WidgetMainMenu;
+
+	UPROPERTY(VisibleAnywhere)
+	class UHUDMultMenu* WidgetMultMenu;
 
 	FPlayerProfile* PlayerInfo;
 
@@ -63,10 +66,13 @@ public:
 
 	void CreateSession();
 	void FindSession();
+	void JoinSession(int32 idx);
 
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 
 	void OnFindSessionComplete(bool bWasSuccessful);
+
+	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 
 private:
 	FString PlayerProfileSlot = "PlayerProfileSlot";
@@ -77,6 +83,7 @@ private:
 
 	FOnCreateSessionCompleteDelegate OnCreateSessionCompleteDelegate;
 	FOnFindSessionsCompleteDelegate OnFindSessionCompleteDelegate;
+	FOnJoinSessionCompleteDelegate OnJoinSessionCompleteDelegate;
 
 	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
 };
