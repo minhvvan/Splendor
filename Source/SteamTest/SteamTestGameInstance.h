@@ -30,9 +30,6 @@ public:
 	void ShowMainMenu();
 
 	UFUNCTION()
-	void ShowMultMenu();
-
-	UFUNCTION()
 	void StartSoloGame();
 
 	UFUNCTION()
@@ -48,6 +45,9 @@ public:
 	TSubclassOf<UUserWidget> MultMenuClass;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> LobbyClass;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> ServerRowClass;
 
 	UPROPERTY(VisibleAnywhere)
@@ -55,6 +55,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	class UHUDMultMenu* WidgetMultMenu;
+
+	UPROPERTY(VisibleAnywhere)
+	class UHUDLobby* WidgetLobby;
 
 	FPlayerProfile* PlayerInfo;
 

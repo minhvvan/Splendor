@@ -4,41 +4,44 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "HUDMainMenu.generated.h"
+#include "HUDLobby.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEAMTEST_API UHUDMainMenu : public UUserWidget
+class STEAMTEST_API UHUDLobby : public UUserWidget
 {
 	GENERATED_BODY()
-
+	
 protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnPlay;
+	class UButton* BtnFirstPlayer;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnQuitGame;
+	class UButton* BtnSecondPlayer;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UEditableText* EdtPlayerName;
+	class UButton* BtnStartGame;	
+	
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UButton* BtnSubmit;
+
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UMultiLineEditableText* EdtChat;
 protected:
 	virtual void NativeOnInitialized();
 
 private:
 	UFUNCTION(BlueprintCallable)
-	void PlayGameClicked();
+	void FirstPlayerClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void QuitGameClicked();
+	void StartGameClicked();
 
-	UFUNCTION(BlueprintCallable)
-	void ChangedPlayerName(const FText& Text);	
-	
 	UFUNCTION(BlueprintCallable)
 	void OnChatTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
 public:
-	void SetPlayerName(FString& name);
+	
 };

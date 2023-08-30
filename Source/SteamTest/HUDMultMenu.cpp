@@ -27,6 +27,8 @@ void UHUDMultMenu::HostGameClicked()
 {
 	if (auto GameInstance = Cast<USteamTestGameInstance>(GetGameInstance()))
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, FString::Printf(TEXT("click")));
+
 		GameInstance->CreateSession();
 	}
 }
@@ -74,4 +76,6 @@ void UHUDMultMenu::PreSessionSearch()
 	BorderMenuBtn->SetIsEnabled(false);
 
 	TxtSearchGame->SetText(FText::FromString("Searching...."));
+
+	SclServerList->ClearChildren();
 }

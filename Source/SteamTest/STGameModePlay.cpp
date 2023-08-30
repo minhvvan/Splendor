@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SteamTestPlayGamemode.h"
+#include "STGameModePlay.h"
 
-ASteamTestPlayGamemode::ASteamTestPlayGamemode()
+ASTGameModePlay::ASTGameModePlay()
 {
 	static ConstructorHelpers::FClassFinder<APlayerController> PlayerController(TEXT("/Script/Engine.Blueprint'/Game/Framework/BP_PlayerContoller.BP_PlayerContoller_C'"));
 	if (PlayerController.Class != NULL)

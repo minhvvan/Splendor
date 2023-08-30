@@ -11,7 +11,10 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
-#include "Components/ScrollBox.h"
+#include "GameFramework/GameUserSettings.h"
+#include "Math/IntPoint.h"
+#include "HUDLobby.h"
+#include "PCMenu.h"
 
 
 USteamTestGameInstance::USteamTestGameInstance(): OnCreateSessionCompleteDelegate(FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete))
@@ -24,12 +27,6 @@ USteamTestGameInstance::USteamTestGameInstance(): OnCreateSessionCompleteDelegat
 		MainMenuClass = MAIN.Class;
 	}	
 	
-	ConstructorHelpers::FClassFinder<UUserWidget> MULT(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Widget/WBP_MultMenu.WBP_MultMenu_C'"));
-	if (MULT.Succeeded())
-	{
-		MultMenuClass = MULT.Class;
-	}
-
 	ConstructorHelpers::FClassFinder<UUserWidget> ROW(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Widget/WBP_ServerRow.WBP_ServerRow_C'"));
 	if (ROW.Succeeded())
 	{
@@ -51,22 +48,9 @@ void USteamTestGameInstance::ShowMainMenu()
 		LoadGame();
 	}
 
-
 	//UGameplayStatics::DeleteGameInSlot(PlayerProfileSlot, 0);
 	
 	WidgetMainMenu->AddToViewport();
-	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetInputMode(FInputModeUIOnly());
-	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(true);
-}
-
-void USteamTestGameInstance::ShowMultMenu()
-{
-	if (!WidgetMultMenu)
-	{
-		WidgetMultMenu = Cast<UHUDMultMenu>(CreateWidget(GetWorld(), MultMenuClass));
-	}
-
-	WidgetMultMenu->AddToViewport();
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetInputMode(FInputModeUIOnly());
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(true);
 }
@@ -208,14 +192,18 @@ void USteamTestGameInstance::OnCreateSessionComplete(FName SessionName, bool bWa
 {
 	if (bWasSuccessful) // 세션 생성 성공
 	{
-		if (GEngine)
+		//! Lobby로 이동
+		auto Controller = Cast<APCMenu>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		if (Controller)
 		{
-			GEngine->AddOnScreenDebugMessage(
-				-1,
-				15,
-				FColor::Blue,
-				FString::Printf(TEXT("session create: %s"), *SessionName.ToString()));
+			Controller->WidgetMultMenu->RemoveFromParent();
 		}
+
+		EnableListenServer(true, 7777);
+		//GetWorld()->GetGameInstance()->EnableListenServer(true, 7777);
+		//GetWorld()->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap?listen");
+		GetWorld()->ServerTravel("/Game/ThirdPerson/Maps/Menu/Lobby?listen");
+		//GetWorld()->ServerTravel("/Game/ThirdPerson/Maps/Menu/MainMenu?listen");
 	}
 	else	// 세션 생성 실패
 	{
@@ -227,18 +215,21 @@ void USteamTestGameInstance::OnCreateSessionComplete(FName SessionName, bool bWa
 				FColor::Red,
 				FString::Printf(TEXT("fail session crate")));
 		}
+
+		OnCreateSessionCompleteDelegate.Unbind();
+		//! 오류 메시지 팝업
 	}
 }
 
 void USteamTestGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 {
-	GEngine->AddOnScreenDebugMessage(
-		-1,
-		15,
-		FColor::Blue,
-		FString::Printf(TEXT("Num: %d"), SessionSearch->SearchResults.Num()));
-
 	OnFindSessionCompleteDelegate.Unbind();
+
+	auto Controller = Cast<APCMenu>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (Controller)
+	{
+		Controller->PreSessionSearch();
+	}
 
 	for (auto Result : SessionSearch->SearchResults)
 	{
@@ -248,43 +239,31 @@ void USteamTestGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 		int current = max - Result.Session.NumOpenPublicConnections;
 
 		ServerRow->SetServerName("aa");
-		//ServerRow->SetServerName(Result.Session.OwningUserName);
 		ServerRow->SetNumPlayer(current, max);
 		ServerRow->SetPing(Result.PingInMs);
 
-		if (WidgetMultMenu)
+		if (Controller)
 		{
-			WidgetMultMenu->PreSessionSearch();
-
-			auto Scroll = WidgetMultMenu->GetScrollServer();
-			if (IsValid(Scroll))
-			{
-				Scroll->AddChild(ServerRow);
-			}
+			Controller->AddSessionRow(ServerRow);
 		}
 	}
 }
 
 void USteamTestGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("OnJoinSessionComplete %s, %d"), *SessionName.ToString(), static_cast<int32>(Result)));
-
-	// Get the OnlineSubsystem we want to work with
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
 	if (OnlineSub)
 	{
-		// Get SessionInterface from the OnlineSubsystem
 		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 
 		if (Sessions.IsValid())
 		{
-			//Sessions->ClearOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
-
 			APlayerController* const PlayerController = GetFirstLocalPlayerController();
 			FString TravelURL;
 
 			if (PlayerController && Sessions->GetResolvedConnectString(SessionName, TravelURL))
 			{
+				//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, FString::Printf(TEXT("URL: %s"), *TravelURL));
 				PlayerController->ClientTravel(TravelURL, ETravelType::TRAVEL_Absolute);
 			}
 		}

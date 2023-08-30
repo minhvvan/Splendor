@@ -7,32 +7,19 @@
 #include "Components/EditableText.h"
 #include "SteamTestGameInstance.h"
 #include "Types/SlateEnums.h"
-
+#include "PCMenu.h"
 
 void UHUDMainMenu::NativeOnInitialized()
 {
-	BtnSoloGame->OnClicked.AddDynamic(this, &UHUDMainMenu::SoloGameClicked);
-	BtnMult->OnClicked.AddDynamic(this, &UHUDMainMenu::MultGameClicked);
+	BtnPlay->OnClicked.AddDynamic(this, &UHUDMainMenu::PlayGameClicked);
 	BtnQuitGame->OnClicked.AddDynamic(this, &UHUDMainMenu::QuitGameClicked);
 	EdtPlayerName->OnTextCommitted.AddDynamic(this, &UHUDMainMenu::OnChatTextCommitted);
 }
 
-void UHUDMainMenu::SoloGameClicked()
+void UHUDMainMenu::PlayGameClicked()
 {
-	if (auto GameInstance = Cast<USteamTestGameInstance>(GetGameInstance()))
-	{
-		GameInstance->StartSoloGame();
-	}
+	Cast<APCMenu>(GetOwningPlayer())->ShowMultMenu();
 
-	RemoveFromParent();
-}
-
-void UHUDMainMenu::MultGameClicked()
-{
-	if (auto GameInstance = Cast<USteamTestGameInstance>(GetGameInstance()))
-	{
-		GameInstance->ShowMultMenu();
-	}
 
 	RemoveFromParent();
 }
