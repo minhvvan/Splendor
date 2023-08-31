@@ -25,7 +25,11 @@ public:
 	
 	void Logout(AController* Exiting) override;
 
+	void SpawnPlayer(APlayerController* PlayerController);
 
 private:
 	TArray<class APlayerController*> PlayerControllers;
+
+	UPROPERTY()
+	TSubclassOf<AActor> SpawnToActor;
 };

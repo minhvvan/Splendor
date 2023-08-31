@@ -12,11 +12,13 @@ ASTGameModeLobby::ASTGameModeLobby()
 {
 	bUseSeamlessTravel = true;
 
-	static ConstructorHelpers::FClassFinder<APlayerController> PlayerController(TEXT("/Script/Engine.Blueprint'/Game/Framework/BP_PCMenu.BP_PCMenu_C'"));
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerController(TEXT("/Script/Engine.Blueprint'/Game/Framework/BP_PCLobby.BP_PCLobby_C'"));
 	if (PlayerController.Class != NULL)
 	{
 		PlayerControllerClass = PlayerController.Class;
 	}
+
+	DefaultPawnClass = nullptr;
 }
 
 void ASTGameModeLobby::BeginPlay()
@@ -42,3 +44,17 @@ void ASTGameModeLobby::Logout(AController* Exiting)
 	PlayerControllers.Remove(PCtarget);
 }
 
+void ASTGameModeLobby::SpawnPlayer(APlayerController* PlayerController)
+{
+	//if (IsValid(PlayerController))
+	//{
+	//	auto Pawn = PlayerController->GetPawn();
+	//	if (Pawn)
+	//	{
+	//		Pawn->Destroy();
+	//	}
+	//}
+
+	//pawn spawnÇØ¾ßµÊ
+	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("spawn palyer")));
+}

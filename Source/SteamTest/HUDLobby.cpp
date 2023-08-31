@@ -4,11 +4,12 @@
 #include "HUDLobby.h"
 #include "Components/Button.h"
 #include "Components/MultiLineEditableText.h"
+#include "PCLobby.h"
 
 void UHUDLobby::NativeOnInitialized()
 {
 	BtnFirstPlayer->OnClicked.AddDynamic(this, &UHUDLobby::FirstPlayerClicked);
-	//BtnSecondPlayer->OnClicked.AddDynamic(this, &UHUDLobby::SearchGameClicked);
+	BtnSecondPlayer->OnClicked.AddDynamic(this, &UHUDLobby::SecondPlayerClicked);
 	BtnStartGame->OnClicked.AddDynamic(this, &UHUDLobby::StartGameClicked);
 	//BtnSubmit->OnClicked.AddDynamic(this, &UHUDLobby::BackClicked);
 
@@ -16,6 +17,15 @@ void UHUDLobby::NativeOnInitialized()
 }
 
 void UHUDLobby::FirstPlayerClicked()
+{
+	auto PC = Cast<APCLobby>(GetOwningPlayer());
+	if (IsValid(PC))
+	{
+		PC->FirstPlayerClicked();
+	}
+}
+
+void UHUDLobby::SecondPlayerClicked()
 {
 }
 

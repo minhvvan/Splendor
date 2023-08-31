@@ -15,6 +15,7 @@
 #include "Math/IntPoint.h"
 #include "HUDLobby.h"
 #include "PCMenu.h"
+#include "PCLobby.h"
 
 
 USteamTestGameInstance::USteamTestGameInstance(): OnCreateSessionCompleteDelegate(FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete))

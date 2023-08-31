@@ -5,10 +5,10 @@
 #include "Blueprint/UserWidget.h"
 #include "HUDMainMenu.h"
 #include "HUDMultMenu.h"
-#include "HUDLobby.h"
 #include "HUDServerRow.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/ScrollBox.h"
+#include "STGameModeLobby.h"
 
 
 APCMenu::APCMenu()
@@ -18,14 +18,7 @@ APCMenu::APCMenu()
 	{
 		MultMenuClass = MULT.Class;
 	}
-
-	ConstructorHelpers::FClassFinder<UUserWidget> LOBBY(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Widget/WBP_Lobby.WBP_Lobby_C'"));
-	if (LOBBY.Succeeded())
-	{
-		LobbyClass = LOBBY.Class;
-	}
 }
-
 
 void APCMenu::ShowMultMenu()
 {
@@ -35,18 +28,6 @@ void APCMenu::ShowMultMenu()
 	}
 
 	WidgetMultMenu->AddToViewport();
-	SetInputMode(FInputModeUIOnly());
-	SetShowMouseCursor(true);
-}
-
-void APCMenu::ShowLobby()
-{
-	if (!WidgetLobby)
-	{
-		WidgetLobby = Cast<UHUDLobby>(CreateWidget(GetWorld(), LobbyClass));
-	}
-
-	WidgetLobby->AddToViewport();
 	SetInputMode(FInputModeUIOnly());
 	SetShowMouseCursor(true);
 }

@@ -21,9 +21,6 @@ public:
 	void ShowMultMenu();
 
 	UFUNCTION()
-	void ShowLobby();
-
-	UFUNCTION()
 	void PreSessionSearch();
 
 	UFUNCTION()
@@ -34,10 +31,4 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	class UHUDMultMenu* WidgetMultMenu;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> LobbyClass;
-
-	UPROPERTY(VisibleAnywhere)
-	class UHUDLobby* WidgetLobby;
 };

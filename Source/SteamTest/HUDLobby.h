@@ -37,6 +37,9 @@ private:
 	void FirstPlayerClicked();
 
 	UFUNCTION(BlueprintCallable)
+	void SecondPlayerClicked();
+
+	UFUNCTION(BlueprintCallable)
 	void StartGameClicked();
 
 	UFUNCTION(BlueprintCallable)
