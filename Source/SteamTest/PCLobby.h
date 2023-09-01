@@ -23,7 +23,6 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SRSpawnPlayer();
 
-
 	UFUNCTION()
 	void ShowLobby();
 
@@ -32,6 +31,10 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void SRFirstPlayerClicked();
+
+	//playerstate정보를 받아서 화면에 표시
+	UFUNCTION(NetMulticast, Reliable)
+	void MarkFirst(const FString& name);
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> LobbyClass;

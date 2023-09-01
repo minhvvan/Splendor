@@ -7,6 +7,9 @@
 #include "SteamTestGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "PCMenu.h"
+#include "PCLobby.h"
+#include "PSPlayerInfo.h"
+#include "GSLobby.h"
 
 ASTGameModeLobby::ASTGameModeLobby()
 {
@@ -29,12 +32,21 @@ void ASTGameModeLobby::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
+	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("PostLogin")));
+
+
 	PlayerControllers.Add(NewPlayer);
+	PlayerStates.Add(NewPlayer->GetPlayerState<APSPlayerInfo>());
 }
 
 void ASTGameModeLobby::SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC)
 {
+	Super::SwapPlayerControllers(OldPC, NewPC);
+
+	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("SwapPlayerControllers")));
+
 	PlayerControllers.Add(NewPC);
+	PlayerStates.Add(NewPC->GetPlayerState<APSPlayerInfo>());
 }
 
 void ASTGameModeLobby::Logout(AController* Exiting)
@@ -57,4 +69,16 @@ void ASTGameModeLobby::SpawnPlayer(APlayerController* PlayerController)
 
 	//pawn spawnÇØ¾ßµÊ
 	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("spawn palyer")));
+}
+
+void ASTGameModeLobby::FirstPlayerMark(FString name)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("num: %d"), PlayerControllers.Num()));
+
+	auto GS = GetGameState<AGSLobby>();
+
+	for (auto PlayerState : GS->PlayerArray)
+	{
+		Cast<APCLobby>(PlayerState->GetPlayerController())->MarkFirst(name);
+	}
 }

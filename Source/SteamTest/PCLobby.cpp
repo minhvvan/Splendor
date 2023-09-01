@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/ScrollBox.h"
 #include "STGameModeLobby.h"
+#include "PSPlayerInfo.h"
 
 
 APCLobby::APCLobby()
@@ -25,7 +26,6 @@ void APCLobby::BeginPlay()
 {
 	if (IsLocalController())
 	{
-		//SRSpawnPlayer();
 		ShowLobby();
 	}
 }
@@ -43,6 +43,7 @@ void APCLobby::ShowLobby()
 	if (!WidgetLobby)
 	{
 		WidgetLobby = Cast<UHUDLobby>(CreateWidget(GetWorld(), LobbyClass));
+		WidgetLobby->SetPC(this);
 	}
 
 	WidgetLobby->AddToViewport();
@@ -58,8 +59,26 @@ void APCLobby::FirstPlayerClicked()
 	}
 }
 
+void APCLobby::MarkFirst_Implementation(const FString& name)
+{
+	if (IsLocalController())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("MarkFirst")));
+
+		if (WidgetLobby)
+		{
+			WidgetLobby->SetFirstText(name);
+		}
+	}
+}
+
 void APCLobby::SRFirstPlayerClicked_Implementation()
 {
 	ASTGameModeLobby* GMLobby = Cast< ASTGameModeLobby>(UGameplayStatics::GetGameMode(GetWorld()));
-	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("fist")));
+	//main에서 입력한 name 전달(지금은 hard)
+	//auto PS = GetPlayerState<APSPlayerInfo>();
+	//auto PlayerName = PS->GetPlayerName();
+	FString PlayerName = "minhwan";
+
+	GMLobby->FirstPlayerMark(PlayerName);
 }

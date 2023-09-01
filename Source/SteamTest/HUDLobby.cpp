@@ -3,13 +3,16 @@
 
 #include "HUDLobby.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "Components/MultiLineEditableText.h"
+#include "Kismet/GameplayStatics.h"
 #include "PCLobby.h"
+#include "Components/AudioComponent.h"
+
 
 void UHUDLobby::NativeOnInitialized()
 {
 	BtnFirstPlayer->OnClicked.AddDynamic(this, &UHUDLobby::FirstPlayerClicked);
-	BtnSecondPlayer->OnClicked.AddDynamic(this, &UHUDLobby::SecondPlayerClicked);
 	BtnStartGame->OnClicked.AddDynamic(this, &UHUDLobby::StartGameClicked);
 	//BtnSubmit->OnClicked.AddDynamic(this, &UHUDLobby::BackClicked);
 
@@ -18,10 +21,9 @@ void UHUDLobby::NativeOnInitialized()
 
 void UHUDLobby::FirstPlayerClicked()
 {
-	auto PC = Cast<APCLobby>(GetOwningPlayer());
-	if (IsValid(PC))
+	if (MainPC)
 	{
-		PC->FirstPlayerClicked();
+		MainPC->FirstPlayerClicked();
 	}
 }
 
@@ -36,4 +38,17 @@ void UHUDLobby::StartGameClicked()
 
 void UHUDLobby::OnChatTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
+}
+
+void UHUDLobby::SetPC(APlayerController* PC)
+{
+	if (PC)
+	{
+		MainPC = Cast<APCLobby>(PC);
+	}
+}
+
+void UHUDLobby::SetFirstText(FString text)
+{
+	TxtFirstPlayer->SetText(FText::FromString(text));
 }

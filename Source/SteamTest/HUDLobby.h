@@ -16,10 +16,16 @@ class STEAMTEST_API UHUDLobby : public UUserWidget
 	
 protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnFirstPlayer;
+	class UButton* BtnFirstPlayer;	
+	
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UTextBlock* TxtFirstPlayer;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UButton* BtnSecondPlayer;
+
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UTextBlock* TxtSecondPlayer;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UButton* BtnStartGame;	
@@ -45,6 +51,11 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void OnChatTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
+	//이렇게 하는게 맞나 모르겠다
+	class APCLobby* MainPC;
+
 public:
-	
+	void SetPC(APlayerController* PC);
+
+	void SetFirstText(FString text);
 };
