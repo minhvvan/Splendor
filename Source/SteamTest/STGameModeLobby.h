@@ -35,6 +35,9 @@ public:
 	UFUNCTION()
 	void FirstPlayerMark(FString name);
 
+	UFUNCTION()
+	void SecondPlayerMark(FString name);
+
 private:
 	UPROPERTY()
 	TArray<class APlayerController*> PlayerControllers;

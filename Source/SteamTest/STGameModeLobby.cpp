@@ -73,12 +73,20 @@ void ASTGameModeLobby::SpawnPlayer(APlayerController* PlayerController)
 
 void ASTGameModeLobby::FirstPlayerMark(FString name)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("num: %d"), PlayerControllers.Num()));
-
 	auto GS = GetGameState<AGSLobby>();
 
 	for (auto PlayerState : GS->PlayerArray)
 	{
 		Cast<APCLobby>(PlayerState->GetPlayerController())->MarkFirst(name);
+	}
+}
+
+void ASTGameModeLobby::SecondPlayerMark(FString name)
+{
+	auto GS = GetGameState<AGSLobby>();
+
+	for (auto PlayerState : GS->PlayerArray)
+	{
+		Cast<APCLobby>(PlayerState->GetPlayerController())->MarkSecond(name);
 	}
 }

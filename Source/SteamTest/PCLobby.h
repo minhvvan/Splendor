@@ -29,12 +29,20 @@ public:
 	UFUNCTION()
 	void FirstPlayerClicked();
 
+	UFUNCTION()
+	void SecondPlayerClicked();
+
 	UFUNCTION(Server, Reliable)
 	void SRFirstPlayerClicked();
 
-	//playerstate정보를 받아서 화면에 표시
+	UFUNCTION(Server, Reliable)
+	void SRSecondPlayerClicked();
+
 	UFUNCTION(NetMulticast, Reliable)
 	void MarkFirst(const FString& name);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MarkSecond(const FString& name);
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> LobbyClass;

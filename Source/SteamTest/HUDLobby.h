@@ -58,4 +58,5 @@ public:
 	void SetPC(APlayerController* PC);
 
 	void SetFirstText(FString text);
+	void SetSecondText(FString text);
 };

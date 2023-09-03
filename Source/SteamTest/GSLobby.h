@@ -15,9 +15,19 @@ class STEAMTEST_API AGSLobby : public AGameState
 	GENERATED_BODY()
 	
 public:
-	void UpdatePlayerList();
+	UFUNCTION()
+	bool SetFirstPlayer(APCLobby* pc);
+
+	UFUNCTION()
+	bool SetSecondPlayer(APCLobby* pc);
+
+	UFUNCTION()
+	APCLobby* GetFirstPlayer() { return FirstPlayer; };
+
+	UFUNCTION()
+	APCLobby* GetSecondPlayer() { return SecondPlayer; };
 
 private:
-
-	
+	class APCLobby* FirstPlayer;
+	class APCLobby* SecondPlayer;
 };

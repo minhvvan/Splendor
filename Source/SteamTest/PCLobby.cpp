@@ -59,15 +59,35 @@ void APCLobby::FirstPlayerClicked()
 	}
 }
 
+void APCLobby::SecondPlayerClicked()
+{
+	if (IsLocalController())
+	{
+		SRSecondPlayerClicked();
+	}
+}
+
 void APCLobby::MarkFirst_Implementation(const FString& name)
 {
 	if (IsLocalController())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("MarkFirst")));
 
 		if (WidgetLobby)
 		{
 			WidgetLobby->SetFirstText(name);
+		}
+	}
+}
+
+void APCLobby::MarkSecond_Implementation(const FString& name)
+{
+	if (IsLocalController())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("MarkSecond")));
+
+		if (WidgetLobby)
+		{
+			WidgetLobby->SetSecondText(name);
 		}
 	}
 }
@@ -81,4 +101,15 @@ void APCLobby::SRFirstPlayerClicked_Implementation()
 	FString PlayerName = "minhwan";
 
 	GMLobby->FirstPlayerMark(PlayerName);
+}
+
+void APCLobby::SRSecondPlayerClicked_Implementation()
+{
+	ASTGameModeLobby* GMLobby = Cast< ASTGameModeLobby>(UGameplayStatics::GetGameMode(GetWorld()));
+	//main에서 입력한 name 전달(지금은 hard)
+	//auto PS = GetPlayerState<APSPlayerInfo>();
+	//auto PlayerName = PS->GetPlayerName();
+	FString PlayerName = "yeji";
+
+	GMLobby->SecondPlayerMark(PlayerName);
 }

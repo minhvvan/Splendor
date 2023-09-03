@@ -5,14 +5,16 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/MultiLineEditableText.h"
+#include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "PCLobby.h"
-#include "Components/AudioComponent.h"
+#include "GSLobby.h"
 
 
 void UHUDLobby::NativeOnInitialized()
 {
 	BtnFirstPlayer->OnClicked.AddDynamic(this, &UHUDLobby::FirstPlayerClicked);
+	BtnSecondPlayer->OnClicked.AddDynamic(this, &UHUDLobby::SecondPlayerClicked);
 	BtnStartGame->OnClicked.AddDynamic(this, &UHUDLobby::StartGameClicked);
 	//BtnSubmit->OnClicked.AddDynamic(this, &UHUDLobby::BackClicked);
 
@@ -21,14 +23,45 @@ void UHUDLobby::NativeOnInitialized()
 
 void UHUDLobby::FirstPlayerClicked()
 {
+	auto GS = GetWorld()->GetGameState<AGSLobby>();
+	if (!GS->SetFirstPlayer(MainPC))
+	{
+		SetFirstText("");
+	}
+
+	//!TODO: 여기가 이상함 -> pram이 없고 넘어가서 info를 따서 세팅하게됨
 	if (MainPC)
 	{
-		MainPC->FirstPlayerClicked();
+		MainPC->FirstPlayerClicked(/*param*/);
 	}
 }
 
 void UHUDLobby::SecondPlayerClicked()
 {
+	auto GS = GetWorld()->GetGameState<AGSLobby>();
+	auto SecondPlayer = GS->GetSecondPlayer();
+
+	if (SecondPlayer)
+	{
+		if (MainPC == SecondPlayer)
+		{
+			//해제
+			GS->SetSecondPlayer(nullptr);
+			SetSecondText("");
+		}
+		else
+		{
+			//선택 불가
+		}
+	}
+	else
+	{
+		if (MainPC)
+		{
+			GS->SetSecondPlayer(MainPC);
+			MainPC->SecondPlayerClicked();
+		}
+	}
 }
 
 void UHUDLobby::StartGameClicked()
@@ -51,4 +84,9 @@ void UHUDLobby::SetPC(APlayerController* PC)
 void UHUDLobby::SetFirstText(FString text)
 {
 	TxtFirstPlayer->SetText(FText::FromString(text));
+}
+
+void UHUDLobby::SetSecondText(FString text)
+{
+	TxtSecondPlayer->SetText(FText::FromString(text));
 }
