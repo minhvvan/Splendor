@@ -4,11 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameState.h"
+#include "Net/UnrealNetwork.h"
 #include "GSLobby.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class STEAMTEST_API AGSLobby : public AGameState
 {
@@ -27,7 +26,18 @@ public:
 	UFUNCTION()
 	APCLobby* GetSecondPlayer() { return SecondPlayer; };
 
+	UFUNCTION()
+	bool GetCanStart() { return bCanStart; };
+
 private:
+	UPROPERTY()
 	class APCLobby* FirstPlayer;
+
+	UPROPERTY()
 	class APCLobby* SecondPlayer;
+
+	UPROPERTY()
+	bool bCanStart;
+
+	void checkCanStart();
 };

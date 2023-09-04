@@ -11,6 +11,7 @@
 #include "Components/ScrollBox.h"
 #include "STGameModeLobby.h"
 #include "PSPlayerInfo.h"
+#include "GSLobby.h"
 
 
 APCLobby::APCLobby()
@@ -67,40 +68,59 @@ void APCLobby::SecondPlayerClicked()
 	}
 }
 
-void APCLobby::MarkFirst_Implementation(const FString& name)
+void APCLobby::MarkFirst_Implementation(const FString& name, bool bEnableFirst)
 {
 	if (IsLocalController())
 	{
-
 		if (WidgetLobby)
 		{
 			WidgetLobby->SetFirstText(name);
+
+			//enable하면 안됨-> 해제가 불가능
+			WidgetLobby->SetFirstEnable(bEnableFirst);
 		}
 	}
 }
 
-void APCLobby::MarkSecond_Implementation(const FString& name)
+void APCLobby::MarkSecond_Implementation(const FString& name, bool bEnableSecond)
 {
 	if (IsLocalController())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("MarkSecond")));
-
 		if (WidgetLobby)
 		{
 			WidgetLobby->SetSecondText(name);
+			WidgetLobby->SetSecondEnable(bEnableSecond);
 		}
 	}
 }
 
 void APCLobby::SRFirstPlayerClicked_Implementation()
 {
-	ASTGameModeLobby* GMLobby = Cast< ASTGameModeLobby>(UGameplayStatics::GetGameMode(GetWorld()));
+	ASTGameModeLobby* GMLobby = Cast<ASTGameModeLobby>(UGameplayStatics::GetGameMode(GetWorld()));
 	//main에서 입력한 name 전달(지금은 hard)
 	//auto PS = GetPlayerState<APSPlayerInfo>();
 	//auto PlayerName = PS->GetPlayerName();
-	FString PlayerName = "minhwan";
+	auto GS = GetWorld()->GetGameState<AGSLobby>();
+	FString PlayerName;
+	bool bEnableFirst;
+	if (GS->SetFirstPlayer(this))
+	{
+		PlayerName = "minhwan";
+		bEnableFirst = false;
+	}
+	else
+	{
+		PlayerName = "";
+		bEnableFirst = true;
+	}
 
-	GMLobby->FirstPlayerMark(PlayerName);
+	if (GS->GetCanStart())
+	{
+		WidgetLobby->SetCanStart(true);
+		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("First: CanStart")));
+	}
+
+	GMLobby->FirstPlayerMark(PlayerName, bEnableFirst);
 }
 
 void APCLobby::SRSecondPlayerClicked_Implementation()
@@ -109,7 +129,26 @@ void APCLobby::SRSecondPlayerClicked_Implementation()
 	//main에서 입력한 name 전달(지금은 hard)
 	//auto PS = GetPlayerState<APSPlayerInfo>();
 	//auto PlayerName = PS->GetPlayerName();
-	FString PlayerName = "yeji";
+	auto GS = GetWorld()->GetGameState<AGSLobby>();
+	FString PlayerName;
+	bool bEnableSecond;
 
-	GMLobby->SecondPlayerMark(PlayerName);
+	if (GS->SetSecondPlayer(this))
+	{
+		PlayerName = "yeji";
+		bEnableSecond = false;
+	}
+	else
+	{
+		PlayerName = "";
+		bEnableSecond = true;
+	}
+
+	if (GS->GetCanStart())
+	{
+		WidgetLobby->SetCanStart(true);
+		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("Second: CanStart")));
+	}
+
+	GMLobby->SecondPlayerMark(PlayerName, bEnableSecond);
 }

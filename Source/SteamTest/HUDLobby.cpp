@@ -7,9 +7,10 @@
 #include "Components/MultiLineEditableText.h"
 #include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
+#include "STGameModeLobby.h"
 #include "PCLobby.h"
 #include "GSLobby.h"
-
 
 void UHUDLobby::NativeOnInitialized()
 {
@@ -23,50 +24,25 @@ void UHUDLobby::NativeOnInitialized()
 
 void UHUDLobby::FirstPlayerClicked()
 {
-	auto GS = GetWorld()->GetGameState<AGSLobby>();
-	if (!GS->SetFirstPlayer(MainPC))
-	{
-		SetFirstText("");
-	}
-
-	//!TODO: 여기가 이상함 -> pram이 없고 넘어가서 info를 따서 세팅하게됨
 	if (MainPC)
 	{
-		MainPC->FirstPlayerClicked(/*param*/);
+		MainPC->FirstPlayerClicked();
 	}
-}
+} 
 
 void UHUDLobby::SecondPlayerClicked()
 {
-	auto GS = GetWorld()->GetGameState<AGSLobby>();
-	auto SecondPlayer = GS->GetSecondPlayer();
-
-	if (SecondPlayer)
+	if (MainPC)
 	{
-		if (MainPC == SecondPlayer)
-		{
-			//해제
-			GS->SetSecondPlayer(nullptr);
-			SetSecondText("");
-		}
-		else
-		{
-			//선택 불가
-		}
-	}
-	else
-	{
-		if (MainPC)
-		{
-			GS->SetSecondPlayer(MainPC);
-			MainPC->SecondPlayerClicked();
-		}
+		MainPC->SecondPlayerClicked();
 	}
 }
 
 void UHUDLobby::StartGameClicked()
 {
 	//Server 인지 check -> 맞으면 start game
+	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("Start")));
+
 }
 
 void UHUDLobby::OnChatTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
@@ -89,4 +65,14 @@ void UHUDLobby::SetFirstText(FString text)
 void UHUDLobby::SetSecondText(FString text)
 {
 	TxtSecondPlayer->SetText(FText::FromString(text));
+}
+
+void UHUDLobby::SetCanStart(bool bCanStart)
+{
+	if(bCanStart)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Blue, FString::Printf(TEXT("SetCanStart")));
+	}
+
+	BtnStartGame->SetIsEnabled(bCanStart);
 }

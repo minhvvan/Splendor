@@ -35,6 +35,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UMultiLineEditableText* EdtChat;
+
 protected:
 	virtual void NativeOnInitialized();
 
@@ -51,12 +52,25 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void OnChatTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
-	//이렇게 하는게 맞나 모르겠다
+	UPROPERTY()
 	class APCLobby* MainPC;
+
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool bEnableFirst = true;
+
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool bEnableSecond = true;
 
 public:
 	void SetPC(APlayerController* PC);
 
 	void SetFirstText(FString text);
 	void SetSecondText(FString text);
+
+	void SetFirstEnable(bool bEnable) { bEnableFirst = bEnable; };
+	void SetSecondEnable(bool bEnable) { bEnableSecond = bEnable; };
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLifetimeProps);
+
+	void SetCanStart(bool bCanStart);
 };

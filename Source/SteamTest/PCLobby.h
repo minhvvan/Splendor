@@ -39,10 +39,10 @@ public:
 	void SRSecondPlayerClicked();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MarkFirst(const FString& name);
+	void MarkFirst(const FString& name, bool bEnableFirst);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MarkSecond(const FString& name);
+	void MarkSecond(const FString& name, bool bEnableSecond);
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> LobbyClass;
