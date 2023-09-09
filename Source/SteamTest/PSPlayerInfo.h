@@ -6,9 +6,6 @@
 #include "GameFramework/PlayerState.h"
 #include "PSPlayerInfo.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class STEAMTEST_API APSPlayerInfo : public APlayerState
 {
@@ -17,10 +14,22 @@ class STEAMTEST_API APSPlayerInfo : public APlayerState
 public:
 	APSPlayerInfo();
 
-	FString GetPlayerName() const { return PlayerName; };
-	void SetPlayerName(FString name) { PlayerName = name; };
+	UFUNCTION()
+	FString GetPName() const { return PName; };
+
+	UFUNCTION()
+	void SetPName(FString name) { PName = name; };
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
+protected:
+	UFUNCTION()
+	void CopyProperties(class APlayerState* PlayerState) override;
+
+	UFUNCTION()
+	void OverrideWith(class APlayerState* PlayerState) override;
 
 private:
-	UPROPERTY()
-	FString PlayerName;
+	UPROPERTY(Replicated)
+	FString PName;
 };

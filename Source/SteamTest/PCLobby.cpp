@@ -2,12 +2,13 @@
 
 
 #include "PCLobby.h"
+#include "SteamTestGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
 #include "HUDMainMenu.h"
 #include "HUDMultMenu.h"
 #include "HUDLobby.h"
 #include "HUDServerRow.h"
-#include "Kismet/GameplayStatics.h"
 #include "Components/ScrollBox.h"
 #include "STGameModeLobby.h"
 #include "PSPlayerInfo.h"
@@ -38,7 +39,6 @@ void APCLobby::SRSpawnPlayer_Implementation()
 	GMLobby->SpawnPlayer(this);
 }
 
-
 void APCLobby::ShowLobby()
 {
 	if (!WidgetLobby)
@@ -68,6 +68,7 @@ void APCLobby::SecondPlayerClicked()
 	}
 }
 
+
 void APCLobby::MarkFirst_Implementation(const FString& name, bool bEnableFirst)
 {
 	if (IsLocalController())
@@ -75,8 +76,6 @@ void APCLobby::MarkFirst_Implementation(const FString& name, bool bEnableFirst)
 		if (WidgetLobby)
 		{
 			WidgetLobby->SetFirstText(name);
-
-			//enable하면 안됨-> 해제가 불가능
 			WidgetLobby->SetFirstEnable(bEnableFirst);
 		}
 	}
@@ -105,8 +104,12 @@ void APCLobby::SRFirstPlayerClicked_Implementation()
 	bool bEnableFirst;
 	if (GS->SetFirstPlayer(this))
 	{
-		PlayerName = "minhwan";
-		bEnableFirst = false;
+		auto PS = GetPlayerState<APSPlayerInfo>();
+		if (PS)
+		{
+			PlayerName = PS->GetPName();
+			bEnableFirst = false;
+		}
 	}
 	else
 	{
@@ -114,10 +117,9 @@ void APCLobby::SRFirstPlayerClicked_Implementation()
 		bEnableFirst = true;
 	}
 
-	if (GS->GetCanStart())
+	if (WidgetLobby)
 	{
-		WidgetLobby->SetCanStart(true);
-		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("First: CanStart")));
+		WidgetLobby->SetCanStart(GS->GetCanStart());
 	}
 
 	GMLobby->FirstPlayerMark(PlayerName, bEnableFirst);
@@ -135,8 +137,12 @@ void APCLobby::SRSecondPlayerClicked_Implementation()
 
 	if (GS->SetSecondPlayer(this))
 	{
-		PlayerName = "yeji";
-		bEnableSecond = false;
+		auto PS = GetPlayerState<APSPlayerInfo>();
+		if (PS)
+		{
+			PlayerName = PS->GetPName();
+			bEnableSecond = false;
+		}
 	}
 	else
 	{
@@ -144,11 +150,37 @@ void APCLobby::SRSecondPlayerClicked_Implementation()
 		bEnableSecond = true;
 	}
 
-	if (GS->GetCanStart())
+	if (WidgetLobby)
 	{
-		WidgetLobby->SetCanStart(true);
-		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("Second: CanStart")));
+		WidgetLobby->SetCanStart(GS->GetCanStart());
 	}
 
 	GMLobby->SecondPlayerMark(PlayerName, bEnableSecond);
+}
+
+void APCLobby::Init_Implementation()
+{
+	//이거는 player state 따로 관리 하려면 
+	// save data에서 정보 뽑아오기
+	if (IsLocalController())
+	{
+		auto GI = Cast<USteamTestGameInstance>(GetGameInstance());
+		auto Name = GI->LoadName();
+		auto PS = GetPlayerState<APSPlayerInfo>();
+		PS->SetPName(Name);
+
+		SRUpdatePlayerState(Name);
+	}
+}
+
+void APCLobby::SRUpdatePlayerState_Implementation(const FString& name)
+{
+	auto PS = GetPlayerState<APSPlayerInfo>();
+	PS->SetPName(name);
+}
+
+
+void APCLobby::OnRep_PlayerState()
+{
+	Init();
 }

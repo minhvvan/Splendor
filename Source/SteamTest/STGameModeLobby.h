@@ -38,12 +38,15 @@ public:
 	UFUNCTION()
 	void SecondPlayerMark(FString name, bool bEnableSecond);
 
-private:
-	UPROPERTY()
-	TArray<class APlayerController*> PlayerControllers;
+	UFUNCTION()
+	void StartGame();
 
-	UPROPERTY()
-	TArray<class APlayerState*> PlayerStates;
+private:
+	//UPROPERTY()
+	//TArray<class APlayerController*> PlayerControllers;
+
+	//UPROPERTY()
+	//TArray<class APlayerState*> PlayerStates;
 
 	UPROPERTY()
 	TSubclassOf<AActor> SpawnToActor;

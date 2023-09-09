@@ -30,10 +30,10 @@ public:
 	void ShowMainMenu();
 
 	UFUNCTION()
-	void StartSoloGame();
+	void LoadGame();
 
 	UFUNCTION()
-	void LoadGame();
+	FString LoadName();
 	
 	UFUNCTION()
 	void SaveGame();
@@ -59,14 +59,6 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class UHUDLobby* WidgetLobby;
 
-	FPlayerProfile* PlayerInfo;
-
-	void MakePlayerInfo(FString name);
-
-	void ChangeConnectionType();
-
-	bool GetIsLanConnect() { return IsLanConnection ? true : false; };
-
 	void CreateSession();
 	void FindSession();
 	void JoinSession(int32 idx);
@@ -79,8 +71,6 @@ public:
 
 private:
 	FString PlayerProfileSlot = "PlayerProfileSlot";
-
-	bool IsLanConnection;
 
 	IOnlineSessionPtr OnlineSessionInterface;
 

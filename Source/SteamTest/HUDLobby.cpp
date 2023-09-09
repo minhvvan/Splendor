@@ -40,9 +40,13 @@ void UHUDLobby::SecondPlayerClicked()
 
 void UHUDLobby::StartGameClicked()
 {
-	//Server 인지 check -> 맞으면 start game
-	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("Start")));
+	//GM에게 Widget 떼라고 말해야 함
 
+	auto World = GetWorld();
+	if (World)
+	{
+		World->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap");
+	}
 }
 
 void UHUDLobby::OnChatTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)

@@ -4,18 +4,19 @@
 #include "SteamTestGameInstance.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/GameUserSettings.h"
+#include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSubsystem.h"
+#include "OnlineSessionSettings.h"
 #include "SG_PlayerProfile.h"
 #include "HUDMainMenu.h"
 #include "HUDMultMenu.h"
 #include "HUDServerRow.h"
-#include "Interfaces/OnlineSessionInterface.h"
-#include "OnlineSubsystem.h"
-#include "OnlineSessionSettings.h"
-#include "GameFramework/GameUserSettings.h"
 #include "Math/IntPoint.h"
 #include "HUDLobby.h"
 #include "PCMenu.h"
 #include "PCLobby.h"
+#include "PSPlayerInfo.h"
 
 
 USteamTestGameInstance::USteamTestGameInstance(): OnCreateSessionCompleteDelegate(FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete))
@@ -33,8 +34,6 @@ USteamTestGameInstance::USteamTestGameInstance(): OnCreateSessionCompleteDelegat
 	{
 		ServerRowClass = ROW.Class;
 	}
-
-	PlayerInfo = new FPlayerProfile();
 }
 
 void USteamTestGameInstance::ShowMainMenu()
@@ -56,56 +55,50 @@ void USteamTestGameInstance::ShowMainMenu()
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(true);
 }
 
-void USteamTestGameInstance::StartSoloGame()
-{
-	if (!UGameplayStatics::DoesSaveGameExist(PlayerProfileSlot, 0))
-	{
-		SaveGame();
-	}
-
-	UGameplayStatics::OpenLevel(this, FName("ThirdPersonMap"));
-}
-
 void USteamTestGameInstance::LoadGame()
 {
-	auto LoadGameInstance = Cast<USG_PlayerProfile>(UGameplayStatics::LoadGameFromSlot(PlayerProfileSlot, 0));
+	if (UGameplayStatics::DoesSaveGameExist(PlayerProfileSlot, 0))
+	{
+		auto LoadGameInstance = Cast<USG_PlayerProfile>(UGameplayStatics::LoadGameFromSlot(PlayerProfileSlot, 0));
 
-	if (LoadGameInstance)
-	{
-		LoadGameInstance->Print();
-		WidgetMainMenu->SetPlayerName(LoadGameInstance->PlayPfofile.PlayerName);
+		if (LoadGameInstance)
+		{
+			if (WidgetMainMenu)
+			{
+				WidgetMainMenu->SetPlayerName(LoadGameInstance->PlayPfofile.PlayerName);
+			}
+		}
 	}
-	else
+}
+
+FString USteamTestGameInstance::LoadName()
+{
+	if (UGameplayStatics::DoesSaveGameExist(PlayerProfileSlot, 0))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("fail load"));
+		auto LoadGameInstance = Cast<USG_PlayerProfile>(UGameplayStatics::LoadGameFromSlot(PlayerProfileSlot, 0));
+
+		if (LoadGameInstance)
+		{
+			return LoadGameInstance->PlayPfofile.PlayerName;
+		}
 	}
+
+	return FString();
 }
 
 void USteamTestGameInstance::SaveGame()
 {
 	auto SaveGameInstance = Cast<USG_PlayerProfile>(UGameplayStatics::CreateSaveGameObject(USG_PlayerProfile::StaticClass()));
+	APlayerController* const PlayerController = GetFirstLocalPlayerController();
+	auto PS = PlayerController->GetPlayerState<APSPlayerInfo>();
 
-	SaveGameInstance->SetPlayerName(PlayerInfo->PlayerName);
-	if (UGameplayStatics::SaveGameToSlot(SaveGameInstance, PlayerProfileSlot, 0))
+	if (PS)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("success"));
-	}
-}
-
-void USteamTestGameInstance::MakePlayerInfo(FString name)
-{
-	PlayerInfo->PlayerName = name;
-}
-
-void USteamTestGameInstance::ChangeConnectionType()
-{
-	if (IsLanConnection)
-	{
-		IsLanConnection = false;
-	}
-	else
-	{
-		IsLanConnection = true;
+		SaveGameInstance->SetPlayerName(PS->GetPName());
+		if (UGameplayStatics::SaveGameToSlot(SaveGameInstance, PlayerProfileSlot, 0))
+		{
+			//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, FString::Printf(TEXT("success: %s"), *(PS->GetName())));
+		}
 	}
 }
 
@@ -201,10 +194,11 @@ void USteamTestGameInstance::OnCreateSessionComplete(FName SessionName, bool bWa
 		}
 
 		EnableListenServer(true, 7777);
-		//GetWorld()->GetGameInstance()->EnableListenServer(true, 7777);
-		//GetWorld()->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap?listen");
-		GetWorld()->ServerTravel("/Game/ThirdPerson/Maps/Menu/Lobby?listen");
-		//GetWorld()->ServerTravel("/Game/ThirdPerson/Maps/Menu/MainMenu?listen");
+		auto World = GetWorld();
+		if (World)
+		{
+			World->ServerTravel("/Game/ThirdPerson/Maps/Menu/Lobby?listen");
+		}
 	}
 	else	// 세션 생성 실패
 	{
@@ -239,6 +233,8 @@ void USteamTestGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 		int max = Result.Session.SessionSettings.NumPublicConnections;
 		int current = max - Result.Session.NumOpenPublicConnections;
 
+		
+		//!TODO: 이름, 인원 변경
 		ServerRow->SetServerName("aa");
 		ServerRow->SetNumPlayer(current, max);
 		ServerRow->SetPing(Result.PingInMs);
@@ -264,7 +260,6 @@ void USteamTestGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSes
 
 			if (PlayerController && Sessions->GetResolvedConnectString(SessionName, TravelURL))
 			{
-				//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, FString::Printf(TEXT("URL: %s"), *TravelURL));
 				PlayerController->ClientTravel(TravelURL, ETravelType::TRAVEL_Absolute);
 			}
 		}

@@ -34,10 +34,7 @@ private:
 	void QuitGameClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void ChangedPlayerName(const FText& Text);	
-	
-	UFUNCTION(BlueprintCallable)
-	void OnChatTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+	void ChangedPlayerName(const FText& Text, ETextCommit::Type CommitMethod);
 
 public:
 	void SetPlayerName(FString& name);

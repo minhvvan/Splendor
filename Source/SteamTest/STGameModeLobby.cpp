@@ -32,28 +32,35 @@ void ASTGameModeLobby::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
-	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("PostLogin")));
+	///서버는 되는데 client player state를 못가져옴
+	///뭔가 PC 복사 때문인거 같은데 
+	/// 
+	/// RPC(client) get data -> save game으로 불러와서 -> RPC(server)update
+	//Cast<APCLobby>(NewPlayer)->Init();
 
 
-	PlayerControllers.Add(NewPlayer);
-	PlayerStates.Add(NewPlayer->GetPlayerState<APSPlayerInfo>());
+	//PlayerControllers.Add(NewPlayer);
+	//PlayerStates.Add(NewPlayer->GetPlayerState<APSPlayerInfo>());
+
+
 }
 
 void ASTGameModeLobby::SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC)
 {
 	Super::SwapPlayerControllers(OldPC, NewPC);
+	//server 단위 travel 
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("SwapPlayerControllers")));
 
-	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("SwapPlayerControllers")));
-
-	PlayerControllers.Add(NewPC);
-	PlayerStates.Add(NewPC->GetPlayerState<APSPlayerInfo>());
+	//PlayerControllers.Add(NewPC);
+	//PlayerStates.Add(NewPC->GetPlayerState<APSPlayerInfo>());
 }
 
 void ASTGameModeLobby::Logout(AController* Exiting)
 {
 	auto PCtarget = Cast<APCMenu>(Exiting);
 
-	PlayerControllers.Remove(PCtarget);
+	//PlayerControllers.Remove(PCtarget);
+	//PlayerStates.Remove(PCtarget->GetPlayerState<APSPlayerInfo>());
 }
 
 void ASTGameModeLobby::SpawnPlayer(APlayerController* PlayerController)
@@ -68,7 +75,7 @@ void ASTGameModeLobby::SpawnPlayer(APlayerController* PlayerController)
 	//}
 
 	//pawn spawn해야됨
-	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("spawn palyer")));
+	//GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("spawn palyer")));
 }
 
 void ASTGameModeLobby::FirstPlayerMark(FString name, bool bEnableFirst)

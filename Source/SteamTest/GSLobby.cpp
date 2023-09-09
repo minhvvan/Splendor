@@ -52,8 +52,6 @@ bool AGSLobby::SetSecondPlayer(APCLobby* pc)
 
 void AGSLobby::checkCanStart()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Blue, FString::Printf(TEXT("checkCanStart")));
-
 	if (FirstPlayer && SecondPlayer)
 	{
 		bCanStart = true;

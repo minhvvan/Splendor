@@ -30,8 +30,6 @@ void UHUDServerRow::SetPing(int ping)
 
 void UHUDServerRow::ClickedRow()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("clicked")));
-
 	if (auto GameInstance = Cast<USteamTestGameInstance>(GetGameInstance()))
 	{
 		auto idx = GetParent()->GetChildIndex(this);

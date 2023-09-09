@@ -44,6 +44,17 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MarkSecond(const FString& name, bool bEnableSecond);
 
+	UFUNCTION(Client, Reliable)
+	void Init();
+
+	UFUNCTION(Server, Reliable)
+	void SRUpdatePlayerState(const FString& name);
+
+	void OnRep_PlayerState() override;
+
+	UFUNCTION(Server, Reliable)
+	void SRStartGame();
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> LobbyClass;
 

@@ -14,6 +14,8 @@ void USG_PlayerProfile::SetPlayerName(FString name)
 
 void USG_PlayerProfile::Print()
 {
-	UE_LOG(LogTemp, Warning, TEXT("aa%s"), *(PlayPfofile.PlayerName));
-	UE_LOG(LogTemp, Warning, TEXT("score: %d"), score);
+	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("name: %s"), *PlayPfofile.PlayerName));
+
+	//UE_LOG(LogTemp, Warning, TEXT("aa%s"), *(PlayPfofile.PlayerName));
+	//UE_LOG(LogTemp, Warning, TEXT("score: %d"), score);
 }

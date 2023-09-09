@@ -53,9 +53,6 @@ private:
 	void SearchGameClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void ConnectionClicked();
-
-	UFUNCTION(BlueprintCallable)
 	void BackClicked();
 
 	UFUNCTION(BlueprintCallable)
