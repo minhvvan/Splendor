@@ -16,4 +16,13 @@ class STEAMTEST_API ASTGameModePlay : public AGameMode
 	
 public:
 	ASTGameModePlay();
+
+	UFUNCTION()
+	void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC) override;
+
+	//void InitGameState() override;
+
+	UFUNCTION()
+	void SetPlayerTurn(APlayerController* Player, bool bFirst);
+
 };

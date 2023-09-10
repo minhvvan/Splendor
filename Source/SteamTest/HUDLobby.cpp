@@ -41,11 +41,10 @@ void UHUDLobby::SecondPlayerClicked()
 void UHUDLobby::StartGameClicked()
 {
 	//GM에게 Widget 떼라고 말해야 함
-
-	auto World = GetWorld();
-	if (World)
+	auto PC = Cast<APCLobby>(GetOwningPlayer());
+	if (PC)
 	{
-		World->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap");
+		PC->SRStartGame();
 	}
 }
 
@@ -73,10 +72,5 @@ void UHUDLobby::SetSecondText(FString text)
 
 void UHUDLobby::SetCanStart(bool bCanStart)
 {
-	if(bCanStart)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Blue, FString::Printf(TEXT("SetCanStart")));
-	}
-
 	BtnStartGame->SetIsEnabled(bCanStart);
 }

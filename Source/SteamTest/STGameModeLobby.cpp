@@ -31,18 +31,6 @@ void ASTGameModeLobby::BeginPlay()
 void ASTGameModeLobby::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-
-	///서버는 되는데 client player state를 못가져옴
-	///뭔가 PC 복사 때문인거 같은데 
-	/// 
-	/// RPC(client) get data -> save game으로 불러와서 -> RPC(server)update
-	//Cast<APCLobby>(NewPlayer)->Init();
-
-
-	//PlayerControllers.Add(NewPlayer);
-	//PlayerStates.Add(NewPlayer->GetPlayerState<APSPlayerInfo>());
-
-
 }
 
 void ASTGameModeLobby::SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC)
@@ -95,5 +83,15 @@ void ASTGameModeLobby::SecondPlayerMark(FString name, bool bEnableSecond)
 	for (auto PlayerState : GS->PlayerArray)
 	{
 		Cast<APCLobby>(PlayerState->GetPlayerController())->MarkSecond(name, bEnableSecond);
+	}
+}
+
+void ASTGameModeLobby::StartGame()
+{
+	auto GS = GetGameState<AGSLobby>();
+
+	for (auto PlayerState : GS->PlayerArray)
+	{
+		Cast<APCLobby>(PlayerState->GetPlayerController())->DetachLobbyWidget();
 	}
 }

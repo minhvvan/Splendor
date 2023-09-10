@@ -2,18 +2,42 @@
 
 
 #include "STGameModePlay.h"
+#include "PSPlayerInfo.h"
+#include "GSPlay.h"
 
 ASTGameModePlay::ASTGameModePlay()
 {
-	static ConstructorHelpers::FClassFinder<APlayerController> PlayerController(TEXT("/Script/Engine.Blueprint'/Game/Framework/BP_PlayerContoller.BP_PlayerContoller_C'"));
-	if (PlayerController.Class != NULL)
-	{
-		PlayerControllerClass = PlayerController.Class;
-	}
+	bUseSeamlessTravel = true;
+}
 
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
-	if (PlayerPawnBPClass.Class != NULL)
+void ASTGameModePlay::SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC)
+{
+	Super::SwapPlayerControllers(OldPC, NewPC);
+}
+
+//void ASTGameModePlay::InitGameState()
+//{
+//	auto GS = GetGameState<AGSPlay>();
+//
+//	for (auto ps : GS->PlayerArray)
+//	{
+//		auto name = Cast<APSPlayerInfo>(ps)->GetPName();
+//	}
+//}
+
+void ASTGameModePlay::SetPlayerTurn(APlayerController* Player, bool bFirst)
+{
+	auto GS = GetGameState<AGSPlay>();
+	
+	if (GS)
 	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
+		if (bFirst)
+		{
+			GS->SetFirstPlayer(Player);
+		}
+		else
+		{
+			GS->SetSecondPlayer(Player);
+		}
 	}
 }

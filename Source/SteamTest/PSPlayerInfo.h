@@ -22,6 +22,12 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
+	UFUNCTION()
+	void SetMyTrun(bool flag) { MyTurn = flag; };
+
+	UFUNCTION()
+	bool GetMyTurn() { return MyTurn; };
+
 protected:
 	UFUNCTION()
 	void CopyProperties(class APlayerState* PlayerState) override;
@@ -32,4 +38,7 @@ protected:
 private:
 	UPROPERTY(Replicated)
 	FString PName;
+
+	UPROPERTY(Replicated)
+	bool MyTurn;
 };

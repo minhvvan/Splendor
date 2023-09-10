@@ -55,6 +55,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SRStartGame();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void DetachLobbyWidget();
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> LobbyClass;
 

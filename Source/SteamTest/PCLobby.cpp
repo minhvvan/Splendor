@@ -28,7 +28,11 @@ void APCLobby::BeginPlay()
 {
 	if (IsLocalController())
 	{
-		ShowLobby();
+		auto name = GetWorld()->GetMapName();
+		if (name == "Lobby")
+		{
+			ShowLobby();
+		}
 	}
 }
 
@@ -96,9 +100,6 @@ void APCLobby::MarkSecond_Implementation(const FString& name, bool bEnableSecond
 void APCLobby::SRFirstPlayerClicked_Implementation()
 {
 	ASTGameModeLobby* GMLobby = Cast<ASTGameModeLobby>(UGameplayStatics::GetGameMode(GetWorld()));
-	//main에서 입력한 name 전달(지금은 hard)
-	//auto PS = GetPlayerState<APSPlayerInfo>();
-	//auto PlayerName = PS->GetPlayerName();
 	auto GS = GetWorld()->GetGameState<AGSLobby>();
 	FString PlayerName;
 	bool bEnableFirst;
@@ -107,12 +108,15 @@ void APCLobby::SRFirstPlayerClicked_Implementation()
 		auto PS = GetPlayerState<APSPlayerInfo>();
 		if (PS)
 		{
+			PS->SetMyTrun(true);
 			PlayerName = PS->GetPName();
 			bEnableFirst = false;
 		}
 	}
 	else
 	{
+		auto PS = GetPlayerState<APSPlayerInfo>();
+		PS->SetMyTrun(false);
 		PlayerName = "";
 		bEnableFirst = true;
 	}
@@ -128,9 +132,6 @@ void APCLobby::SRFirstPlayerClicked_Implementation()
 void APCLobby::SRSecondPlayerClicked_Implementation()
 {
 	ASTGameModeLobby* GMLobby = Cast< ASTGameModeLobby>(UGameplayStatics::GetGameMode(GetWorld()));
-	//main에서 입력한 name 전달(지금은 hard)
-	//auto PS = GetPlayerState<APSPlayerInfo>();
-	//auto PlayerName = PS->GetPlayerName();
 	auto GS = GetWorld()->GetGameState<AGSLobby>();
 	FString PlayerName;
 	bool bEnableSecond;
@@ -183,4 +184,27 @@ void APCLobby::SRUpdatePlayerState_Implementation(const FString& name)
 void APCLobby::OnRep_PlayerState()
 {
 	Init();
+}
+
+void APCLobby::SRStartGame_Implementation()
+{
+	ASTGameModeLobby* GMLobby = Cast< ASTGameModeLobby>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GMLobby)
+	{
+		GMLobby->StartGame();
+	}
+
+	auto World = GetWorld();
+	if (World)
+	{
+		World->ServerTravel("/Game/ThirdPerson/Maps/Game/Splendor");
+	}
+}
+
+void APCLobby::DetachLobbyWidget_Implementation()
+{
+	if (WidgetLobby)
+	{
+		WidgetLobby->RemoveFromParent();
+	}
 }

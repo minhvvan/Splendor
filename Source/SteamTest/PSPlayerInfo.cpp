@@ -5,7 +5,7 @@
 #include "Net/UnrealNetwork.h"
 #include "UObject/CoreNet.h"
 
-APSPlayerInfo::APSPlayerInfo()
+APSPlayerInfo::APSPlayerInfo(): PName(""), MyTurn(false)
 {
 }
 
@@ -13,6 +13,7 @@ void APSPlayerInfo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APSPlayerInfo, PName);
+	DOREPLIFETIME(APSPlayerInfo, MyTurn);
 }
 
 void APSPlayerInfo::CopyProperties(APlayerState* PlayerState)
@@ -25,6 +26,7 @@ void APSPlayerInfo::CopyProperties(APlayerState* PlayerState)
 		if (NewPlayerState)
 		{
 			NewPlayerState->PName = PName;
+			NewPlayerState->MyTurn = MyTurn;
 		}
 	}
 }
@@ -38,6 +40,7 @@ void APSPlayerInfo::OverrideWith(APlayerState* PlayerState)
 		if (OldPlayerState)
 		{
 			PName = OldPlayerState->PName;
+			MyTurn = OldPlayerState->MyTurn;
 		}
 	}
 }
