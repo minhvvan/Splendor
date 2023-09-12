@@ -24,4 +24,14 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void SRSetTurn();
+
+	UFUNCTION()
+	void ShowDesk();
+
+private:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> DeskClass;
+
+	UPROPERTY(VisibleAnywhere)
+	class UHUDDesk* WidgetDesk;
 };

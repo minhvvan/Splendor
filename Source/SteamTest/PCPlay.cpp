@@ -5,14 +5,21 @@
 #include "PSPlayerInfo.h"
 #include "Kismet/GameplayStatics.h"
 #include "STGameModePlay.h"
+#include "HUDDesk.h"
+
 
 APCPlay::APCPlay()
 {
+	ConstructorHelpers::FClassFinder<UUserWidget> DESK(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Widget/WBP_Desk.WBP_Desk_C'"));
+	if (DESK.Succeeded())
+	{
+		DeskClass = DESK.Class;
+	}
 }
 
 void APCPlay::BeginPlay()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("PCPlay: BeginPlay")));
+	ShowDesk();
 }
 
 void APCPlay::SeamlessTravelFrom(APlayerController* OldPC)
@@ -20,6 +27,18 @@ void APCPlay::SeamlessTravelFrom(APlayerController* OldPC)
 	Super::SeamlessTravelFrom(OldPC);
 
 	SRSetTurn();
+}
+
+void APCPlay::ShowDesk()
+{
+	if (!WidgetDesk)
+	{
+		WidgetDesk = Cast<UHUDDesk>(CreateWidget(GetWorld(), DeskClass));
+	}
+
+	WidgetDesk->AddToViewport();
+	SetInputMode(FInputModeUIOnly());
+	SetShowMouseCursor(true);
 }
 
 
