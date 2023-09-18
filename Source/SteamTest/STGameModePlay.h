@@ -20,9 +20,14 @@ public:
 	UFUNCTION()
 	void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC) override;
 
-	//void InitGameState() override;
-
 	UFUNCTION()
 	void SetPlayerTurn(APlayerController* Player, bool bFirst);
 
+	UFUNCTION()
+	void SpawnPlayer(APlayerController* PlayerController);
+
+	void RestartPlayer(AController* NewPlayer) override;
+private:
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class ATileManager* TileManager;
 };

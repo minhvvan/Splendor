@@ -4,26 +4,22 @@
 #include "STGameModePlay.h"
 #include "PSPlayerInfo.h"
 #include "GSPlay.h"
+#include "TileManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "PCPlay.h"
 
 ASTGameModePlay::ASTGameModePlay()
 {
 	bUseSeamlessTravel = true;
+
+	TileManager = CreateDefaultSubobject<ATileManager>(TEXT("TileManager"));
 }
 
 void ASTGameModePlay::SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC)
 {
 	Super::SwapPlayerControllers(OldPC, NewPC);
+	//SpawnPlayer(NewPC);
 }
-
-//void ASTGameModePlay::InitGameState()
-//{
-//	auto GS = GetGameState<AGSPlay>();
-//
-//	for (auto ps : GS->PlayerArray)
-//	{
-//		auto name = Cast<APSPlayerInfo>(ps)->GetPName();
-//	}
-//}
 
 void ASTGameModePlay::SetPlayerTurn(APlayerController* Player, bool bFirst)
 {
@@ -40,4 +36,24 @@ void ASTGameModePlay::SetPlayerTurn(APlayerController* Player, bool bFirst)
 			GS->SetSecondPlayer(Player);
 		}
 	}
+}
+
+void ASTGameModePlay::SpawnPlayer(APlayerController* PlayerController)
+{
+	if (IsValid(PlayerController))
+	{
+		auto Pawn = PlayerController->GetPawn();
+		if (Pawn)
+		{
+			Pawn->Destroy();
+		}
+	}
+
+	//Cast<APCPlay>(PlayerController)->SpawnPlayer();
+}
+
+void ASTGameModePlay::RestartPlayer(AController* NewPlayer)
+{
+	Super::RestartPlayer(NewPlayer);
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("RestartPlayer")));
 }

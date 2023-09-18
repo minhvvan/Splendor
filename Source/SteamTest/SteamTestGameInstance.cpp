@@ -109,31 +109,31 @@ void USteamTestGameInstance::CreateSession()
 	if (OnlineSubsystem)
 	{
 		// OnlineSubsystem Interface 받아오기
-		OnlineSessionInterface = OnlineSubsystem->GetSessionInterface();
-
-		if (OnlineSessionInterface)
+		if (!OnlineSessionInterface)
 		{
-			const auto ExistingSession = OnlineSessionInterface->GetNamedSession(NAME_GameSession); // 
-			if (ExistingSession != nullptr)
-			{
-				OnlineSessionInterface->DestroySession(NAME_GameSession);
-			}
-
-			OnlineSessionInterface->AddOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegate);
-
-			TSharedPtr<FOnlineSessionSettings> SessionSettings = MakeShareable(new FOnlineSessionSettings());
-			SessionSettings->bIsLANMatch = false;			// Steam을 사용할 것이기 때문에 LanMatch = false
-			SessionSettings->NumPublicConnections = 4;		// 세션에 연결 가능한 인원
-			SessionSettings->bAllowJoinInProgress = true;	// 세션이 실행 중(게임 중) 참여가능 여부
-			SessionSettings->bAllowJoinViaPresence = true;	// 정확하지 않음 - Steam 사용자와 같은 지역에서 참여 가능 여부
-			SessionSettings->bShouldAdvertise = true;		// Steam을 통해 세션을 알린다.(다른 플레이어가 해당 세션을 찾아 참여 가능)
-			SessionSettings->bUsesPresence = true;			// 정확하지 않음 - Steam 사용자와 같은 지역에서 세션을 찾을 수 있는 여부
-			SessionSettings->bUseLobbiesIfAvailable = true; // Lobby API를 지원할 경우 Lobby 사용 여부
-			SessionSettings->Set(FName("MatchType"), FString("FreeForAll"), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing); // 세션의 MatchType을 모두에게 열림, 온라인서비스와 핑을 통해 세션 홍보 옵션으로 설정
-			
-			const ULocalPlayer* Localplayer = GetWorld()->GetFirstLocalPlayerFromController();
-			OnlineSessionInterface->CreateSession(*Localplayer->GetPreferredUniqueNetId(), NAME_GameSession, *SessionSettings);
+			OnlineSessionInterface = OnlineSubsystem->GetSessionInterface();
 		}
+
+		const auto ExistingSession = OnlineSessionInterface->GetNamedSession(NAME_GameSession); // 
+		if (ExistingSession != nullptr)
+		{
+			OnlineSessionInterface->DestroySession(NAME_GameSession);
+		}
+
+		OnlineSessionInterface->AddOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegate);
+
+		TSharedPtr<FOnlineSessionSettings> SessionSettings = MakeShareable(new FOnlineSessionSettings());
+		SessionSettings->bIsLANMatch = false;			// Steam을 사용할 것이기 때문에 LanMatch = false
+		SessionSettings->NumPublicConnections = 2;		// 세션에 연결 가능한 인원
+		SessionSettings->bAllowJoinInProgress = true;	// 세션이 실행 중(게임 중) 참여가능 여부
+		SessionSettings->bAllowJoinViaPresence = true;	// 정확하지 않음 - Steam 사용자와 같은 지역에서 참여 가능 여부
+		SessionSettings->bShouldAdvertise = true;		// Steam을 통해 세션을 알린다.(다른 플레이어가 해당 세션을 찾아 참여 가능)
+		SessionSettings->bUsesPresence = true;			// 정확하지 않음 - Steam 사용자와 같은 지역에서 세션을 찾을 수 있는 여부
+		SessionSettings->bUseLobbiesIfAvailable = true; // Lobby API를 지원할 경우 Lobby 사용 여부
+		SessionSettings->Set(FName("MatchType"), FString("FreeForAll"), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing); // 세션의 MatchType을 모두에게 열림, 온라인서비스와 핑을 통해 세션 홍보 옵션으로 설정
+		
+		const ULocalPlayer* Localplayer = GetWorld()->GetFirstLocalPlayerFromController();
+		OnlineSessionInterface->CreateSession(*Localplayer->GetPreferredUniqueNetId(), NAME_GameSession, *SessionSettings);
 	}
 }
 
@@ -197,7 +197,7 @@ void USteamTestGameInstance::OnCreateSessionComplete(FName SessionName, bool bWa
 		auto World = GetWorld();
 		if (World)
 		{
-			World->ServerTravel("/Game/ThirdPerson/Maps/Menu/Lobby?listen");
+			World->ServerTravel("/Game/Splendor/Maps/Menu/Lobby?listen");
 		}
 	}
 	else	// 세션 생성 실패

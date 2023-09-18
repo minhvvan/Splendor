@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "STGameModePlay.h"
 #include "HUDDesk.h"
+#include "Camera/CameraActor.h"
 
 
 APCPlay::APCPlay()
@@ -20,6 +21,21 @@ APCPlay::APCPlay()
 void APCPlay::BeginPlay()
 {
 	ShowDesk();
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("BeginPlay")));
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACameraActor::StaticClass(), FoundActors);
+	for (auto cam : FoundActors)
+	{
+		if (cam->ActorHasTag(FName(*CAM_TAG)))
+		{
+
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Cam")));
+
+			SetViewTargetWithBlend(Cast<AActor>(cam));
+		}
+	}
 }
 
 void APCPlay::SeamlessTravelFrom(APlayerController* OldPC)
@@ -37,9 +53,29 @@ void APCPlay::ShowDesk()
 	}
 
 	WidgetDesk->AddToViewport();
+	//SetInputMode(FInputModeGameOnly());
+	//SetShowMouseCursor(false);
 	SetInputMode(FInputModeUIOnly());
 	SetShowMouseCursor(true);
 }
+
+//void APCPlay::SpawnPlayer_Implementation()
+//{
+//	UWorld* world = GetWorld();
+//	if (world)
+//	{
+//		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("SpawnPlayer")));
+//
+//		FActorSpawnParameters SpawnParams;
+//		SpawnParams.Owner = this;
+//		FRotator rotator;
+//		FVector loc = FVector(0, -90, 1200);
+//
+//
+//		auto pawn = Cast<APawn>(world->SpawnActor<AActor>(PawnClass, loc, rotator, SpawnParams));
+//		Possess(pawn);
+//	}
+//}
 
 
 void APCPlay::SRSetTurn_Implementation()

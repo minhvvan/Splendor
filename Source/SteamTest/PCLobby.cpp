@@ -197,7 +197,8 @@ void APCLobby::SRStartGame_Implementation()
 	auto World = GetWorld();
 	if (World)
 	{
-		World->ServerTravel("/Game/ThirdPerson/Maps/Game/Splendor");
+		World->ServerTravel("/Game/Splendor/Maps/Game/Splendor");
+		//World->ServerTravel("/Game/Splendor/Maps/ThirdPersonMap");
 	}
 }
 

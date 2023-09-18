@@ -28,10 +28,18 @@ public:
 	UFUNCTION()
 	void ShowDesk();
 
+	//UFUNCTION(Client, Reliable)
+	//void SpawnPlayer();
+
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> DeskClass;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<APawn> PawnClass;
+
 	UPROPERTY(VisibleAnywhere)
 	class UHUDDesk* WidgetDesk;
+
+	const FString CAM_TAG = TEXT("GameCam");
 };
