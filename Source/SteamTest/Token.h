@@ -23,7 +23,20 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void HighlightOn(UPrimitiveComponent* TouchComp);
+
+	UFUNCTION()
+	void HighlightOff(UPrimitiveComponent* TouchComp);
+
+	virtual void PostInitializeComponents();
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
+	class UAudioComponent* AudioComponent;
+
+	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
+	class USoundCue* HoverSound;
 };

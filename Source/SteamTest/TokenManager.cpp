@@ -91,8 +91,6 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Red: %d"), RemainTokens.Num()));
 			}
 		}
 
@@ -105,8 +103,6 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Green: %d"), RemainTokens.Num()));
-
 			}
 		}
 
@@ -119,8 +115,6 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Blue: %d"), RemainTokens.Num()));
-
 			}
 		}
 
@@ -133,8 +127,6 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Black: %d"), RemainTokens.Num()));
-
 			}
 		}
 
@@ -147,8 +139,6 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("White: %d"), RemainTokens.Num()));
-
 			}
 		}
 
@@ -161,8 +151,6 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Gold: %d"), RemainTokens.Num()));
-
 			}
 		}
 
@@ -175,8 +163,6 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Pearl: %d"), RemainTokens.Num()));
-
 			}
 		}
 
@@ -186,8 +172,6 @@ void ATokenManager::SpawnTokens()
 
 void ATokenManager::PlaceTokens(TArray<AToken*>& Tokens)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Tokens: %d"), Tokens.Num()));
-
 	//GM에게 Tilemanager spawnloc 받아서 위치
 	ASTGameModePlay* GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (GM)
