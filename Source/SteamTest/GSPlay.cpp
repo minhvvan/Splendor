@@ -28,3 +28,11 @@ void AGSPlay::SetSecondPlayer(APlayerController* Player)
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("already set firstPlayer")));
 	}
 }
+
+void AGSPlay::AddPlayerState(APlayerState* PlayerState)
+{
+	Super::AddPlayerState(PlayerState);
+
+	//auto name = PlayerState->GetPlayerController()->GetName();
+	//GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("AddPlayerState: %s"), *name));
+}

@@ -28,18 +28,17 @@ public:
 	UFUNCTION()
 	void ShowDesk();
 
-	//UFUNCTION(Client, Reliable)
-	//void SpawnPlayer();
-
 private:
+	TArray<class ATile*> Tiles;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> DeskClass;
 
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<APawn> PawnClass;
-
 	UPROPERTY(VisibleAnywhere)
 	class UHUDDesk* WidgetDesk;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class ATile> TileClass;
 
 	const FString CAM_TAG = TEXT("GameCam");
 };

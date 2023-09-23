@@ -4,19 +4,25 @@
 #include "TileManager.h"
 #include "STGameModePlay.h"
 #include "Tile.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ATileManager::ATileManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	ConstructorHelpers::FClassFinder<ATile> TILE(TEXT("/Script/Engine.Blueprint'/Game/Splendor/BP/BP_Tile.BP_Tile_C'"));
+	if (TILE.Succeeded())
+	{
+		TileClass = TILE.Class;
+	}
 }
 
 // Called when the game starts or when spawned
 void ATileManager::BeginPlay()
 {
 	Super::BeginPlay();
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("BeginPlay")));
 
 	SpawnTiles();
 }
@@ -30,25 +36,68 @@ void ATileManager::Tick(float DeltaTime)
 
 void ATileManager::SpawnTiles()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("SpawnTiles")));
-
 	//타일 생성
-	auto GM = Cast<ASTGameModePlay>(GetWorld()->GetAuthGameMode());
-	if (GM)
+	UWorld* world = GetWorld();
+
+	int offset = 105;
+	if (world)
 	{
-		UWorld* world = GetWorld();
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		FRotator rotator;
+		FVector loc = FVector(-210, -400, 0);
+		int cnt = 0;
+		int cursor = 3;
+		int k = 1;
+		int progress = 0;
+		TArray<TPair<int, int>> Dir = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
+
 		for (int i = 0; i < 25; i++)
 		{
-			if (world)
+			auto tile = Cast<ATile>(world->SpawnActor<AActor>(TileClass, loc, rotator, SpawnParams));
+			if (tile)
 			{
-				FActorSpawnParameters SpawnParams;
-				SpawnParams.Owner = this;
-				FRotator rotator;
-				FVector  SpawnLocation = GetActorLocation();
-
-				world->SpawnActor<AActor>(TileClass, SpawnLocation, rotator, SpawnParams);
+				tile->SetActorScale3D(FVector(0.5f));
+				Tiles.Add(tile);
 			}
+
+			cnt++;
+
+			if (cnt == k)
+			{
+				//change dir
+				cursor = (cursor + 1) % 4;
+				cnt = 0;
+
+				if (progress == 2)
+				{
+					k++;
+					progress = 0;
+				}
+				progress++;
+			}
+
+			loc += FVector(offset * Dir[cursor].Key, offset * Dir[cursor].Value, 0);
 		}
 	}
 }
 
+TArray<FVector> ATileManager::GetTokenLocs(const TArray<class AToken*>& Tokens)
+{
+	TArray<FVector> Locs;
+
+	for (auto token : Tokens)
+	{
+		for (auto tile : Tiles)
+		{
+			//이미 있음
+			if (tile->GetOnToken()) continue;
+
+			tile->SetOnToken(token);
+			Locs.Add(tile->GetTokenLoc());
+			break;
+		}
+	}
+
+	return Locs;
+}

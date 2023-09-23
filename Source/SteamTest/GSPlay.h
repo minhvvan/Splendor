@@ -18,6 +18,7 @@ public:
 	void SetFirstPlayer(APlayerController* Player);
 	void SetSecondPlayer(APlayerController* Player);
 
+	virtual void AddPlayerState(APlayerState* PlayerState) override;
 private:
 	UPROPERTY()
 	class APCPlay* FirstPlayer;

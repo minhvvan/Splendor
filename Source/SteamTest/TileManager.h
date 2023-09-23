@@ -24,11 +24,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-private:
-	UFUNCTION()
 	void SpawnTiles();
 
-	TArray<ATile> Tiles;
+	TArray<FVector> GetTokenLocs(const TArray<class AToken*>& Tokens);
+
+private:
+	TArray<ATile*> Tiles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
 	TSubclassOf<ATile> TileClass;

@@ -5,20 +5,18 @@
 #include "PSPlayerInfo.h"
 #include "GSPlay.h"
 #include "TileManager.h"
+#include "TokenManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "PCPlay.h"
 
 ASTGameModePlay::ASTGameModePlay()
 {
 	bUseSeamlessTravel = true;
-
-	TileManager = CreateDefaultSubobject<ATileManager>(TEXT("TileManager"));
 }
 
 void ASTGameModePlay::SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC)
 {
 	Super::SwapPlayerControllers(OldPC, NewPC);
-	//SpawnPlayer(NewPC);
 }
 
 void ASTGameModePlay::SetPlayerTurn(APlayerController* Player, bool bFirst)
@@ -38,22 +36,27 @@ void ASTGameModePlay::SetPlayerTurn(APlayerController* Player, bool bFirst)
 	}
 }
 
-void ASTGameModePlay::SpawnPlayer(APlayerController* PlayerController)
+void ASTGameModePlay::StartPlay()
 {
-	if (IsValid(PlayerController))
-	{
-		auto Pawn = PlayerController->GetPawn();
-		if (Pawn)
-		{
-			Pawn->Destroy();
-		}
-	}
-
-	//Cast<APCPlay>(PlayerController)->SpawnPlayer();
+	Super::StartPlay();
 }
 
-void ASTGameModePlay::RestartPlayer(AController* NewPlayer)
+void ASTGameModePlay::StartMatch()
 {
-	Super::RestartPlayer(NewPlayer);
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("RestartPlayer")));
+	Super::StartMatch();
+
+	TileManager = GetWorld()->SpawnActor<ATileManager>();
+	TokenManager = GetWorld()->SpawnActor<ATokenManager>();
+}
+
+TArray<FVector> ASTGameModePlay::GetTokenSpawnLoc(const TArray<class AToken*>& Tokens)
+{
+	if (TileManager)
+	{
+		auto Locs = TileManager->GetTokenLocs(Tokens);
+
+		return Locs;
+	}
+
+	return TArray<FVector>();
 }

@@ -23,11 +23,16 @@ public:
 	UFUNCTION()
 	void SetPlayerTurn(APlayerController* Player, bool bFirst);
 
-	UFUNCTION()
-	void SpawnPlayer(APlayerController* PlayerController);
+	virtual void StartPlay() override;
 
-	void RestartPlayer(AController* NewPlayer) override;
+	virtual void StartMatch() override;
+
+	TArray<FVector> GetTokenSpawnLoc(const TArray<class AToken*>& Tokens);
+
 private:
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class ATileManager* TileManager;
+
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class ATokenManager* TokenManager;
 };
