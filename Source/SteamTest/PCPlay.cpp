@@ -12,6 +12,8 @@
 
 APCPlay::APCPlay()
 {
+	EnableInput(this);
+
 	ConstructorHelpers::FClassFinder<UUserWidget> DESK(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Widget/WBP_Desk.WBP_Desk_C'"));
 	if (DESK.Succeeded())
 	{
@@ -51,8 +53,20 @@ void APCPlay::ShowDesk()
 	WidgetDesk->AddToViewport();
 	//SetInputMode(FInputModeGameOnly());
 	//SetShowMouseCursor(false);
-	SetInputMode(FInputModeUIOnly());
+	SetInputMode(FInputModeGameAndUI());
 	SetShowMouseCursor(true);
+}
+
+void APCPlay::Click()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Click")));
+}
+
+void APCPlay::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	InputComponent->BindAction("ClickAction", IE_Pressed, this, &APCPlay::Click);
 }
 
 

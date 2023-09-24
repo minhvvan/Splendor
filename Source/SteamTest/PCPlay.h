@@ -28,6 +28,11 @@ public:
 	UFUNCTION()
 	void ShowDesk();
 
+	void Click();
+
+protected:
+	virtual void SetupInputComponent();
+
 private:
 	TArray<class ATile*> Tiles;
 
@@ -41,4 +46,12 @@ private:
 	TSubclassOf<class ATile> TileClass;
 
 	const FString CAM_TAG = TEXT("GameCam");
+
+	/** MappingContext */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputMappingContext* DefaultMappingContext;
+
+	/** Jump Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* ClickAction;
 };

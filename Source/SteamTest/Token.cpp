@@ -4,6 +4,7 @@
 #include "Token.h"
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
+#include "ClickableMesh.h"
 
 // Sets default values
 AToken::AToken()
@@ -13,30 +14,29 @@ AToken::AToken()
 
 	bReplicates = true;
 
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh = CreateDefaultSubobject<UClickableMesh>(TEXT("Mesh"));
 	RootComponent = Mesh;
 
-	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("HoverSound"));
-	AudioComponent->SetupAttachment(Mesh);
+	AudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("HoverSound"));
+	AudioComp->SetupAttachment(Mesh);
+
+	bSelected = false;
 }
 
 // Called when the game starts or when spawned
 void AToken::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 void AToken::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	Mesh->OnBeginCursorOver.AddDynamic(this, &AToken::HighlightOn);
-	Mesh->OnEndCursorOver.AddDynamic(this, &AToken::HighlightOff);
-
-	if (AudioComponent->IsValidLowLevelFast())
+	if (AudioComp->IsValidLowLevelFast())
 	{
-		AudioComponent->SetSound(HoverSound);
+		AudioComp->SetSound(HoverSound);
 	}
 }
 
@@ -45,21 +45,4 @@ void AToken::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
-
-void AToken::HighlightOn(UPrimitiveComponent* TouchComp)
-{
-	if (Mesh)
-	{
-		Mesh->SetRenderCustomDepth(true);
-		AudioComponent->Play();
-	}
-}
-
-void AToken::HighlightOff(UPrimitiveComponent* TouchComp)
-{
-	if (Mesh)
-	{
-		Mesh->SetRenderCustomDepth(false);
-	}
 }
