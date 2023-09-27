@@ -8,7 +8,9 @@
 #include "HUDDesk.h"
 #include "Camera/CameraActor.h"
 #include "Tile.h"
-
+#include "Token.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
 
 APCPlay::APCPlay()
 {
@@ -19,6 +21,9 @@ APCPlay::APCPlay()
 	{
 		DeskClass = DESK.Class;
 	}
+
+	bEnableClickEvents = true;
+	bEnableMouseOverEvents = true;
 }
 
 void APCPlay::BeginPlay()
@@ -33,6 +38,11 @@ void APCPlay::BeginPlay()
 		{
 			SetViewTargetWithBlend(Cast<AActor>(cam));
 		}
+	}
+
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
 }
 
@@ -59,16 +69,38 @@ void APCPlay::ShowDesk()
 
 void APCPlay::Click()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Click")));
+	if (IsLocalController())
+	{
+		FHitResult HitResult;
+		GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
+
+		if (HitResult.bBlockingHit)
+		{
+			auto hittedActor = HitResult.GetActor();
+
+			auto name = hittedActor->GetName();
+
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Click: %s"), *name));
+
+			//RPC
+			SRClickToken(Cast<AToken>(hittedActor));
+		}
+	}
+
 }
 
 void APCPlay::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("ClickAction", IE_Pressed, this, &APCPlay::Click);
-}
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("SetupInputComponent")));
 
+		// Setup mouse input events
+		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &APCPlay::Click);
+	}
+}
 
 void APCPlay::SRSetTurn_Implementation()
 {
@@ -83,5 +115,15 @@ void APCPlay::SRSetTurn_Implementation()
 		{
 			GM->SetPlayerTurn(this, PS->GetMyTurn());
 		}
+	}
+}
+
+
+void APCPlay::SRClickToken_Implementation(AToken* ClickedToken)
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GM)
+	{
+		GM->TokenClicked(ClickedToken);
 	}
 }

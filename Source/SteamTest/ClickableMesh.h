@@ -28,7 +28,7 @@ public:
 	void HighlightOff(UPrimitiveComponent* TouchComp);
 
 	UFUNCTION()
-	void OnClick(UPrimitiveComponent* pComponent, FKey ButtonPressed);
+	void SetSelectedMat(bool bSelected);
 
 private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))

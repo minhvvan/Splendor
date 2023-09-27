@@ -19,6 +19,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -30,6 +32,9 @@ public:
 	bool GetSelected() const { return bSelected; };
 	void SetSelected(bool flag) { bSelected = flag; };
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Clicked();
+
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
 	class UClickableMesh* Mesh;
@@ -40,5 +45,6 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
 	class USoundCue* HoverSound;
 
+	UPROPERTY(replicated)
 	bool bSelected;
 };

@@ -16,8 +16,6 @@ void UClickableMesh::InitializeComponent()
 
 	OnBeginCursorOver.AddDynamic(this, &UClickableMesh::HighlightOn);
 	OnEndCursorOver.AddDynamic(this, &UClickableMesh::HighlightOff);
-
-	OnClicked.AddDynamic(this, &UClickableMesh::OnClick);
 }
 
 void UClickableMesh::HighlightOn(UPrimitiveComponent* TouchComp)
@@ -37,23 +35,14 @@ void UClickableMesh::HighlightOff(UPrimitiveComponent* TouchComp)
 	SetRenderCustomDepth(false);
 }
 
-void UClickableMesh::OnClick(UPrimitiveComponent* pComponent, FKey ButtonPressed)
+void UClickableMesh::SetSelectedMat(bool bSelected)
 {
-	auto token = Cast<AToken>(GetOwner());
-
-	if (token)
+	if (bSelected)
 	{
-		if (token->GetSelected())
-		{
-			token->SetSelected(false);
-
-			SetMaterial(2, SelectedMat);
-		}
-		else
-		{
-			token->SetSelected(true);
-
-			SetMaterial(2, UnSelectedMat);
-		}
+		SetMaterial(2, SelectedMat);
+	}
+	else
+	{
+		SetMaterial(2, UnSelectedMat);
 	}
 }

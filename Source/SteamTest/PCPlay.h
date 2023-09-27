@@ -25,13 +25,16 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SRSetTurn();
 
+	UFUNCTION(Server, Reliable)
+	void SRClickToken(class AToken* ClickedToken);
+
 	UFUNCTION()
 	void ShowDesk();
 
 	void Click();
 
 protected:
-	virtual void SetupInputComponent();
+	virtual void SetupInputComponent() override;
 
 private:
 	TArray<class ATile*> Tiles;

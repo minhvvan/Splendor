@@ -5,6 +5,7 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 #include "ClickableMesh.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AToken::AToken()
@@ -16,6 +17,7 @@ AToken::AToken()
 
 	Mesh = CreateDefaultSubobject<UClickableMesh>(TEXT("Mesh"));
 	RootComponent = Mesh;
+	Mesh->SetIsReplicated(true);
 
 	AudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("HoverSound"));
 	AudioComp->SetupAttachment(Mesh);
@@ -30,6 +32,13 @@ void AToken::BeginPlay()
 
 }
 
+void AToken::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AToken, bSelected);
+}
+
 void AToken::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -38,6 +47,25 @@ void AToken::PostInitializeComponents()
 	{
 		AudioComp->SetSound(HoverSound);
 	}
+}
+
+void AToken::Clicked_Implementation()
+{
+	if (bSelected)
+	{
+		bSelected = false;
+	}
+	else
+	{
+		bSelected = true;
+	}
+
+	if (Mesh)
+	{
+		Mesh->SetSelectedMat(bSelected);
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("select")));
 }
 
 // Called every frame

@@ -60,3 +60,11 @@ TArray<FVector> ASTGameModePlay::GetTokenSpawnLoc(const TArray<class AToken*>& T
 
 	return TArray<FVector>();
 }
+
+void ASTGameModePlay::TokenClicked(AToken* ClickedToken)
+{
+	if (ClickedToken)
+	{
+		ClickedToken->Clicked();
+	}
+}

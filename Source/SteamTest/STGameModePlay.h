@@ -29,6 +29,9 @@ public:
 
 	TArray<FVector> GetTokenSpawnLoc(const TArray<class AToken*>& Tokens);
 
+	UFUNCTION()
+	void TokenClicked(class AToken* ClickedToken);
+
 private:
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class ATileManager* TileManager;
