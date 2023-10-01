@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "Token.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSelected);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnSelected);
 UCLASS()
 class STEAMTEST_API AToken : public AActor
 {
@@ -34,6 +37,9 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Clicked();
+
+	FSelected OnSelected;
+	FUnSelected OnUnSelected;
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))

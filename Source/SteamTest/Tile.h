@@ -26,7 +26,15 @@ public:
 	FVector GetTokenLoc() { return GetActorLocation() + FVector(0, 0, 15); };
 
 	class AToken* GetOnToken() { return OnToken; };
-	void SetOnToken(class AToken* token) { OnToken = token; };
+
+	UFUNCTION()
+	void SetOnToken(class AToken* token);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void OnSelected();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void OnUnSelected();
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
@@ -34,4 +42,10 @@ private:
 
 	UPROPERTY()
 	AToken* OnToken;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	class UMaterial* UnSelectedMat;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	class UMaterial* SelectedMat;
 };

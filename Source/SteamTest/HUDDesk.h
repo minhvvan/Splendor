@@ -60,6 +60,9 @@ public:
 	void SetScrollTxt(int scroll);
 	void SetTurnTxt(FString turn);
 
+	UFUNCTION()
+	void SetBtnGetTokenState(bool bEnable);
+
 private:
 	UFUNCTION(BlueprintCallable)
 	void GetTokenClicked();

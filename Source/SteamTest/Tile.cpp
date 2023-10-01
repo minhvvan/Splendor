@@ -2,6 +2,7 @@
 
 
 #include "Tile.h"
+#include "Token.h"
 
 // Sets default values
 ATile::ATile()
@@ -33,4 +34,27 @@ void ATile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ATile::SetOnToken(class AToken* token)
+{
+	OnToken = token;
+	token->OnSelected.AddDynamic(this, &ATile::OnSelected);
+	token->OnUnSelected.AddDynamic(this, &ATile::OnUnSelected);
+}
+
+void ATile::OnSelected_Implementation()
+{
+	if (Mesh)
+	{
+		Mesh->SetMaterial(0, SelectedMat);
+	}
+}
+
+void ATile::OnUnSelected_Implementation()
+{
+	if (Mesh)
+	{
+		Mesh->SetMaterial(0, UnSelectedMat);
+	}
 }

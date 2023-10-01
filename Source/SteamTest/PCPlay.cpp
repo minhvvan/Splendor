@@ -76,17 +76,40 @@ void APCPlay::Click()
 
 		if (HitResult.bBlockingHit)
 		{
-			auto hittedActor = HitResult.GetActor();
+			auto Token = Cast<AToken>(HitResult.GetActor());
 
-			auto name = hittedActor->GetName();
+			if (Token)
+			{
+				if (SelectedToken.Find(Token) == INDEX_NONE)
+				{
+					SelectedToken.AddUnique(Token);
+				}
+				else
+				{
+					SelectedToken.Remove(Token);
+				}
 
-			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Click: %s"), *name));
+				if (SelectedToken.Num() == 0)
+				{
+					// GetToken unable
+					if (WidgetDesk)
+					{
+						WidgetDesk->SetBtnGetTokenState(false);
+					}
+				}
+				else
+				{
+					//GetToken enable
+					if (WidgetDesk)
+					{
+						WidgetDesk->SetBtnGetTokenState(true);
+					}
+				}
 
-			//RPC
-			SRClickToken(Cast<AToken>(hittedActor));
+				SRClickToken(Token);
+			}
 		}
 	}
-
 }
 
 void APCPlay::SetupInputComponent()
@@ -95,8 +118,6 @@ void APCPlay::SetupInputComponent()
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("SetupInputComponent")));
-
 		// Setup mouse input events
 		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &APCPlay::Click);
 	}

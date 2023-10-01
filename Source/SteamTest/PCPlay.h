@@ -57,4 +57,6 @@ private:
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* ClickAction;
+
+	TArray<class AToken*> SelectedToken;
 };

@@ -29,7 +29,6 @@ AToken::AToken()
 void AToken::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void AToken::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -54,18 +53,18 @@ void AToken::Clicked_Implementation()
 	if (bSelected)
 	{
 		bSelected = false;
+		OnUnSelected.Broadcast();
 	}
 	else
 	{
 		bSelected = true;
+		OnSelected.Broadcast();
 	}
 
 	if (Mesh)
 	{
 		Mesh->SetSelectedMat(bSelected);
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("select")));
 }
 
 // Called every frame
