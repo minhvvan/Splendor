@@ -7,11 +7,15 @@
 #include "HUDCardHolder.h"
 #include "PCPlay.h"
 #include "Kismet/GameplayStatics.h"
+#include "Token.h"
 
 void UHUDDesk::NativeOnInitialized()
 {
 	BtnGetToken->OnClicked.AddDynamic(this, &UHUDDesk::GetTokenClicked);
 	BtnFillToken->OnClicked.AddDynamic(this, &UHUDDesk::FilTokenClicked);
+
+
+
 }
 
 void UHUDDesk::SetScoreTxt(int score)
@@ -50,6 +54,137 @@ void UHUDDesk::GetTokenClicked()
 	{
 		// token 받아와서 가능 여부 판단
 		// 가능하면 받아오기
+
+		// 좌우: 1
+		// 상대각: 4
+		// 하대각: 6
+
+		auto Tokens = PC->GetSelectedTokens();
+
+		Tokens.Sort([](const AToken& A, const AToken& B) {
+			return A.GetBoardIndex() < B.GetBoardIndex();
+		});
+
+		for (auto token : Tokens)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("%d"), token->GetBoardIndex()));
+		}
+
+		//상하 : 5
+		bool flag = true;
+		int prev = -1;
+		for (auto token : Tokens)
+		{
+			if (prev == -1)
+			{
+				prev = token->GetBoardIndex();
+				continue;
+			}
+
+			if (token->GetBoardIndex() != prev + 5)
+			{
+				flag = false;
+				break;
+			}
+
+			prev = token->GetBoardIndex();
+		}
+
+		if (flag) 
+		{
+			// Get
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("UpDown")));
+
+			return;
+		}
+
+
+		//좌우: 1
+		flag = true;
+		prev = -1;
+		for (auto token : Tokens)
+		{
+			if (prev == -1)
+			{
+				prev = token->GetBoardIndex();
+				continue;
+			}
+
+			if (token->GetBoardIndex() != prev + 1)
+			{
+				flag = false;
+				break;
+			}
+
+			prev = token->GetBoardIndex();
+		}
+
+		if (flag)
+		{
+			// Get
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("LeftRIght")));
+
+			return;
+		}
+
+		// 상대각: 4
+		flag = true;
+		prev = -1;
+		for (auto token : Tokens)
+		{
+			if (prev == -1)
+			{
+				prev = token->GetBoardIndex();
+				continue;
+			}
+
+			if (token->GetBoardIndex() != prev + 4)
+			{
+				flag = false;
+				break;
+			}
+
+			prev = token->GetBoardIndex();
+		}
+
+		if (flag)
+		{
+			// Get
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("UpRight")));
+
+			return;
+		}
+
+		//하대각: 6
+		flag = true;
+		prev = -1;
+		for (auto token : Tokens)
+		{
+			if (prev == -1)
+			{
+				prev = token->GetBoardIndex();
+				continue;
+			}
+
+			if (token->GetBoardIndex() != prev + 6)
+			{
+				flag = false;
+				break;
+			}
+
+			prev = token->GetBoardIndex();
+		}
+
+		if (flag)
+		{
+			// Get
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("DownRight")));
+
+			return;
+		}
+
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Fail")));
+
 	}
 }
 

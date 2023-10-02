@@ -65,6 +65,8 @@ void ASTGameModePlay::TokenClicked(AToken* ClickedToken)
 {
 	if (ClickedToken)
 	{
+
+
 		ClickedToken->Clicked();
 	}
 }

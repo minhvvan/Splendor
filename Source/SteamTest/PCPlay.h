@@ -33,6 +33,8 @@ public:
 
 	void Click();
 
+	TArray<class AToken*> GetSelectedTokens() const { return SelectedToken; };
+
 protected:
 	virtual void SetupInputComponent() override;
 

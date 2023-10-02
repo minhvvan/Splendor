@@ -31,12 +31,17 @@ public:
 	void GetTokens(TArray<AToken*>& Tokens, bool b1Player);
 	void UseTokens(TArray<AToken*>& Tokens, bool b1Player);
 
+	UFUNCTION()
+	TArray<AToken*> CheckAbleTokens(class AToken* ClickedToken);
+
 private:
 	TArray<AToken*> RemainTokens;
 	TArray<AToken*> UsedTokens;
 
 	TArray<AToken*> P1Tokens;
 	TArray<AToken*> P2Tokens;
+
+	TArray<TArray<AToken*>> Board;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AToken> RedTokenClass;
@@ -58,4 +63,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AToken> PearlTokenClass;
+
+	TArray<int> BoardIdx;
 };

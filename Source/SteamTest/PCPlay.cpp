@@ -80,6 +80,23 @@ void APCPlay::Click()
 
 			if (Token)
 			{
+				if (SelectedToken.Num() == 3)
+				{
+					if (SelectedToken.Find(Token) == INDEX_NONE)
+					{
+						//!TODO: 안내문구
+						GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("already 3")));
+					}
+					else
+					{
+						SelectedToken.Remove(Token);
+
+						SRClickToken(Token);
+					}
+
+					return;
+				}
+
 				if (SelectedToken.Find(Token) == INDEX_NONE)
 				{
 					SelectedToken.AddUnique(Token);

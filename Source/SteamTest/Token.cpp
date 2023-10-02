@@ -23,6 +23,9 @@ AToken::AToken()
 	AudioComp->SetupAttachment(Mesh);
 
 	bSelected = false;
+
+	Index = 25;
+
 }
 
 // Called when the game starts or when spawned

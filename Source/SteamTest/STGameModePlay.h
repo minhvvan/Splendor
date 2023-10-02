@@ -32,6 +32,7 @@ public:
 	UFUNCTION()
 	void TokenClicked(class AToken* ClickedToken);
 
+
 private:
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class ATileManager* TileManager;

@@ -41,6 +41,21 @@ public:
 	FSelected OnSelected;
 	FUnSelected OnUnSelected;
 
+	UFUNCTION()
+	int GetIndex() const { return Index; };
+
+	UFUNCTION()
+	void SetIndex(int idx) { Index = idx; };
+
+	UFUNCTION()
+	int GetBoardIndex() const { return BoardIndex; };
+
+	UFUNCTION()
+	void SetBoardIndex(int idx) { BoardIndex = idx; };
+
+protected:
+
+
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
 	class UClickableMesh* Mesh;
@@ -53,4 +68,11 @@ private:
 
 	UPROPERTY(replicated)
 	bool bSelected;
+
+	UPROPERTY()
+	int Index;
+
+	UPROPERTY()
+	int BoardIndex;
+
 };
