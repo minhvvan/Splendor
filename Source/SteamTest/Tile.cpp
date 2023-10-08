@@ -43,6 +43,23 @@ void ATile::SetOnToken(class AToken* token)
 	token->OnUnSelected.AddDynamic(this, &ATile::OnUnSelected);
 }
 
+void ATile::SetIsAble(bool bAlbe)
+{
+	if (bAlbe)
+	{
+		Mesh->SetMaterial(0, UnSelectedMat);
+
+		//click ¸·±â
+	}
+	else
+	{
+		if (Mesh)
+		{
+			Mesh->SetMaterial(0, DisabledMat);
+		}
+	}
+}
+
 void ATile::OnSelected_Implementation()
 {
 	if (Mesh)

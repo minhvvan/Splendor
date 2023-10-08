@@ -26,7 +26,7 @@ public:
 	void SRSetTurn();
 
 	UFUNCTION(Server, Reliable)
-	void SRClickToken(class AToken* ClickedToken);
+	void SRClickToken(class AToken* ClickedToken, int cnt, bool bAble);
 
 	UFUNCTION()
 	void ShowDesk();

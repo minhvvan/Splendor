@@ -26,10 +26,15 @@ public:
 
 	void SpawnTiles();
 
-	TArray<FVector> GetTokenLocs(const TArray<class AToken*>& Tokens);
+	TPair<TArray<FVector>, TArray<int>> GetTokenLocs(const TArray<class AToken*>& Tokens);
+
+	void Clicked(int selectedIdx, int dist, bool bAble);
 
 private:
 	TArray<ATile*> Tiles;
+	TArray<int> BoardIdx;
+	TArray<int> SelectedTiles;
+	TArray<TArray<TArray<int>>> Distance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
 	TSubclassOf<ATile> TileClass;

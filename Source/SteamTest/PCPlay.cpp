@@ -80,30 +80,23 @@ void APCPlay::Click()
 
 			if (Token)
 			{
-				if (SelectedToken.Num() == 3)
+				if (SelectedToken.Find(Token) == INDEX_NONE)
 				{
-					if (SelectedToken.Find(Token) == INDEX_NONE)
+					if (SelectedToken.Num() < 3)
+					{ 
+						SelectedToken.AddUnique(Token);
+						SRClickToken(Token, SelectedToken.Num(), true);
+					}
+					else
 					{
 						//!TODO: 안내문구
 						GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("already 3")));
 					}
-					else
-					{
-						SelectedToken.Remove(Token);
-
-						SRClickToken(Token);
-					}
-
-					return;
-				}
-
-				if (SelectedToken.Find(Token) == INDEX_NONE)
-				{
-					SelectedToken.AddUnique(Token);
 				}
 				else
 				{
 					SelectedToken.Remove(Token);
+					SRClickToken(Token, SelectedToken.Num(), false);
 				}
 
 				if (SelectedToken.Num() == 0)
@@ -122,8 +115,6 @@ void APCPlay::Click()
 						WidgetDesk->SetBtnGetTokenState(true);
 					}
 				}
-
-				SRClickToken(Token);
 			}
 		}
 	}
@@ -157,11 +148,11 @@ void APCPlay::SRSetTurn_Implementation()
 }
 
 
-void APCPlay::SRClickToken_Implementation(AToken* ClickedToken)
+void APCPlay::SRClickToken_Implementation(AToken* ClickedToken, int cnt, bool bAble)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (GM)
 	{
-		GM->TokenClicked(ClickedToken);
+		GM->TokenClicked(ClickedToken, cnt, bAble);
 	}
 }

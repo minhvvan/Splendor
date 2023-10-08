@@ -61,33 +61,6 @@ ATokenManager::ATokenManager()
 		Board[i].SetNum(5);
 	}
 
-	{
-		BoardIdx.Emplace(12);
-		BoardIdx.Emplace(17);
-		BoardIdx.Emplace(16);
-		BoardIdx.Emplace(11);
-		BoardIdx.Emplace(6);
-		BoardIdx.Emplace(7);
-		BoardIdx.Emplace(8);
-		BoardIdx.Emplace(13);
-		BoardIdx.Emplace(18);
-		BoardIdx.Emplace(23);
-		BoardIdx.Emplace(22);
-		BoardIdx.Emplace(21);
-		BoardIdx.Emplace(20);
-		BoardIdx.Emplace(15);
-		BoardIdx.Emplace(10);
-		BoardIdx.Emplace(5);
-		BoardIdx.Emplace(0);
-		BoardIdx.Emplace(1);
-		BoardIdx.Emplace(2);
-		BoardIdx.Emplace(3);
-		BoardIdx.Emplace(4);
-		BoardIdx.Emplace(9);
-		BoardIdx.Emplace(14);
-		BoardIdx.Emplace(19);
-		BoardIdx.Emplace(24);
-	}
 
 }
 
@@ -214,17 +187,13 @@ void ATokenManager::PlaceTokens(TArray<AToken*>& Tokens)
 		//shuffle
 		Algo::RandomShuffle(Tokens);
 
-		auto SpawnLocs = GM->GetTokenSpawnLoc(Tokens);
+		TPair<TArray<FVector>, TArray<int>> SpawnLocs = GM->GetTokenSpawnLoc(Tokens);
 
 		for (int i = 0; i < Tokens.Num(); i++)
 		{
-			int boardIdx = BoardIdx[i];
-
-
-
 			Tokens[i]->SetIndex(i);
-			Tokens[i]->SetBoardIndex(BoardIdx[i]);
-			Tokens[i]->SetActorLocation(SpawnLocs[i]);
+			Tokens[i]->SetBoardIndex(SpawnLocs.Value[i]);
+			Tokens[i]->SetActorLocation(SpawnLocs.Key[i]);
 		}
 	}
 }
@@ -256,15 +225,4 @@ void ATokenManager::GetTokens(TArray<AToken*>& Tokens, bool b1Player)
 
 void ATokenManager::UseTokens(TArray<AToken*>& Tokens, bool b1Player)
 {
-}
-
-TArray<AToken*> ATokenManager::CheckAbleTokens(AToken* ClickedToken)
-{
-	for (auto token : RemainTokens)
-	{
-		if (token->GetSelected()) continue;
-
-
-
-	}
 }

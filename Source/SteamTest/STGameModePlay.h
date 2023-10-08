@@ -27,11 +27,10 @@ public:
 
 	virtual void StartMatch() override;
 
-	TArray<FVector> GetTokenSpawnLoc(const TArray<class AToken*>& Tokens);
+	TPair<TArray<FVector>, TArray<int>> GetTokenSpawnLoc(const TArray<class AToken*>& Tokens);
 
 	UFUNCTION()
-	void TokenClicked(class AToken* ClickedToken);
-
+	void TokenClicked(class AToken* ClickedToken, int cnt, bool bAble);
 
 private:
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

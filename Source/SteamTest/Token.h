@@ -74,5 +74,4 @@ private:
 
 	UPROPERTY()
 	int BoardIndex;
-
 };

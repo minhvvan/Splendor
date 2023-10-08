@@ -49,23 +49,28 @@ void ASTGameModePlay::StartMatch()
 	TokenManager = GetWorld()->SpawnActor<ATokenManager>();
 }
 
-TArray<FVector> ASTGameModePlay::GetTokenSpawnLoc(const TArray<class AToken*>& Tokens)
+TPair<TArray<FVector>, TArray<int>> ASTGameModePlay::GetTokenSpawnLoc(const TArray<class AToken*>& Tokens)
 {
 	if (TileManager)
 	{
-		auto Locs = TileManager->GetTokenLocs(Tokens);
+		auto LocAndIdx = TileManager->GetTokenLocs(Tokens);
 
-		return Locs;
+		return LocAndIdx;
 	}
 
-	return TArray<FVector>();
+	return TPair<TArray<FVector>, TArray<int>>();
 }
 
-void ASTGameModePlay::TokenClicked(AToken* ClickedToken)
+void ASTGameModePlay::TokenClicked(AToken* ClickedToken, int cnt, bool bAble)
 {
 	if (ClickedToken)
 	{
+		int boardIdx = ClickedToken->GetBoardIndex();
 
+		if (TileManager)
+		{
+			TileManager->Clicked(boardIdx, cnt, bAble);
+		}
 
 		ClickedToken->Clicked();
 	}
