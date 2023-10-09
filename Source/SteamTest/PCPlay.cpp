@@ -80,6 +80,34 @@ void APCPlay::Click()
 
 			if (Token)
 			{
+				//연속 여부 판단
+				if (SelectedToken.Num() != 0)
+				{
+					int tokenIdx = Token->GetIndex();
+					bool flag = false;
+					for (auto selectedToken : SelectedToken)
+					{
+						if (tokenIdx == selectedToken->GetIndex())
+						{
+							flag = true;
+							break;
+						}
+
+						if (IsNear(tokenIdx, selectedToken->GetIndex()))
+						{
+							flag = true;
+							break;
+						}
+					}
+
+					if (!flag)
+					{
+						//!TODO: 연속되지 않은 토큰 popup
+						GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("not consecutive")));
+						return;
+					}
+				}
+
 				if (SelectedToken.Find(Token) == INDEX_NONE)
 				{
 					if (SelectedToken.Num() < 3)
@@ -95,8 +123,8 @@ void APCPlay::Click()
 				}
 				else
 				{
-					SelectedToken.Remove(Token);
 					SRClickToken(Token, SelectedToken.Num(), false);
+					SelectedToken.Remove(Token);
 				}
 
 				if (SelectedToken.Num() == 0)
@@ -118,6 +146,50 @@ void APCPlay::Click()
 			}
 		}
 	}
+}
+
+bool APCPlay::IsNear(int a, int b)
+{
+	int minVal = a < b ? a : b;
+	int maxVal = a > b ? a : b;
+
+	int diff = maxVal - minVal;
+
+	if (minVal % 5 == 0)
+	{
+		if (diff == 1 || diff == 5 || diff == 6)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else if (minVal % 5 == 4)
+	{
+		if (diff == 4 || diff == 5)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		if (diff == 1 || diff == 4 || diff == 5 || diff == 6)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	return false;
 }
 
 void APCPlay::SetupInputComponent()

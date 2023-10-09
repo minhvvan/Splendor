@@ -37,10 +37,6 @@ public:
 	void OnUnSelected();
 
 	void SetIsAble(bool bAlbe);
-
-	void SetBoardIdx(int idx) { BoardIdx = idx; };
-	int GetBoardIdx() { return BoardIdx; };
-
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Mesh;
@@ -56,6 +52,4 @@ private:
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	class UMaterial* DisabledMat;
-
-	int BoardIdx;
 };

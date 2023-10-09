@@ -48,8 +48,6 @@ void ATile::SetIsAble(bool bAlbe)
 	if (bAlbe)
 	{
 		Mesh->SetMaterial(0, UnSelectedMat);
-
-		//click 막기
 	}
 	else
 	{
@@ -57,6 +55,8 @@ void ATile::SetIsAble(bool bAlbe)
 		{
 			Mesh->SetMaterial(0, DisabledMat);
 		}
+
+		//click 막기
 	}
 }
 

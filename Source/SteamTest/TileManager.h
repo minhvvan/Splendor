@@ -25,14 +25,15 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SpawnTiles();
-
-	TPair<TArray<FVector>, TArray<int>> GetTokenLocs(const TArray<class AToken*>& Tokens);
+	void SetTokenLocs(TArray<class AToken*>& Tokens);
 
 	void Clicked(int selectedIdx, int dist, bool bAble);
+	void UpdateBoardState();
+
 
 private:
 	TArray<ATile*> Tiles;
-	TArray<int> BoardIdx;
+	TArray<int> FillIdx;
 	TArray<int> SelectedTiles;
 	TArray<TArray<TArray<int>>> Distance;
 

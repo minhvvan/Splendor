@@ -5,6 +5,7 @@
 #include "STGameModePlay.h"
 #include "Tile.h"
 #include "Kismet/GameplayStatics.h"
+#include "Token.h"
 
 // Sets default values
 ATileManager::ATileManager()
@@ -21,35 +22,36 @@ ATileManager::ATileManager()
 	Distance.SetNum(25);
 	for (int i = 0; i < 25; i++)
 	{
-		Distance[i].SetNum(4);
+		//1, 2, 3 모두
+		Distance[i].SetNum(3);
 	}
 
 	{
-		BoardIdx.Emplace(12);
-		BoardIdx.Emplace(17);
-		BoardIdx.Emplace(16);
-		BoardIdx.Emplace(11);
-		BoardIdx.Emplace(6);
-		BoardIdx.Emplace(7);
-		BoardIdx.Emplace(8);
-		BoardIdx.Emplace(13);
-		BoardIdx.Emplace(18);
-		BoardIdx.Emplace(23);
-		BoardIdx.Emplace(22);
-		BoardIdx.Emplace(21);
-		BoardIdx.Emplace(20);
-		BoardIdx.Emplace(15);
-		BoardIdx.Emplace(10);
-		BoardIdx.Emplace(5);
-		BoardIdx.Emplace(0);
-		BoardIdx.Emplace(1);
-		BoardIdx.Emplace(2);
-		BoardIdx.Emplace(3);
-		BoardIdx.Emplace(4);
-		BoardIdx.Emplace(9);
-		BoardIdx.Emplace(14);
-		BoardIdx.Emplace(19);
-		BoardIdx.Emplace(24);
+		FillIdx.Emplace(12);
+		FillIdx.Emplace(17);
+		FillIdx.Emplace(16);
+		FillIdx.Emplace(11);
+		FillIdx.Emplace(6);
+		FillIdx.Emplace(7);
+		FillIdx.Emplace(8);
+		FillIdx.Emplace(13);
+		FillIdx.Emplace(18);
+		FillIdx.Emplace(23);
+		FillIdx.Emplace(22);
+		FillIdx.Emplace(21);
+		FillIdx.Emplace(20);
+		FillIdx.Emplace(15);
+		FillIdx.Emplace(10);
+		FillIdx.Emplace(5);
+		FillIdx.Emplace(0);
+		FillIdx.Emplace(1);
+		FillIdx.Emplace(2);
+		FillIdx.Emplace(3);
+		FillIdx.Emplace(4);
+		FillIdx.Emplace(9);
+		FillIdx.Emplace(14);
+		FillIdx.Emplace(19);
+		FillIdx.Emplace(24);
 	}
 
 	{
@@ -58,24 +60,64 @@ ATileManager::ATileManager()
 
 		for (int i = 0; i < 25; i++)
 		{
+			TArray<int> arr;
+			for (int t = 0; t < 25; t++)
+			{
+				arr.Emplace(t);
+			}
+
 			for (int j = 0; j < 8; j++)
 			{
+				if (i % 5 == 0)
+				{
+					if (j==0 || j == 3 || j == 5) continue;
+				}
+
+				if (i % 5 == 4)
+				{
+					if (j == 2 || j == 4 || j == 7) continue;
+				}
+
 				int temp = i + d1[j];
 				if (temp < 0 || temp >= 25) continue;
 
-				Distance[i][1].Emplace(temp);
+				arr.Remove(temp);
 			}
+			Distance[i][1] = arr;
 		}
 
 		for (int i = 0; i < 25; i++)
 		{
+			TArray<int> arr = Distance[i][1];
+
 			for (int j = 0; j < 8; j++)
 			{
+				if (i % 5 == 0)
+				{
+					if (j == 0 || j == 3 || j == 5) continue;
+				}
+
+				if (i % 5 == 1)
+				{
+					if (j == 0 || j == 3 || j == 5) continue;
+				}
+
+				if (i % 5 == 3)
+				{
+					if (j == 2 || j == 4 || j == 7) continue;
+				}
+
+				if (i % 5 == 4)
+				{
+					if (j == 2 || j == 4 || j == 7) continue;
+				}
+
 				int temp = i + d2[j];
 				if (temp < 0 || temp >= 25) continue;
 
-				Distance[i][2].Emplace(temp);
+				arr.Remove(temp);
 			}
+			Distance[i][2] = arr;
 		}
 	}
 }
@@ -92,7 +134,6 @@ void ATileManager::BeginPlay()
 void ATileManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ATileManager::SpawnTiles()
@@ -100,101 +141,113 @@ void ATileManager::SpawnTiles()
 	//타일 생성
 	UWorld* world = GetWorld();
 
-	int offset = 105;
+	int offset = 110;
 	if (world)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		FRotator rotator;
-		FVector loc = FVector(-210, -400, 0);
-		int cnt = 0;
-		int cursor = 3;
-		int k = 1;
-		int progress = 0;
-		TArray<TPair<int, int>> Dir = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
+		FVector loc = FVector(490, 520, 0);
 
-		for (int i = 0; i < 25; i++)
+		for (int i = 0; i < 5; i++)
 		{
-			auto tile = Cast<ATile>(world->SpawnActor<AActor>(TileClass, loc, rotator, SpawnParams));
-			if (tile)
+			for (int j = 0; j < 5; j++)
 			{
-				tile->SetActorScale3D(FVector(0.5f));
-				tile->SetBoardIdx(i);
-				Tiles.Add(tile);
-			}
-
-			cnt++;
-
-			if (cnt == k)
-			{
-				//change dir
-				cursor = (cursor + 1) % 4;
-				cnt = 0;
-
-				if (progress == 2)
+				auto tile = Cast<ATile>(world->SpawnActor<AActor>(TileClass, loc, rotator, SpawnParams));
+				if (tile)
 				{
-					k++;
-					progress = 0;
+					tile->SetActorScale3D(FVector(0.55f));
+					Tiles.Add(tile);
 				}
-				progress++;
+
+				loc += FVector(0, offset, 0);
 			}
 
-			loc += FVector(offset * Dir[cursor].Key, offset * Dir[cursor].Value, 0);
+			loc = FVector(490 - offset*(i+1), 520, 0);
 		}
 	}
 }
 
-TPair<TArray<FVector>, TArray<int>> ATileManager::GetTokenLocs(const TArray<class AToken*>& Tokens)
+void ATileManager::SetTokenLocs(TArray<class AToken*>& Tokens)
 {
-	TArray<FVector> Locs;
-	TArray<int> Board;
-
 	for (auto token : Tokens)
 	{
 		for (int i = 0; i < Tiles.Num(); i++)
 		{
-			auto tile = Tiles[i];
+			auto tile = Tiles[FillIdx[i]];
 			//이미 있음
 			if (tile->GetOnToken()) continue;
 
+			token->SetIndex(FillIdx[i]);
+			token->SetActorLocation(tile->GetTokenLoc());
 			tile->SetOnToken(token);
-			Locs.Add(tile->GetTokenLoc());
-			Board.Add(BoardIdx[i]);
 
 			break;  
 		}
 	}
-
-	return { Locs, Board };
 }
 
-void ATileManager::Clicked(int boardIdx, int dist, bool bAble)
+void ATileManager::Clicked(int selectedIdx, int dist, bool bAble)
 {
-	//bAble: true -> 선택,  bAble: flase-> 해제
-	if (bAble)
-	{
-		//선택 불가능한 곳 끄기
-		SelectedTiles.Add(boardIdx);
+	if (bAble) SelectedTiles.Add(selectedIdx);
+	else SelectedTiles.Remove(selectedIdx);
 
-		auto Disable = Distance[boardIdx][dist];
-		for (auto DisableTile : Disable)
+	UpdateBoardState();
+}
+
+void ATileManager::UpdateBoardState()
+{
+	int selectedNum = SelectedTiles.Num();
+
+	if (selectedNum == 0)
+	{
+		for (auto tile : Tiles)
 		{
-			Tiles[DisableTile]->SetIsAble(false);
-			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("%d"), DisableTile));
+			tile->SetIsAble(true);
+		}
+	}
+	else if (selectedNum == 1)
+	{
+		for (int i = 0; i < Tiles.Num(); i++)
+		{
+			if (SelectedTiles.Find(i) != INDEX_NONE) continue;
+			if (Distance[SelectedTiles[0]][2].Find(i) != INDEX_NONE)
+			{
+				Tiles[i]->SetIsAble(false);
+			}
+			else
+			{
+				Tiles[i]->SetIsAble(true);
+			}
+		}
+	}
+	else if (selectedNum == 2)
+	{
+		//같은 라인만 
+		SelectedTiles.Sort();
+		int dir = abs(SelectedTiles[1] - SelectedTiles[0]);
+
+		for (int i = 0; i < Tiles.Num(); i++)
+		{
+			if (SelectedTiles.Find(i) != INDEX_NONE) continue;
+			if (i == SelectedTiles[0] - dir || i == SelectedTiles[1] + dir)
+			{
+				Tiles[i]->SetIsAble(true);
+			}
+			else
+			{
+				Tiles[i]->SetIsAble(false);
+			}
 		}
 	}
 	else
 	{
-		// 선택가능한 곳 다시 켜기
-		SelectedTiles.Remove(boardIdx);
-
-		for (auto SelectedTile : SelectedTiles)
+		//선택된 tile 아니면 모두 disable
+		for (int i = 0; i < Tiles.Num(); i++)
 		{
-			auto Able = Distance[SelectedTile][dist];
-			for (auto AbleTile : Able)
-			{
-				Tiles[AbleTile]->SetIsAble(true);
-			}
+			if (SelectedTiles.Find(i) != INDEX_NONE) continue;
+
+			Tiles[i]->SetIsAble(false);
 		}
 	}
 }

@@ -33,6 +33,8 @@ public:
 
 	void Click();
 
+	bool IsNear(int a, int b);
+
 	TArray<class AToken*> GetSelectedTokens() const { return SelectedToken; };
 
 protected:

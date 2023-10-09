@@ -54,14 +54,6 @@ ATokenManager::ATokenManager()
 	{
 		PearlTokenClass = PEARL.Class;
 	}
-
-	Board.SetNum(5);
-	for (int i = 0; i < 5; i++)
-	{
-		Board[i].SetNum(5);
-	}
-
-
 }
 
 // Called when the game starts or when spawned
@@ -187,14 +179,7 @@ void ATokenManager::PlaceTokens(TArray<AToken*>& Tokens)
 		//shuffle
 		Algo::RandomShuffle(Tokens);
 
-		TPair<TArray<FVector>, TArray<int>> SpawnLocs = GM->GetTokenSpawnLoc(Tokens);
-
-		for (int i = 0; i < Tokens.Num(); i++)
-		{
-			Tokens[i]->SetIndex(i);
-			Tokens[i]->SetBoardIndex(SpawnLocs.Value[i]);
-			Tokens[i]->SetActorLocation(SpawnLocs.Key[i]);
-		}
+		GM->SetTokenSpawnLoc(Tokens);
 	}
 }
 

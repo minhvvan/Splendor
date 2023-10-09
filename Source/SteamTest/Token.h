@@ -47,12 +47,6 @@ public:
 	UFUNCTION()
 	void SetIndex(int idx) { Index = idx; };
 
-	UFUNCTION()
-	int GetBoardIndex() const { return BoardIndex; };
-
-	UFUNCTION()
-	void SetBoardIndex(int idx) { BoardIndex = idx; };
-
 protected:
 
 
@@ -71,7 +65,4 @@ private:
 
 	UPROPERTY()
 	int Index;
-
-	UPROPERTY()
-	int BoardIndex;
 };

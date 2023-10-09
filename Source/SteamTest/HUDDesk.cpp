@@ -62,12 +62,12 @@ void UHUDDesk::GetTokenClicked()
 		auto Tokens = PC->GetSelectedTokens();
 
 		Tokens.Sort([](const AToken& A, const AToken& B) {
-			return A.GetBoardIndex() < B.GetBoardIndex();
+			return A.GetIndex() < B.GetIndex();
 		});
 
 		for (auto token : Tokens)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("%d"), token->GetBoardIndex()));
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("%d"), token->GetIndex()));
 		}
 
 		//»óÇÏ : 5
@@ -77,17 +77,17 @@ void UHUDDesk::GetTokenClicked()
 		{
 			if (prev == -1)
 			{
-				prev = token->GetBoardIndex();
+				prev = token->GetIndex();
 				continue;
 			}
 
-			if (token->GetBoardIndex() != prev + 5)
+			if (token->GetIndex() != prev + 5)
 			{
 				flag = false;
 				break;
 			}
 
-			prev = token->GetBoardIndex();
+			prev = token->GetIndex();
 		}
 
 		if (flag) 
@@ -106,17 +106,17 @@ void UHUDDesk::GetTokenClicked()
 		{
 			if (prev == -1)
 			{
-				prev = token->GetBoardIndex();
+				prev = token->GetIndex();
 				continue;
 			}
 
-			if (token->GetBoardIndex() != prev + 1)
+			if (token->GetIndex() != prev + 1)
 			{
 				flag = false;
 				break;
 			}
 
-			prev = token->GetBoardIndex();
+			prev = token->GetIndex();
 		}
 
 		if (flag)
@@ -134,17 +134,17 @@ void UHUDDesk::GetTokenClicked()
 		{
 			if (prev == -1)
 			{
-				prev = token->GetBoardIndex();
+				prev = token->GetIndex();
 				continue;
 			}
 
-			if (token->GetBoardIndex() != prev + 4)
+			if (token->GetIndex() != prev + 4)
 			{
 				flag = false;
 				break;
 			}
 
-			prev = token->GetBoardIndex();
+			prev = token->GetIndex();
 		}
 
 		if (flag)
@@ -162,17 +162,17 @@ void UHUDDesk::GetTokenClicked()
 		{
 			if (prev == -1)
 			{
-				prev = token->GetBoardIndex();
+				prev = token->GetIndex();
 				continue;
 			}
 
-			if (token->GetBoardIndex() != prev + 6)
+			if (token->GetIndex() != prev + 6)
 			{
 				flag = false;
 				break;
 			}
 
-			prev = token->GetBoardIndex();
+			prev = token->GetIndex();
 		}
 
 		if (flag)

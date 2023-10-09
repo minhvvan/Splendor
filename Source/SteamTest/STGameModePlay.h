@@ -27,7 +27,7 @@ public:
 
 	virtual void StartMatch() override;
 
-	TPair<TArray<FVector>, TArray<int>> GetTokenSpawnLoc(const TArray<class AToken*>& Tokens);
+	void SetTokenSpawnLoc(TArray<class AToken*>& Tokens);
 
 	UFUNCTION()
 	void TokenClicked(class AToken* ClickedToken, int cnt, bool bAble);
