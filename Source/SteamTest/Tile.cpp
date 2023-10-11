@@ -43,7 +43,7 @@ void ATile::SetOnToken(class AToken* token)
 	token->OnUnSelected.AddDynamic(this, &ATile::OnUnSelected);
 }
 
-void ATile::SetIsAble(bool bAlbe)
+void ATile::SetIsAble_Implementation(bool bAlbe)
 {
 	if (bAlbe)
 	{

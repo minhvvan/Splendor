@@ -187,7 +187,7 @@ void ATileManager::SetTokenLocs(TArray<class AToken*>& Tokens)
 	}
 }
 
-void ATileManager::Clicked(int selectedIdx, int dist, bool bAble)
+void ATileManager::Clicked_Implementation(int selectedIdx, int dist, bool bAble)
 {
 	if (bAble) SelectedTiles.Add(selectedIdx);
 	else SelectedTiles.Remove(selectedIdx);
@@ -195,7 +195,7 @@ void ATileManager::Clicked(int selectedIdx, int dist, bool bAble)
 	UpdateBoardState();
 }
 
-void ATileManager::UpdateBoardState()
+void ATileManager::UpdateBoardState_Implementation()
 {
 	int selectedNum = SelectedTiles.Num();
 

@@ -27,9 +27,11 @@ public:
 	void SpawnTiles();
 	void SetTokenLocs(TArray<class AToken*>& Tokens);
 
+	UFUNCTION(NetMulticast, Reliable)
 	void Clicked(int selectedIdx, int dist, bool bAble);
-	void UpdateBoardState();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void UpdateBoardState();
 
 private:
 	TArray<ATile*> Tiles;

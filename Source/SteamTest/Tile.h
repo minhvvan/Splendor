@@ -36,6 +36,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void OnUnSelected();
 
+	UFUNCTION(NetMulticast, Reliable)
 	void SetIsAble(bool bAlbe);
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
