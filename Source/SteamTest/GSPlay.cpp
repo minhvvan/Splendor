@@ -10,10 +10,7 @@ void AGSPlay::SetFirstPlayer(APlayerController* Player)
 	if (!FirstPlayer)
 	{
 		FirstPlayer = Cast<APCPlay>(Player);
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("already set firstPlayer")));
+		FirstPlayer->SetTurn(true);
 	}
 }
 
@@ -22,17 +19,6 @@ void AGSPlay::SetSecondPlayer(APlayerController* Player)
 	if (!SecondPlayer)
 	{
 		SecondPlayer = Cast<APCPlay>(Player);
+		SecondPlayer->SetTurn(false);
 	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("already set firstPlayer")));
-	}
-}
-
-void AGSPlay::AddPlayerState(APlayerState* PlayerState)
-{
-	Super::AddPlayerState(PlayerState);
-
-	//auto name = PlayerState->GetPlayerController()->GetName();
-	//GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, FString::Printf(TEXT("AddPlayerState: %s"), *name));
 }

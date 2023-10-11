@@ -11,6 +11,7 @@
 #include "Token.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Net/UnrealNetwork.h"
 
 APCPlay::APCPlay()
 {
@@ -22,6 +23,7 @@ APCPlay::APCPlay()
 		DeskClass = DESK.Class;
 	}
 
+	bReplicates = true;
 	bEnableClickEvents = true;
 	bEnableMouseOverEvents = true;
 }
@@ -78,71 +80,78 @@ void APCPlay::Click()
 		{
 			auto Token = Cast<AToken>(HitResult.GetActor());
 
-			if (Token)
+			if (IsTurn)
 			{
-				//연속 여부 판단
-				if (SelectedToken.Num() != 0)
+				if (Token)
 				{
-					int tokenIdx = Token->GetIndex();
-					bool flag = false;
-					for (auto selectedToken : SelectedToken)
+					//연속 여부 판단
+					if (SelectedToken.Num() != 0)
 					{
-						if (tokenIdx == selectedToken->GetIndex())
+						int tokenIdx = Token->GetIndex();
+						bool flag = false;
+						for (auto selectedToken : SelectedToken)
 						{
-							flag = true;
-							break;
+							if (tokenIdx == selectedToken->GetIndex())
+							{
+								flag = true;
+								break;
+							}
+
+							if (IsNear(tokenIdx, selectedToken->GetIndex()))
+							{
+								flag = true;
+								break;
+							}
 						}
 
-						if (IsNear(tokenIdx, selectedToken->GetIndex()))
+						if (!flag)
 						{
-							flag = true;
-							break;
+							//!TODO: 연속되지 않은 토큰 popup
+							GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("not consecutive")));
+							return;
 						}
 					}
 
-					if (!flag)
+					if (SelectedToken.Find(Token) == INDEX_NONE)
 					{
-						//!TODO: 연속되지 않은 토큰 popup
-						GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("not consecutive")));
-						return;
-					}
-				}
-
-				if (SelectedToken.Find(Token) == INDEX_NONE)
-				{
-					if (SelectedToken.Num() < 3)
-					{ 
-						SelectedToken.AddUnique(Token);
-						SRClickToken(Token, SelectedToken.Num(), true);
+						if (SelectedToken.Num() < 3)
+						{
+							SelectedToken.AddUnique(Token);
+							SRClickToken(Token, SelectedToken.Num(), true);
+						}
+						else
+						{
+							//!TODO: 안내문구
+							GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("already 3")));
+						}
 					}
 					else
 					{
-						//!TODO: 안내문구
-						GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("already 3")));
+						SRClickToken(Token, SelectedToken.Num(), false);
+						SelectedToken.Remove(Token);
 					}
-				}
-				else
-				{
-					SRClickToken(Token, SelectedToken.Num(), false);
-					SelectedToken.Remove(Token);
-				}
 
-				if (SelectedToken.Num() == 0)
-				{
-					// GetToken unable
-					if (WidgetDesk)
+					if (SelectedToken.Num() == 0)
 					{
-						WidgetDesk->SetBtnGetTokenState(false);
+						// GetToken unable
+						if (WidgetDesk)
+						{
+							WidgetDesk->SetBtnGetTokenState(false);
+						}
+					}
+					else
+					{
+						//GetToken enable
+						if (WidgetDesk)
+						{
+							WidgetDesk->SetBtnGetTokenState(true);
+						}
 					}
 				}
-				else
-				{
-					//GetToken enable
-					if (WidgetDesk)
-					{
-						WidgetDesk->SetBtnGetTokenState(true);
-					}
-				}
+			}
+			else
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Not My Turn")));
 			}
 		}
 	}
@@ -203,6 +212,13 @@ void APCPlay::SetupInputComponent()
 	}
 }
 
+void APCPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APCPlay, IsTurn);
+}
+
 void APCPlay::SRSetTurn_Implementation()
 {
 	auto PS = GetPlayerState<APSPlayerInfo>();
@@ -219,7 +235,6 @@ void APCPlay::SRSetTurn_Implementation()
 	}
 }
 
-
 void APCPlay::SRClickToken_Implementation(AToken* ClickedToken, int cnt, bool bAble)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -227,4 +242,24 @@ void APCPlay::SRClickToken_Implementation(AToken* ClickedToken, int cnt, bool bA
 	{
 		GM->TokenClicked(ClickedToken, cnt, bAble);
 	}
+}
+
+void APCPlay::SRPossessTokens_Implementation()
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GM)
+	{
+		GM->PossessTokens(this);
+
+		//Client PC Reset
+		ClearSelectedTokens();
+
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Server: %d"), SelectedToken.Num()));
+	}
+}
+
+void APCPlay::ClearSelectedTokens_Implementation()
+{
+	SelectedToken.Reset();
 }

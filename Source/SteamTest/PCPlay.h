@@ -6,6 +6,9 @@
 #include "GameFramework/PlayerController.h"
 #include "PCPlay.generated.h"
 
+class AToken;
+class ATile;
+
 /**
  * 
  */
@@ -26,7 +29,7 @@ public:
 	void SRSetTurn();
 
 	UFUNCTION(Server, Reliable)
-	void SRClickToken(class AToken* ClickedToken, int cnt, bool bAble);
+	void SRClickToken(AToken* ClickedToken, int cnt, bool bAble);
 
 	UFUNCTION()
 	void ShowDesk();
@@ -35,13 +38,24 @@ public:
 
 	bool IsNear(int a, int b);
 
-	TArray<class AToken*> GetSelectedTokens() const { return SelectedToken; };
+	TArray<AToken*>& GetSelectedTokens() { return SelectedToken; };
+
+	void SetTurn(bool flag) { IsTurn = flag; };
+	bool GetTurn() { return IsTurn; };
+
+	UFUNCTION(Server, Reliable)
+	void SRPossessTokens();
+
+	UFUNCTION(Client, Reliable)
+	void ClearSelectedTokens();
 
 protected:
 	virtual void SetupInputComponent() override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 private:
-	TArray<class ATile*> Tiles;
+	TArray<ATile*> Tiles;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> DeskClass;
@@ -50,17 +64,19 @@ private:
 	class UHUDDesk* WidgetDesk;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class ATile> TileClass;
+	TSubclassOf<ATile> TileClass;
 
 	const FString CAM_TAG = TEXT("GameCam");
 
-	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
 
-	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* ClickAction;
 
-	TArray<class AToken*> SelectedToken;
+	UPROPERTY()
+	TArray<AToken*> SelectedToken;
+
+	UPROPERTY(replicated)
+	bool IsTurn = false;
 };

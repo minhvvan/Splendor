@@ -26,15 +26,24 @@ public:
 
 	void SpawnTokens();
 	void PlaceTokens(TArray<AToken*>& Tokens);
+
+	UFUNCTION()
+	void SelectedToken(AToken* token, bool bSelected);
+
+	UFUNCTION()
 	void FillTokens();
 
-	void GetTokens(TArray<AToken*>& Tokens, bool b1Player);
+	UFUNCTION()
+	void PossessTokens(bool b1Player);
+	
+	UFUNCTION()
 	void UseTokens(TArray<AToken*>& Tokens, bool b1Player);
-
 
 private:
 	TArray<AToken*> RemainTokens;
 	TArray<AToken*> UsedTokens;
+
+	TArray<AToken*> SelectedTokens;
 
 	TArray<AToken*> P1Tokens;
 	TArray<AToken*> P2Tokens;

@@ -187,7 +187,7 @@ void ATileManager::SetTokenLocs(TArray<class AToken*>& Tokens)
 	}
 }
 
-void ATileManager::Clicked_Implementation(int selectedIdx, int dist, bool bAble)
+void ATileManager::Clicked(int selectedIdx, int dist, bool bAble)
 {
 	if (bAble) SelectedTiles.Add(selectedIdx);
 	else SelectedTiles.Remove(selectedIdx);
@@ -195,7 +195,7 @@ void ATileManager::Clicked_Implementation(int selectedIdx, int dist, bool bAble)
 	UpdateBoardState();
 }
 
-void ATileManager::UpdateBoardState_Implementation()
+void ATileManager::UpdateBoardState()
 {
 	int selectedNum = SelectedTiles.Num();
 
@@ -250,4 +250,16 @@ void ATileManager::UpdateBoardState_Implementation()
 			Tiles[i]->SetIsAble(false);
 		}
 	}
+}
+
+void ATileManager::ClearSeletedTiles()
+{
+	SelectedTiles.Reset();
+
+	//모든 타일 정리
+	UpdateBoardState();
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Tile: %d"), SelectedTiles.Num()));
+
+	//!TODO: 가져간 타일을 끌지 말지 정해야함
 }

@@ -15,10 +15,15 @@ class STEAMTEST_API AGSPlay : public AGameState
 	GENERATED_BODY()
 	
 public:
+	UFUNCTION()
 	void SetFirstPlayer(APlayerController* Player);
+
+	UFUNCTION()
 	void SetSecondPlayer(APlayerController* Player);
 
-	virtual void AddPlayerState(APlayerState* PlayerState) override;
+	UFUNCTION()
+	bool IsFirstPlayer(class APCPlay* Player) { return FirstPlayer == Player; };
+
 private:
 	UPROPERTY()
 	class APCPlay* FirstPlayer;

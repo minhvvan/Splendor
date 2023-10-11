@@ -27,10 +27,14 @@ public:
 
 	virtual void StartMatch() override;
 
+	UFUNCTION()
 	void SetTokenSpawnLoc(TArray<class AToken*>& Tokens);
 
 	UFUNCTION()
 	void TokenClicked(class AToken* ClickedToken, int cnt, bool bAble);
+
+	UFUNCTION()
+	void PossessTokens(APlayerController* PC);
 
 private:
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

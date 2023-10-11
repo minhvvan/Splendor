@@ -41,6 +41,7 @@ void ATile::SetOnToken(class AToken* token)
 	OnToken = token;
 	token->OnSelected.AddDynamic(this, &ATile::OnSelected);
 	token->OnUnSelected.AddDynamic(this, &ATile::OnUnSelected);
+
 }
 
 void ATile::SetIsAble_Implementation(bool bAlbe)
@@ -48,6 +49,12 @@ void ATile::SetIsAble_Implementation(bool bAlbe)
 	if (bAlbe)
 	{
 		Mesh->SetMaterial(0, UnSelectedMat);
+
+		//click 가능하게
+		if (OnToken)
+		{
+			OnToken->SetActorEnableCollision(true);
+		}
 	}
 	else
 	{
@@ -57,6 +64,10 @@ void ATile::SetIsAble_Implementation(bool bAlbe)
 		}
 
 		//click 막기
+		if (OnToken)
+		{
+			OnToken->SetActorEnableCollision(false);
+		}
 	}
 }
 

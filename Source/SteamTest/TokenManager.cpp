@@ -183,16 +183,28 @@ void ATokenManager::PlaceTokens(TArray<AToken*>& Tokens)
 	}
 }
 
+void ATokenManager::SelectedToken(AToken* token, bool bSelected)
+{
+	if (bSelected)
+	{
+		SelectedTokens.Add(token);
+	}
+	else
+	{
+		SelectedTokens.Remove(token);
+	}
+}
+
 void ATokenManager::FillTokens()
 {
 	PlaceTokens(UsedTokens);
 }
 
-void ATokenManager::GetTokens(TArray<AToken*>& Tokens, bool b1Player)
+void ATokenManager::PossessTokens(bool b1Player)
 {
 	if (b1Player)
 	{
-		for (auto token : Tokens)
+		for (auto token : SelectedTokens)
 		{
 			RemainTokens.Remove(token);
 			P1Tokens.Add(token);
@@ -200,12 +212,18 @@ void ATokenManager::GetTokens(TArray<AToken*>& Tokens, bool b1Player)
 	}
 	else
 	{
-		for (auto token : Tokens)
+		for (auto token : SelectedTokens)
 		{
 			RemainTokens.Remove(token);
 			P2Tokens.Add(token);
 		}
 	}
+
+	SelectedTokens.Reset();
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Remain: %d"), RemainTokens.Num()));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("PC1: %d"), P1Tokens.Num()));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("PC2: %d"), P2Tokens.Num()));
 }
 
 void ATokenManager::UseTokens(TArray<AToken*>& Tokens, bool b1Player)

@@ -68,6 +68,30 @@ void ASTGameModePlay::TokenClicked(AToken* ClickedToken, int cnt, bool bAble)
 			TileManager->Clicked(boardIdx, cnt, bAble);
 		}
 
+		if (TokenManager)
+		{
+			TokenManager->SelectedToken(ClickedToken, bAble);
+		}
+
 		ClickedToken->Clicked();
+	}
+}
+
+void ASTGameModePlay::PossessTokens(APlayerController* PC)
+{
+	if (TokenManager)
+	{
+		auto GS = GetGameState<AGSPlay>();
+		if (GS)
+		{
+			auto playPC = Cast<APCPlay>(PC);
+			bool bFirst = GS->IsFirstPlayer(playPC);
+			TokenManager->PossessTokens(bFirst);
+		}
+	}
+
+	if (TileManager)
+	{
+		TileManager->ClearSeletedTiles();
 	}
 }
