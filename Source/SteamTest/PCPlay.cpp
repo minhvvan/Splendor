@@ -48,13 +48,6 @@ void APCPlay::BeginPlay()
 	}
 }
 
-void APCPlay::SeamlessTravelFrom(APlayerController* OldPC)
-{
-	Super::SeamlessTravelFrom(OldPC);
-
-	SRSetTurn();
-}
-
 void APCPlay::ShowDesk()
 {
 	if (!WidgetDesk)
@@ -222,7 +215,7 @@ void APCPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 void APCPlay::SRSetTurn_Implementation()
 {
 	auto PS = GetPlayerState<APSPlayerInfo>();
-	
+
 	if (PS)
 	{
 		auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -230,7 +223,7 @@ void APCPlay::SRSetTurn_Implementation()
 		//GS Update
 		if (GM)
 		{
-			GM->SetPlayerTurn(this, PS->GetMyTurn());
+			GM->InitPlayerTurn(this, PS->GetMyTurn());
 		}
 	}
 }
@@ -254,8 +247,6 @@ void APCPlay::SRPossessTokens_Implementation()
 
 		//Client PC Reset
 		ClearSelectedTokens();
-
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Server: %d"), SelectedToken.Num()));
 	}
 }
 

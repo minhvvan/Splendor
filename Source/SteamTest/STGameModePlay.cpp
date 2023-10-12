@@ -7,6 +7,7 @@
 #include "TileManager.h"
 #include "TokenManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "TurnManager.h"
 #include "PCPlay.h"
 
 ASTGameModePlay::ASTGameModePlay()
@@ -19,19 +20,18 @@ void ASTGameModePlay::SwapPlayerControllers(APlayerController* OldPC, APlayerCon
 	Super::SwapPlayerControllers(OldPC, NewPC);
 }
 
-void ASTGameModePlay::SetPlayerTurn(APlayerController* Player, bool bFirst)
+void ASTGameModePlay::InitPlayerTurn(APlayerController* Player, bool bFirst)
 {
-	auto GS = GetGameState<AGSPlay>();
-	
-	if (GS)
+	if (TurnManager)
 	{
-		if (bFirst)
+		auto GS = GetGameState<AGSPlay>();
+		
+		if (GS)
 		{
-			GS->SetFirstPlayer(Player);
-		}
-		else
-		{
-			GS->SetSecondPlayer(Player);
+			for (auto PS : GS->PlayerArray)
+			{
+				TurnManager->InitPlayerTurn(PS->GetPlayerController(), Cast<APSPlayerInfo>(PS)->GetMyTurn());
+			}
 		}
 	}
 }
@@ -45,8 +45,11 @@ void ASTGameModePlay::StartMatch()
 {
 	Super::StartMatch();
 
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, FString::Printf(TEXT("StartMatch")));
+
 	TileManager = GetWorld()->SpawnActor<ATileManager>();
 	TokenManager = GetWorld()->SpawnActor<ATokenManager>();
+	TurnManager = GetWorld()->SpawnActor<ATurnManager>();
 }
 
 void ASTGameModePlay::SetTokenSpawnLoc(TArray<class AToken*>& Tokens)
@@ -81,12 +84,10 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC)
 {
 	if (TokenManager)
 	{
-		auto GS = GetGameState<AGSPlay>();
-		if (GS)
+		if (TurnManager)
 		{
-			auto playPC = Cast<APCPlay>(PC);
-			bool bFirst = GS->IsFirstPlayer(playPC);
-			TokenManager->PossessTokens(bFirst);
+			bool bCurrent = TurnManager->IsFirstPlayer(PC);
+			TokenManager->PossessTokens(bCurrent);
 		}
 	}
 
@@ -94,4 +95,17 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC)
 	{
 		TileManager->ClearSeletedTiles();
 	}
+
+	//ÅÏ º¯°æ
+	if (TurnManager)
+	{
+		TurnManager->EndCurrentTurn();
+	}
+}
+
+void ASTGameModePlay::HandleSeamlessTravelPlayer(AController*& C)
+{
+	Super::HandleSeamlessTravelPlayer(C);
+
+	Cast<APCPlay>(C)->SRSetTurn();
 }

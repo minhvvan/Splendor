@@ -23,8 +23,6 @@ public:
 	UFUNCTION()
 	void BeginPlay() override;
 
-	virtual void SeamlessTravelFrom(class APlayerController* OldPC) override;
-
 	UFUNCTION(Server, Reliable)
 	void SRSetTurn();
 
@@ -40,7 +38,10 @@ public:
 
 	TArray<AToken*>& GetSelectedTokens() { return SelectedToken; };
 
+	UFUNCTION()
 	void SetTurn(bool flag) { IsTurn = flag; };
+
+	UFUNCTION()
 	bool GetTurn() { return IsTurn; };
 
 	UFUNCTION(Server, Reliable)

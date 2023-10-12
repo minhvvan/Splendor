@@ -5,20 +5,20 @@
 #include "PSPlayerInfo.h"
 #include "PCPlay.h"
 
-void AGSPlay::SetFirstPlayer(APlayerController* Player)
-{
-	if (!FirstPlayer)
-	{
-		FirstPlayer = Cast<APCPlay>(Player);
-		FirstPlayer->SetTurn(true);
-	}
-}
-
-void AGSPlay::SetSecondPlayer(APlayerController* Player)
-{
-	if (!SecondPlayer)
-	{
-		SecondPlayer = Cast<APCPlay>(Player);
-		SecondPlayer->SetTurn(false);
-	}
-}
+//void AGSPlay::SetFirstPlayer(APlayerController* Player)
+//{
+//	if (!FirstPlayer)
+//	{
+//		FirstPlayer = Cast<APCPlay>(Player);
+//		FirstPlayer->SetTurn(true);
+//	}
+//}
+//
+//void AGSPlay::SetSecondPlayer(APlayerController* Player)
+//{
+//	if (!SecondPlayer)
+//	{
+//		SecondPlayer = Cast<APCPlay>(Player);
+//		SecondPlayer->SetTurn(false);
+//	}
+//}

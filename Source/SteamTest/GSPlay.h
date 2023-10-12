@@ -14,20 +14,20 @@ class STEAMTEST_API AGSPlay : public AGameState
 {
 	GENERATED_BODY()
 	
-public:
-	UFUNCTION()
-	void SetFirstPlayer(APlayerController* Player);
-
-	UFUNCTION()
-	void SetSecondPlayer(APlayerController* Player);
-
-	UFUNCTION()
-	bool IsFirstPlayer(class APCPlay* Player) { return FirstPlayer == Player; };
-
-private:
-	UPROPERTY()
-	class APCPlay* FirstPlayer;
-
-	UPROPERTY()
-	class APCPlay* SecondPlayer;
+//public:
+//	UFUNCTION()
+//	void SetFirstPlayer(APlayerController* Player);
+//
+//	UFUNCTION()
+//	void SetSecondPlayer(APlayerController* Player);
+//
+//	UFUNCTION()
+//	bool IsFirstPlayer(class APCPlay* Player) { return FirstPlayer == Player; };
+//
+//private:
+//	UPROPERTY()
+//	class APCPlay* FirstPlayer;
+//
+//	UPROPERTY()
+//	class APCPlay* SecondPlayer;
 };

@@ -21,7 +21,7 @@ public:
 	void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC) override;
 
 	UFUNCTION()
-	void SetPlayerTurn(APlayerController* Player, bool bFirst);
+	void InitPlayerTurn(APlayerController* Player, bool bFirst);
 
 	virtual void StartPlay() override;
 
@@ -36,10 +36,16 @@ public:
 	UFUNCTION()
 	void PossessTokens(APlayerController* PC);
 
+protected:
+	virtual void HandleSeamlessTravelPlayer(AController*& C) override;
+
 private:
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class ATileManager* TileManager;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class ATokenManager* TokenManager;
+
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class ATurnManager* TurnManager;
 };
