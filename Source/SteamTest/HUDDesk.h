@@ -69,7 +69,7 @@ public:
 	void SetScrollTxt(int scroll);
 	void SetTurnTxt(FString turn);
 
-	void RenderMessage(FText message);
+	void RenderMessage(FString message);
 
 private:
 	UFUNCTION(BlueprintCallable)

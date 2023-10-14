@@ -34,11 +34,11 @@ void UHUDDesk::SetTurnTxt(FString turn)
 {
 }
 
-void UHUDDesk::RenderMessage(FText message)
+void UHUDDesk::RenderMessage(FString message)
 {
 	if (TxtMessage)
 	{
-		TxtMessage->SetText(message);
+		TxtMessage->SetText(FText::FromString(message));
 	}
 
 	if (MessageAnim)
@@ -62,8 +62,7 @@ void UHUDDesk::GetTokenClicked()
 			{
 				PlayAnimation(FailedGetAnim);
 				
-				FString str = FString::Printf(TEXT("당신의 차례가 아닙니다."));
-				RenderMessage(FText::FromString(str));
+				RenderMessage(FString::Printf(TEXT("토큰을 선택해 주세요.")));
 
 				if (FailSound)
 				{

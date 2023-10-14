@@ -45,8 +45,6 @@ void ASTGameModePlay::StartMatch()
 {
 	Super::StartMatch();
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, FString::Printf(TEXT("StartMatch")));
-
 	TileManager = GetWorld()->SpawnActor<ATileManager>();
 	TokenManager = GetWorld()->SpawnActor<ATokenManager>();
 	TurnManager = GetWorld()->SpawnActor<ATurnManager>();

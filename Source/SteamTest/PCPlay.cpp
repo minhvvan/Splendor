@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "PCPlay.h"
@@ -77,7 +77,7 @@ void APCPlay::Click()
 			{
 				if (Token)
 				{
-					//¿¬¼Ó ¿©ºÎ ÆÇ´Ü
+					//ì—°ì† ì—¬ë¶€ íŒë‹¨
 					if (SelectedToken.Num() != 0)
 					{
 						int tokenIdx = Token->GetIndex();
@@ -99,8 +99,10 @@ void APCPlay::Click()
 
 						if (!flag)
 						{
-							//!TODO: ¿¬¼ÓµÇÁö ¾ÊÀº ÅäÅ« popup
-							GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("not consecutive")));
+							if (WidgetDesk)
+							{
+								WidgetDesk->RenderMessage(FString::Printf(TEXT("ì—°ì†í•˜ì§€ ì•Šì€ í† í°ì…ë‹ˆë‹¤.")));
+							}
 							return;
 						}
 					}
@@ -114,12 +116,15 @@ void APCPlay::Click()
 						}
 						else
 						{
-							//!TODO: ¾È³»¹®±¸
-							GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("already 3")));
+							if (WidgetDesk)
+							{
+								WidgetDesk->RenderMessage(FString::Printf(TEXT("í† í°ì€ 3ê°œê¹Œì§€ ì„ íƒí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.")));
+							}
 						}
 					}
 					else
 					{
+						//í•´ì œ
 						SRClickToken(Token, SelectedToken.Num(), false);
 						SelectedToken.Remove(Token);
 					}
@@ -127,7 +132,10 @@ void APCPlay::Click()
 			}
 			else
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Not My Turn")));
+				if (WidgetDesk)
+				{
+					WidgetDesk->RenderMessage(FString::Printf(TEXT("ë‹¹ì‹ ì˜ ì°¨ë¡€ê°€ ì•„ë‹™ë‹ˆë‹¤.")));
+				}
 			}
 		}
 	}

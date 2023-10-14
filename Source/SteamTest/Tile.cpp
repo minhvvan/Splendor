@@ -39,9 +39,11 @@ void ATile::Tick(float DeltaTime)
 void ATile::SetOnToken(class AToken* token)
 {
 	OnToken = token;
-	token->OnSelected.AddDynamic(this, &ATile::OnSelected);
-	token->OnUnSelected.AddDynamic(this, &ATile::OnUnSelected);
-
+	if (OnToken)
+	{
+		token->OnSelected.AddDynamic(this, &ATile::OnSelected);
+		token->OnUnSelected.AddDynamic(this, &ATile::OnUnSelected);
+	}
 }
 
 void ATile::SetIsAble_Implementation(bool bAlbe)

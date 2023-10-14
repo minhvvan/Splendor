@@ -208,6 +208,8 @@ void ATokenManager::PossessTokens(bool b1Player)
 		{
 			RemainTokens.Remove(token);
 			P1Tokens.Add(token);
+
+			token->SetActorLocation(FVector(-300, 0, 0));
 		}
 	}
 	else
@@ -216,6 +218,8 @@ void ATokenManager::PossessTokens(bool b1Player)
 		{
 			RemainTokens.Remove(token);
 			P2Tokens.Add(token);
+
+			token->SetActorLocation(FVector(-300, 0, 0));
 		}
 	}
 

@@ -232,6 +232,31 @@ void ATileManager::UpdateBoardState()
 			if (SelectedTiles.Find(i) != INDEX_NONE) continue;
 			if (i == SelectedTiles[0] - dir || i == SelectedTiles[1] + dir)
 			{
+				if (dir == 1)
+				{
+					if (i / 5 != SelectedTiles[0] / 5)
+					{
+						Tiles[i]->SetIsAble(false);
+						continue;
+					}
+				}
+				else if (dir == 4)
+				{
+					if ((SelectedTiles[0] % 5 == 4 && i % 5 == 0) || (SelectedTiles[1] % 5 == 0 && i % 5 == 4))
+					{
+						Tiles[i]->SetIsAble(false);
+						continue;
+					}
+				}
+				else if(dir == 6)
+				{
+					if ((SelectedTiles[0] % 5 == 0 && i % 5 == 4) || (SelectedTiles[1] % 5 == 4 && i % 5 == 0))
+					{
+						Tiles[i]->SetIsAble(false);
+						continue;
+					}
+				}
+
 				Tiles[i]->SetIsAble(true);
 			}
 			else
@@ -254,6 +279,11 @@ void ATileManager::UpdateBoardState()
 
 void ATileManager::ClearSeletedTiles()
 {
+	for (auto seleted : SelectedTiles)
+	{
+		Tiles[seleted]->SetOnToken(nullptr);
+	}
+
 	SelectedTiles.Reset();
 
 	//모든 타일 정리
