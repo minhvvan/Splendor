@@ -123,23 +123,6 @@ void APCPlay::Click()
 						SRClickToken(Token, SelectedToken.Num(), false);
 						SelectedToken.Remove(Token);
 					}
-
-					if (SelectedToken.Num() == 0)
-					{
-						// GetToken unable
-						if (WidgetDesk)
-						{
-							WidgetDesk->SetBtnGetTokenState(false);
-						}
-					}
-					else
-					{
-						//GetToken enable
-						if (WidgetDesk)
-						{
-							WidgetDesk->SetBtnGetTokenState(true);
-						}
-					}
 				}
 			}
 			else

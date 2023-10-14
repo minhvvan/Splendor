@@ -25,7 +25,6 @@ AToken::AToken()
 	bSelected = false;
 
 	Index = 25;
-
 }
 
 // Called when the game starts or when spawned

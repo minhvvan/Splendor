@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "HUDDesk.h"
@@ -8,6 +8,9 @@
 #include "PCPlay.h"
 #include "Kismet/GameplayStatics.h"
 #include "Token.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundCue.h"
+
 
 void UHUDDesk::NativeOnInitialized()
 {
@@ -31,15 +34,16 @@ void UHUDDesk::SetTurnTxt(FString turn)
 {
 }
 
-void UHUDDesk::SetBtnGetTokenState(bool bEnable)
+void UHUDDesk::RenderMessage(FText message)
 {
-	if (bEnable)
+	if (TxtMessage)
 	{
-		BtnGetToken->SetIsEnabled(true);
+		TxtMessage->SetText(message);
 	}
-	else
+
+	if (MessageAnim)
 	{
-		BtnGetToken->SetIsEnabled(false);
+		PlayAnimation(MessageAnim);
 	}
 }
 
@@ -51,11 +55,30 @@ void UHUDDesk::GetTokenClicked()
 	{
 		auto Tokens = PC->GetSelectedTokens();
 
+		if (Tokens.Num() == 0)
+		{
+			//!message: í† í°ì„ ì„ íƒí•´ ì£¼ì„¸ìš”.
+			if (FailedGetAnim)
+			{
+				PlayAnimation(FailedGetAnim);
+				
+				FString str = FString::Printf(TEXT("ë‹¹ì‹ ì˜ ì°¨ë¡€ê°€ ì•„ë‹™ë‹ˆë‹¤."));
+				RenderMessage(FText::FromString(str));
+
+				if (FailSound)
+				{
+					PlaySound(FailSound);
+				}
+			}
+
+			return;
+		}
+
 		Tokens.Sort([](const AToken& A, const AToken& B) {
 			return A.GetIndex() < B.GetIndex();
 		});
 
-		//»óÇÏ : 5
+		//ìƒí•˜ : 5
 		bool flag = true;
 
 		int diff = -1;
@@ -87,12 +110,9 @@ void UHUDDesk::GetTokenClicked()
 		if (flag)
 		{
 			// Get
-			//PossessTokens -> TokenManager(token move) -> TileManager(select Á¤¸®)
+			//PossessTokens -> TokenManager(token move) -> TileManager(select ì •ë¦¬)
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Success")));
 			PC->SRPossessTokens();
-
-			//ÅÏ Á¾·á 
-			//EndTurn -> Turn Switch
 
 			return;
 		}

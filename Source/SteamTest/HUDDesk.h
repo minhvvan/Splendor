@@ -23,7 +23,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UButton* BtnFillToken;
 
-
 	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
 	class UHUDCardHolder* CDHRed;
 
@@ -50,8 +49,18 @@ protected:
 	class UTextBlock* TxtScroll;	
 	
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UTextBlock* TxtTurn;
+	class UTextBlock* TxtTurn;	
 	
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UTextBlock* TxtMessage;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* FailedGetAnim;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* MessageAnim;
+
+
 	virtual void NativeOnInitialized();
 
 public:
@@ -60,8 +69,7 @@ public:
 	void SetScrollTxt(int scroll);
 	void SetTurnTxt(FString turn);
 
-	UFUNCTION()
-	void SetBtnGetTokenState(bool bEnable);
+	void RenderMessage(FText message);
 
 private:
 	UFUNCTION(BlueprintCallable)
@@ -70,4 +78,6 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void FilTokenClicked();
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	USoundBase* FailSound;
 };
