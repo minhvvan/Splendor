@@ -6,6 +6,20 @@
 #include "GameFramework/Actor.h"
 #include "Token.generated.h"
 
+UENUM(BlueprintType)	
+enum class ETokenType : uint8
+{
+	T_Red = 0   UMETA(DisplayName = "Red"),
+	T_Green		UMETA(DisplayName = "Green"),
+	T_Blue		UMETA(DisplayName = "Blue"),
+	T_White		UMETA(DisplayName = "White"),
+	T_Black		UMETA(DisplayName = "Black"),
+	T_Gold		UMETA(DisplayName = "Gold"),
+	T_Pearl		UMETA(DisplayName = "Pearl"),
+
+	E_End,
+};
+
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSelected);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnSelected);
@@ -47,6 +61,12 @@ public:
 	UFUNCTION()
 	void SetIndex(int idx) { Index = idx; };
 
+	UFUNCTION()
+	ETokenType GetTokenType() const { return TokenType; };
+
+	UFUNCTION()
+	void SetTokenType(ETokenType color) { TokenType = color; };
+
 protected:
 
 
@@ -65,4 +85,7 @@ private:
 
 	UPROPERTY()
 	int Index;
+
+	UPROPERTY()
+	ETokenType TokenType;
 };

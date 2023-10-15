@@ -91,6 +91,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
+				token->SetTokenType(ETokenType::T_Red);
 			}
 		}
 
@@ -103,6 +104,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
+				token->SetTokenType(ETokenType::T_Green);
 			}
 		}
 
@@ -115,6 +117,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
+				token->SetTokenType(ETokenType::T_Blue);
 			}
 		}
 
@@ -127,6 +130,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
+				token->SetTokenType(ETokenType::T_Black);
 			}
 		}
 
@@ -139,6 +143,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
+				token->SetTokenType(ETokenType::T_White);
 			}
 		}
 
@@ -151,6 +156,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
+				token->SetTokenType(ETokenType::T_Gold);
 			}
 		}
 
@@ -163,6 +169,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
+				token->SetTokenType(ETokenType::T_Pearl);
 			}
 		}
 

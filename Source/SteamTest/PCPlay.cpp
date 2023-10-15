@@ -73,7 +73,7 @@ void APCPlay::Click()
 		{
 			auto Token = Cast<AToken>(HitResult.GetActor());
 
-			if (IsTurn)
+			//if (IsTurn)
 			{
 				if (Token)
 				{
@@ -111,6 +111,27 @@ void APCPlay::Click()
 					{
 						if (SelectedToken.Num() < 3)
 						{
+							if (SelectedToken.Num() != 0 && Token->GetTokenType() == ETokenType::T_Gold)
+							{
+								if (WidgetDesk)
+								{
+									WidgetDesk->RenderMessage(FString::Printf(TEXT("황금 토큰을 선택할 수 없습니다.")));
+								}
+								return;
+							}
+
+							for (auto SToken : SelectedToken)
+							{
+								if (SToken->GetTokenType() == ETokenType::T_Gold)
+								{
+									if (WidgetDesk)
+									{
+										WidgetDesk->RenderMessage(FString::Printf(TEXT("이미 황금 토큰을 선택하였습니다.")));
+									}
+									return;
+								}
+							}
+
 							SelectedToken.AddUnique(Token);
 							SRClickToken(Token, SelectedToken.Num(), true);
 						}
@@ -130,13 +151,13 @@ void APCPlay::Click()
 					}
 				}
 			}
-			else
-			{
-				if (WidgetDesk)
-				{
-					WidgetDesk->RenderMessage(FString::Printf(TEXT("당신의 차례가 아닙니다.")));
-				}
-			}
+			//else
+			//{
+			//	if (WidgetDesk)
+			//	{
+			//		WidgetDesk->RenderMessage(FString::Printf(TEXT("당신의 차례가 아닙니다.")));
+			//	}
+			//}
 		}
 	}
 }
