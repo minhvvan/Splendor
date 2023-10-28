@@ -24,7 +24,10 @@ protected:
 	class UButton* BtnFillToken;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
-	class UHUDCardHolder* CDHRed;
+	class UHUDCardHolder* CDHRed;	
+	
+	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
+	class UHUDPopUpPannel* PUPannel;
 
 	//UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	//class UHUDCardHolder* CDHGreen;
@@ -60,9 +63,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* MessageAnim;
 
-
 	virtual void NativeOnInitialized();
-
 public:
 	void SetScoreTxt(int score);
 	void SetCrownTxt(int crown);
@@ -71,13 +72,18 @@ public:
 
 	void RenderMessage(FString message);
 
+	void NotifyOverToken();
+
 private:
 	UFUNCTION(BlueprintCallable)
 	void GetTokenClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void FilTokenClicked();
+	void FilTokenClicked();	
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	USoundBase* FailSound;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> OverTokenClass;
 };

@@ -34,7 +34,7 @@ public:
 	void FillTokens();
 
 	UFUNCTION()
-	void PossessTokens(bool b1Player);
+	void PossessTokens(APlayerController* PC);
 	
 	UFUNCTION()
 	void UseTokens(TArray<AToken*>& Tokens, bool b1Player);

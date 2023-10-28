@@ -50,6 +50,9 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClearSelectedTokens();
 
+	UFUNCTION()
+	void PopUpOverToken();
+
 protected:
 	virtual void SetupInputComponent() override;
 

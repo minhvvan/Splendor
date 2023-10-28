@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "STGameModePlay.h"
 #include "Algo/RandomShuffle.h"
+#include "PSPlayerInfo.h"
 
 // Sets default values
 ATokenManager::ATokenManager()
@@ -207,34 +208,47 @@ void ATokenManager::FillTokens()
 	PlaceTokens(UsedTokens);
 }
 
-void ATokenManager::PossessTokens(bool b1Player)
+void ATokenManager::PossessTokens(APlayerController* PC)
 {
-	if (b1Player)
+	auto Player = Cast<APCPlay>(PC);
+	if (Player)
 	{
+		bool b1Player = Player->GetTurn();
+
 		for (auto token : SelectedTokens)
 		{
 			RemainTokens.Remove(token);
-			P1Tokens.Add(token);
+			if (b1Player) P1Tokens.Add(token);
+			else P2Tokens.Add(token);
+
+			auto PS = Player->GetPlayerState<APSPlayerInfo>();
+			if (PS)
+			{
+				PS->AddToken(token->GetTokenType());
+			}
 
 			token->SetActorLocation(FVector(-300, 0, 0));
 		}
-	}
-	else
-	{
-		for (auto token : SelectedTokens)
+
+		if (b1Player)
 		{
-			RemainTokens.Remove(token);
-			P2Tokens.Add(token);
-
-			token->SetActorLocation(FVector(-300, 0, 0));
+			//~Test
+			if (P1Tokens.Num() > 10)
+			{
+				Player->PopUpOverToken();
+			}
 		}
+		else
+		{
+			//~Test
+			if (P2Tokens.Num() > 10)
+			{
+				Player->PopUpOverToken();
+			}
+		}
+
+		SelectedTokens.Reset();
 	}
-
-	SelectedTokens.Reset();
-
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Remain: %d"), RemainTokens.Num()));
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("PC1: %d"), P1Tokens.Num()));
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("PC2: %d"), P2Tokens.Num()));
 }
 
 void ATokenManager::UseTokens(TArray<AToken*>& Tokens, bool b1Player)

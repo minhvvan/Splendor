@@ -56,8 +56,6 @@ void APCPlay::ShowDesk()
 	}
 
 	WidgetDesk->AddToViewport();
-	//SetInputMode(FInputModeGameOnly());
-	//SetShowMouseCursor(false);
 	SetInputMode(FInputModeGameAndUI());
 	SetShowMouseCursor(true);
 }
@@ -265,4 +263,12 @@ void APCPlay::SRPossessTokens_Implementation()
 void APCPlay::ClearSelectedTokens_Implementation()
 {
 	SelectedToken.Reset();
+}
+
+void APCPlay::PopUpOverToken()
+{
+	if (WidgetDesk)
+	{
+		WidgetDesk->NotifyOverToken();
+	}
 }

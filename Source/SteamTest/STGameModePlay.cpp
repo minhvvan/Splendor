@@ -82,11 +82,7 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC)
 {
 	if (TokenManager)
 	{
-		if (TurnManager)
-		{
-			bool bCurrent = TurnManager->IsFirstPlayer(PC);
-			TokenManager->PossessTokens(bCurrent);
-		}
+		TokenManager->PossessTokens(PC);
 	}
 
 	if (TileManager)

@@ -28,6 +28,35 @@ public:
 	UFUNCTION()
 	bool GetMyTurn() { return MyTurn; };
 
+
+	//!------------------------token--------------------------------
+	UFUNCTION()
+	void AddToken(enum ETokenType type);
+
+	UFUNCTION()
+	void SetToken(enum ETokenType type, int num);
+
+	UFUNCTION()
+	int GetTokenRed() { return TokenNumRed; };
+
+	UFUNCTION()
+	int GetTokenGreen() { return TokenNumGreen; };
+
+	UFUNCTION()
+	int GetTokenBlue() { return TokenNumBlue; };
+
+	UFUNCTION()
+	int GetTokenWhite() { return TokenNumWhite; };
+
+	UFUNCTION()
+	int GetTokenBlack() { return TokenNumBlack; };
+
+	UFUNCTION()
+	int GetTokenGold() { return TokenNumGold; };
+
+	UFUNCTION()
+	int GetTokenPearl() { return TokenNumPearl; };
+
 protected:
 	UFUNCTION()
 	void CopyProperties(class APlayerState* PlayerState) override;
@@ -41,4 +70,25 @@ private:
 
 	UPROPERTY(Replicated)
 	bool MyTurn;
+
+	UPROPERTY(Replicated)
+	int TokenNumRed;
+
+	UPROPERTY(Replicated)
+	int TokenNumGreen;
+
+	UPROPERTY(Replicated)
+	int TokenNumBlue;
+
+	UPROPERTY(Replicated)
+	int TokenNumWhite;
+
+	UPROPERTY(Replicated)
+	int TokenNumBlack;
+
+	UPROPERTY(Replicated)
+	int TokenNumGold;
+
+	UPROPERTY(Replicated)
+	int TokenNumPearl;
 };

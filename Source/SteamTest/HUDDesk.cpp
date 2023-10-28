@@ -2,14 +2,15 @@
 
 
 #include "HUDDesk.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundCue.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "HUDCardHolder.h"
+#include "HUDOverToken.h"
 #include "PCPlay.h"
-#include "Kismet/GameplayStatics.h"
 #include "Token.h"
-#include "Components/AudioComponent.h"
-#include "Sound/SoundCue.h"
 
 
 void UHUDDesk::NativeOnInitialized()
@@ -47,6 +48,7 @@ void UHUDDesk::RenderMessage(FString message)
 	}
 }
 
+
 void UHUDDesk::GetTokenClicked()
 {
 	auto PC = Cast<APCPlay>(GetOwningPlayer());
@@ -57,7 +59,6 @@ void UHUDDesk::GetTokenClicked()
 
 		if (Tokens.Num() == 0)
 		{
-			//!message: 토큰을 선택해 주세요.
 			if (FailedGetAnim)
 			{
 				PlayAnimation(FailedGetAnim);
@@ -108,19 +109,29 @@ void UHUDDesk::GetTokenClicked()
 		
 		if (flag)
 		{
-			// Get
 			//PossessTokens -> TokenManager(token move) -> TileManager(select 정리)
-			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Success")));
 			PC->SRPossessTokens();
 
 			return;
 		}
-
-		//error 
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Fail")));
 	}
 }
 
 void UHUDDesk::FilTokenClicked()
 {
+}
+
+void UHUDDesk::NotifyOverToken()
+{
+	//위젯 생성 + attach
+	if (OverTokenClass)
+	{
+		auto widget = Cast<UHUDOverToken>(CreateWidget(GetWorld(), OverTokenClass));
+		if (widget)
+		{
+			widget->AddToViewport();
+		}
+	}
+
+	//그쪽에서 확인이 눌리면 -> detatch
 }
