@@ -69,7 +69,6 @@ void ATokenManager::BeginPlay()
 void ATokenManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ATokenManager::SpawnTokens()
@@ -205,18 +204,16 @@ void ATokenManager::SelectedToken(AToken* token, bool bSelected)
 
 void ATokenManager::FillTokens()
 {
-	PlaceTokens(UsedTokens);
+	PlaceTokens(Pouch);
 }
 
-void ATokenManager::PossessTokens(APlayerController* PC)
+void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 {
 	auto Player = Cast<APCPlay>(PC);
 	auto PS = Player->GetPlayerState<APSPlayerInfo>();
 
 	if (Player && PS)
 	{
-		bool b1Player = Player->GetTurn();
-
 		bool flag = true;
 		int pearlCnt = 0;
 		ETokenType current = ETokenType::E_End;
@@ -231,33 +228,18 @@ void ATokenManager::PossessTokens(APlayerController* PC)
 			}
 			else
 			{
-				//if (current != tType) flag = false;
+				if (current != tType) flag = false;
 			}
 
 			RemainTokens.Remove(token);
-			if (b1Player) P1Tokens.Add(token);
-			else P2Tokens.Add(token);
+			if (bFirst) P1Tokens.Add({ tType, token });
+			else P2Tokens.Add({ tType, token });
 
 			PS->AddToken(token->GetTokenType());
 			token->SetActorLocation(FVector(-300, 0, 0));
 		}
 
-		if (b1Player)
-		{
-			//~Test
-			if (P1Tokens.Num() > 10)
-			{
-				Player->PopUpOverToken();
-			}
-		}
-		else
-		{
-			//~Test
-			if (P2Tokens.Num() > 10)
-			{
-				Player->PopUpOverToken();
-			}
-		}
+		PS->UpdateTotalToken(SelectedTokens.Num());
 
 		if (flag || pearlCnt >= 2)
 		{

@@ -24,6 +24,7 @@ void APSPlayerInfo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(APSPlayerInfo, TokenNumBlack);
 	DOREPLIFETIME(APSPlayerInfo, TokenNumGold);
 	DOREPLIFETIME(APSPlayerInfo, TokenNumPearl);
+	DOREPLIFETIME(APSPlayerInfo, TotalTokenNum);
 
 	DOREPLIFETIME(APSPlayerInfo, ScrollNum);
 }
@@ -97,6 +98,18 @@ void APSPlayerInfo::SetToken(ETokenType type, int num)
 	}
 }
 
+void APSPlayerInfo::PrintToken()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Red: %d"), TokenNumRed));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Green: %d"), TokenNumGreen));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Blue: %d"), TokenNumBlue));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("White: %d"), TokenNumWhite));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Black: %d"), TokenNumBlack));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Gold: %d"), TokenNumGold));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Pearl: %d"), TokenNumPearl));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("-----------------------------")));
+}
+
 void APSPlayerInfo::AddScroll(int num)
 {
 	ScrollNum += num;
@@ -106,8 +119,15 @@ void APSPlayerInfo::AddScroll(int num)
 void APSPlayerInfo::OnRep_Scroll()
 {
 	//~왜 서버쪽 PS변경시 클라에서 동작?
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("scroll: %d"), ScrollNum));
 	OnScrollChanged.Broadcast();
+}
+
+void APSPlayerInfo::OnRep_TotalTokenNum()
+{
+	if (TotalTokenNum > 10)
+	{
+		OnOverToken.Broadcast();
+	}
 }
 
 void APSPlayerInfo::CopyProperties(APlayerState* PlayerState)
@@ -116,8 +136,6 @@ void APSPlayerInfo::CopyProperties(APlayerState* PlayerState)
 
 	if (PlayerState)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("CopyProperties")));
-
 		APSPlayerInfo* NewPlayerState = Cast<APSPlayerInfo>(PlayerState);
 		if (NewPlayerState)
 		{

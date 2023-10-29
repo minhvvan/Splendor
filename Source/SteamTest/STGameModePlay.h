@@ -34,7 +34,7 @@ public:
 	void TokenClicked(class AToken* ClickedToken, int cnt, bool bAble);
 
 	UFUNCTION()
-	void PossessTokens(APlayerController* PC);
+	void PossessTokens(APlayerController* PC, bool bFirst);
 
 	UFUNCTION()
 	void GiveScroll(APlayerController* player);

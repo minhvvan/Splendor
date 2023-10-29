@@ -7,6 +7,7 @@
 #include "PSPlayerInfo.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FDeleChangeScroll)
+DECLARE_MULTICAST_DELEGATE(FDeleOverToken)
 
 UCLASS()
 class STEAMTEST_API APSPlayerInfo : public APlayerState
@@ -58,6 +59,12 @@ public:
 	UFUNCTION()
 	int GetTokenPearl() { return TokenNumPearl; };
 
+	UFUNCTION()
+	void UpdateTotalToken(int num) { TotalTokenNum += num; };
+
+	UFUNCTION()
+	void PrintToken();
+
 	//!---------------Scroll---------------
 	UFUNCTION()
 	void AddScroll(int num);
@@ -68,7 +75,12 @@ public:
 	UFUNCTION()
 	void OnRep_Scroll();
 
+	UFUNCTION()
+	void OnRep_TotalTokenNum();
+
+	//!-------------Delegate-----------
 	FDeleChangeScroll OnScrollChanged;
+	FDeleOverToken OnOverToken;
 
 protected:
 	UFUNCTION()
@@ -107,6 +119,9 @@ private:
 
 	UPROPERTY(replicated)
 	int TokenNumPearl;
+
+	UPROPERTY(ReplicatedUsing = OnRep_TotalTokenNum)
+	int TotalTokenNum;
 
 	UPROPERTY(ReplicatedUsing = OnRep_Scroll)
 	int ScrollNum;

@@ -53,6 +53,12 @@ void ASTGameModePlay::StartMatch()
 	{
 		TokenManager->AddScroll.AddUObject(this, &ASTGameModePlay::GiveScroll);
 	}
+
+	auto GS = GetGameState<AGSPlay>();
+	if (GS && IsValid(GS)) 
+	{
+		GS->InitState();
+	}
 }
 
 void ASTGameModePlay::SetTokenSpawnLoc(TArray<class AToken*>& Tokens)
@@ -83,11 +89,11 @@ void ASTGameModePlay::TokenClicked(AToken* ClickedToken, int cnt, bool bAble)
 	}
 }
 
-void ASTGameModePlay::PossessTokens(APlayerController* PC)
+void ASTGameModePlay::PossessTokens(APlayerController* PC, bool bFirst)
 {
 	if (TokenManager)
 	{
-		TokenManager->PossessTokens(PC);
+		TokenManager->PossessTokens(PC, bFirst);
 	}
 
 	if (TileManager)
@@ -100,10 +106,32 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC)
 	{
 		TurnManager->EndCurrentTurn();
 	}
+
+	for (auto ps : GetGameState<AGSPlay>()->PlayerArray)
+	{
+		Cast<APSPlayerInfo>(ps)->PrintToken();
+	}
 }
 
 void ASTGameModePlay::GiveScroll(APlayerController* player)
 {
+	int minus = 0;
+
+	auto GS = GetGameState<AGSPlay>();
+	if (GS && IsValid(GS))
+	{
+		int scroll = GS->GetGlobalScroll();
+
+		if (scroll == 0)
+		{
+			minus = -1;
+		}
+		else
+		{
+			GS->AddGlobalScroll(-1);
+		}
+	}
+
 	if (TurnManager)
 	{
 		if (TurnManager->IsFirstPlayer(player))
@@ -112,7 +140,6 @@ void ASTGameModePlay::GiveScroll(APlayerController* player)
 			APCPlay* Second = TurnManager->GetScondPlayer();
 			if (Second)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Give Second")));
 				Second->GetPlayerState<APSPlayerInfo>()->AddScroll(1);
 			}
 		}
@@ -122,9 +149,13 @@ void ASTGameModePlay::GiveScroll(APlayerController* player)
 			APCPlay* First = TurnManager->GetFirstPlayer();
 			if (First)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Give First")));
 				First->GetPlayerState<APSPlayerInfo>()->AddScroll(1);
 			}
+		}
+
+		if (minus < 0)
+		{
+			player->GetPlayerState<APSPlayerInfo>()->AddScroll(minus);
 		}
 	}
 }

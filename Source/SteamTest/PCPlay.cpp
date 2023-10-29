@@ -252,13 +252,13 @@ void APCPlay::SRClickToken_Implementation(AToken* ClickedToken, int cnt, bool bA
 	}
 }
 
-void APCPlay::SRPossessTokens_Implementation()
+void APCPlay::SRPossessTokens_Implementation(bool bFirst)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	if (GM)
 	{
-		GM->PossessTokens(this);
+		GM->PossessTokens(this, bFirst);
 
 		//Client PC Reset
 		ClearSelectedTokens();
@@ -270,7 +270,7 @@ void APCPlay::ClearSelectedTokens_Implementation()
 	SelectedToken.Reset();
 }
 
-void APCPlay::PopUpOverToken()
+void APCPlay::PopUpOverToken_Implementation()
 {
 	if (WidgetDesk)
 	{
@@ -286,6 +286,17 @@ void APCPlay::BindState()
 		{
 			WidgetDesk->BindState(GetPlayerState<APSPlayerInfo>());
 		}
+	}
+}
+
+void APCPlay::SRPossessTokens_Implementation(TMap<ETokenType, int> Restore)
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GM)
+	{
+		//Tokenmanager
+		//전달받은 개수 만큼 반환
 	}
 }
 

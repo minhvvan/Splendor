@@ -36,7 +36,7 @@ public:
 	void FillTokens();
 
 	UFUNCTION()
-	void PossessTokens(APlayerController* PC);
+	void PossessTokens(APlayerController* PC, bool bFirst);
 	
 	UFUNCTION()
 	void UseTokens(TArray<AToken*>& Tokens, bool b1Player);
@@ -45,12 +45,12 @@ public:
 
 private:
 	TArray<AToken*> RemainTokens;
-	TArray<AToken*> UsedTokens;
+	TArray<AToken*> Pouch;
 
 	TArray<AToken*> SelectedTokens;
 
-	TArray<AToken*> P1Tokens;
-	TArray<AToken*> P2Tokens;
+	TMap<ETokenType, AToken*> P1Tokens;
+	TMap<ETokenType, AToken*> P2Tokens;
 
 	TArray<TArray<AToken*>> Board;
 

@@ -44,15 +44,14 @@ void UHUDDesk::BindState(APSPlayerInfo* ps)
 {
 	if (IsValid(ps))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("BindState")));
 		CurrentState = ps;
 		ps->OnScrollChanged.AddUObject(this, &UHUDDesk::ChangedScroll);
+		ps->OnOverToken.AddUObject(this, &UHUDDesk::NotifyOverToken);
 	}
 }
 
 void UHUDDesk::ChangedScroll()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangeScroll")));
 
 	if (CurrentState.IsValid())
 	{
@@ -133,8 +132,8 @@ void UHUDDesk::GetTokenClicked()
 		
 		if (flag)
 		{
-			//PossessTokens -> TokenManager(token move) -> TileManager(select 정리)
-			PC->SRPossessTokens();
+			auto PS = Cast<APSPlayerInfo>(PC->PlayerState);
+			PC->SRPossessTokens(PS->GetBFirst());
 
 			return;
 		}
@@ -147,7 +146,6 @@ void UHUDDesk::FilTokenClicked()
 
 void UHUDDesk::NotifyOverToken()
 {
-	//위젯 생성 + attach
 	if (OverTokenClass)
 	{
 		auto widget = Cast<UHUDOverToken>(CreateWidget(GetWorld(), OverTokenClass));

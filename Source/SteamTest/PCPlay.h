@@ -45,18 +45,20 @@ public:
 	bool GetTurn() { return IsTurn; };
 
 	UFUNCTION(Server, Reliable)
-	void SRPossessTokens();
+	void SRPossessTokens(bool bFirst);
 
 	UFUNCTION(Client, Reliable)
 	void ClearSelectedTokens();
 
-	UFUNCTION()
+	UFUNCTION(Client, Reliable)
 	void PopUpOverToken();
 
 	UFUNCTION()
 	void BindState();
 
-	//!------------Desk-------
+	//!------------DESK-------
+	UFUNCTION(Server, Reliable)
+	void SRPossessTokens(TMap<ETokenType, int> Restore/*ÂüÁ¶????*/);
 
 
 protected:

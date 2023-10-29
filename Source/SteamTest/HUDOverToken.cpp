@@ -287,6 +287,8 @@ void UHUDOverToken::CommitTokens()
 		return;
 	}
 
+	//!TODO: token 버려야됨
+	//! token manager에서  정해진 개수만큼 빼서 파우치로 옮기기
 	if (PS)
 	{
 		PS->SetToken(ETokenType::T_Red, RedNum);
@@ -297,6 +299,9 @@ void UHUDOverToken::CommitTokens()
 		PS->SetToken(ETokenType::T_Gold, GoldNum);
 		PS->SetToken(ETokenType::T_Pearl, PearlNum);
 	}
+
+	//서버에 넣어야 됨 -> PC한테 요청
+	GetOwningPlayer<APCPlay>()->
 
 	RemoveFromParent();
 }
