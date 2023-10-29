@@ -67,8 +67,16 @@ protected:
 public:
 	void SetScoreTxt(int score);
 	void SetCrownTxt(int crown);
+
+	UFUNCTION()
 	void SetScrollTxt(int scroll);
 	void SetTurnTxt(FString turn);
+
+	UFUNCTION()
+	void BindState(class APSPlayerInfo* ps);
+
+	UFUNCTION()
+	void ChangedScroll();
 
 	void RenderMessage(FString message);
 
@@ -86,4 +94,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> OverTokenClass;
+
+	UPROPERTY()
+	TWeakObjectPtr<APSPlayerInfo> CurrentState;
 };

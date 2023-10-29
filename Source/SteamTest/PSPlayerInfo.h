@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerState.h"
 #include "PSPlayerInfo.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FDeleChangeScroll)
+
 UCLASS()
 class STEAMTEST_API APSPlayerInfo : public APlayerState
 {
@@ -23,11 +25,10 @@ public:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 	UFUNCTION()
-	void SetMyTrun(bool flag) { MyTurn = flag; };
+	void SetBFirst(bool flag) { bFirst = flag; };
 
 	UFUNCTION()
-	bool GetMyTurn() { return MyTurn; };
-
+	bool GetBFirst() { return bFirst; };
 
 	//!------------------------token--------------------------------
 	UFUNCTION()
@@ -57,38 +58,56 @@ public:
 	UFUNCTION()
 	int GetTokenPearl() { return TokenNumPearl; };
 
+	//!---------------Scroll---------------
+	UFUNCTION()
+	void AddScroll(int num);
+
+	UFUNCTION()
+	int GetScroll() { return ScrollNum; };
+
+	UFUNCTION()
+	void OnRep_Scroll();
+
+	FDeleChangeScroll OnScrollChanged;
+
 protected:
 	UFUNCTION()
-	void CopyProperties(class APlayerState* PlayerState) override;
+	virtual void CopyProperties(class APlayerState* PlayerState) override;
 
 	UFUNCTION()
-	void OverrideWith(class APlayerState* PlayerState) override;
+	virtual void OverrideWith(class APlayerState* PlayerState) override;
+
+	UFUNCTION()
+	virtual void ClientInitialize(class AController* C) override;
 
 private:
-	UPROPERTY(Replicated)
+	UPROPERTY(replicated)
 	FString PName;
 
-	UPROPERTY(Replicated)
-	bool MyTurn;
+	UPROPERTY(replicated)
+	bool bFirst;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(replicated)
 	int TokenNumRed;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(replicated)
 	int TokenNumGreen;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(replicated)
 	int TokenNumBlue;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(replicated)
 	int TokenNumWhite;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(replicated)
 	int TokenNumBlack;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(replicated)
 	int TokenNumGold;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(replicated)
 	int TokenNumPearl;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Scroll)
+	int ScrollNum;
 };

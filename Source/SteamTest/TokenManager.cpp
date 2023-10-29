@@ -211,22 +211,34 @@ void ATokenManager::FillTokens()
 void ATokenManager::PossessTokens(APlayerController* PC)
 {
 	auto Player = Cast<APCPlay>(PC);
-	if (Player)
+	auto PS = Player->GetPlayerState<APSPlayerInfo>();
+
+	if (Player && PS)
 	{
 		bool b1Player = Player->GetTurn();
 
+		bool flag = true;
+		int pearlCnt = 0;
+		ETokenType current = ETokenType::E_End;
 		for (auto token : SelectedTokens)
 		{
+			auto tType = token->GetTokenType();
+			if (tType == ETokenType::T_Pearl) pearlCnt++;
+
+			if (current == ETokenType::E_End)
+			{
+				current = tType;
+			}
+			else
+			{
+				//if (current != tType) flag = false;
+			}
+
 			RemainTokens.Remove(token);
 			if (b1Player) P1Tokens.Add(token);
 			else P2Tokens.Add(token);
 
-			auto PS = Player->GetPlayerState<APSPlayerInfo>();
-			if (PS)
-			{
-				PS->AddToken(token->GetTokenType());
-			}
-
+			PS->AddToken(token->GetTokenType());
 			token->SetActorLocation(FVector(-300, 0, 0));
 		}
 
@@ -245,6 +257,11 @@ void ATokenManager::PossessTokens(APlayerController* PC)
 			{
 				Player->PopUpOverToken();
 			}
+		}
+
+		if (flag || pearlCnt >= 2)
+		{
+			AddScroll.Broadcast(Player);
 		}
 
 		SelectedTokens.Reset();

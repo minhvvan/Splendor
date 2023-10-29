@@ -50,14 +50,19 @@ void APCPlay::BeginPlay()
 
 void APCPlay::ShowDesk()
 {
-	if (!WidgetDesk)
+	if (IsLocalController())
 	{
-		WidgetDesk = Cast<UHUDDesk>(CreateWidget(GetWorld(), DeskClass));
-	}
+		if (!WidgetDesk)
+		{
+			WidgetDesk = Cast<UHUDDesk>(CreateWidget(GetWorld(), DeskClass));
+		}
 
-	WidgetDesk->AddToViewport();
-	SetInputMode(FInputModeGameAndUI());
-	SetShowMouseCursor(true);
+		WidgetDesk->AddToViewport();
+		WidgetDesk->BindState(GetPlayerState<APSPlayerInfo>());
+
+		SetInputMode(FInputModeGameAndUI());
+		SetShowMouseCursor(true);
+	}
 }
 
 void APCPlay::Click()
@@ -71,7 +76,7 @@ void APCPlay::Click()
 		{
 			auto Token = Cast<AToken>(HitResult.GetActor());
 
-			//if (IsTurn)
+			if (IsTurn)
 			{
 				if (Token)
 				{
@@ -149,13 +154,13 @@ void APCPlay::Click()
 					}
 				}
 			}
-			//else
-			//{
-			//	if (WidgetDesk)
-			//	{
-			//		WidgetDesk->RenderMessage(FString::Printf(TEXT("당신의 차례가 아닙니다.")));
-			//	}
-			//}
+			else
+			{
+				if (WidgetDesk)
+				{
+					WidgetDesk->RenderMessage(FString::Printf(TEXT("당신의 차례가 아닙니다.")));
+				}
+			}
 		}
 	}
 }
@@ -233,7 +238,7 @@ void APCPlay::SRSetTurn_Implementation()
 		//GS Update
 		if (GM)
 		{
-			GM->InitPlayerTurn(this, PS->GetMyTurn());
+			GM->InitPlayerTurn(this, PS->GetBFirst());
 		}
 	}
 }
@@ -271,4 +276,20 @@ void APCPlay::PopUpOverToken()
 	{
 		WidgetDesk->NotifyOverToken();
 	}
+}
+
+void APCPlay::BindState()
+{
+	if (IsLocalController())
+	{
+		if (WidgetDesk && IsValid(WidgetDesk))
+		{
+			WidgetDesk->BindState(GetPlayerState<APSPlayerInfo>());
+		}
+	}
+}
+
+void APCPlay::SetTurn(bool flag)
+{
+	IsTurn = flag;
 }

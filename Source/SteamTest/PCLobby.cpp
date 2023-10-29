@@ -108,7 +108,7 @@ void APCLobby::SRFirstPlayerClicked_Implementation()
 		auto PS = GetPlayerState<APSPlayerInfo>();
 		if (PS)
 		{
-			PS->SetMyTrun(true);
+			PS->SetBFirst(true);
 			PlayerName = PS->GetPName();
 			bEnableFirst = false;
 		}
@@ -116,7 +116,7 @@ void APCLobby::SRFirstPlayerClicked_Implementation()
 	else
 	{
 		auto PS = GetPlayerState<APSPlayerInfo>();
-		PS->SetMyTrun(false);
+		PS->SetBFirst(false);
 		PlayerName = "";
 		bEnableFirst = true;
 	}

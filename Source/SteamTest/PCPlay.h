@@ -39,7 +39,7 @@ public:
 	TArray<AToken*>& GetSelectedTokens() { return SelectedToken; };
 
 	UFUNCTION()
-	void SetTurn(bool flag) { IsTurn = flag; };
+	void SetTurn(bool flag);
 
 	UFUNCTION()
 	bool GetTurn() { return IsTurn; };
@@ -52,6 +52,12 @@ public:
 
 	UFUNCTION()
 	void PopUpOverToken();
+
+	UFUNCTION()
+	void BindState();
+
+	//!------------Desk-------
+
 
 protected:
 	virtual void SetupInputComponent() override;

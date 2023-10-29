@@ -36,6 +36,9 @@ public:
 	UFUNCTION()
 	void PossessTokens(APlayerController* PC);
 
+	UFUNCTION()
+	void GiveScroll(APlayerController* player);
+
 protected:
 	virtual void HandleSeamlessTravelPlayer(AController*& C) override;
 

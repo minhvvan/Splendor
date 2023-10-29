@@ -289,7 +289,5 @@ void ATileManager::ClearSeletedTiles()
 	//모든 타일 정리
 	UpdateBoardState();
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Tile: %d"), SelectedTiles.Num()));
-
 	//!TODO: 가져간 타일을 끌지 말지 정해야함
 }

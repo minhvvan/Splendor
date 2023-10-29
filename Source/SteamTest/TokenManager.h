@@ -7,6 +7,8 @@
 #include "Token.h"
 #include "TokenManager.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeleAddScroll, APlayerController*);
+
 UCLASS()
 class STEAMTEST_API ATokenManager : public AActor
 {
@@ -38,6 +40,8 @@ public:
 	
 	UFUNCTION()
 	void UseTokens(TArray<AToken*>& Tokens, bool b1Player);
+
+	FDeleAddScroll AddScroll;
 
 private:
 	TArray<AToken*> RemainTokens;

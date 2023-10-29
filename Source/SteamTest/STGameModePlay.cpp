@@ -30,7 +30,7 @@ void ASTGameModePlay::InitPlayerTurn(APlayerController* Player, bool bFirst)
 		{
 			for (auto PS : GS->PlayerArray)
 			{
-				TurnManager->InitPlayerTurn(PS->GetPlayerController(), Cast<APSPlayerInfo>(PS)->GetMyTurn());
+				TurnManager->InitPlayerTurn(PS->GetPlayerController(), Cast<APSPlayerInfo>(PS)->GetBFirst());
 			}
 		}
 	}
@@ -48,6 +48,11 @@ void ASTGameModePlay::StartMatch()
 	TileManager = GetWorld()->SpawnActor<ATileManager>();
 	TokenManager = GetWorld()->SpawnActor<ATokenManager>();
 	TurnManager = GetWorld()->SpawnActor<ATurnManager>();
+
+	if (TokenManager)
+	{
+		TokenManager->AddScroll.AddUObject(this, &ASTGameModePlay::GiveScroll);
+	}
 }
 
 void ASTGameModePlay::SetTokenSpawnLoc(TArray<class AToken*>& Tokens)
@@ -94,6 +99,33 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC)
 	if (TurnManager)
 	{
 		TurnManager->EndCurrentTurn();
+	}
+}
+
+void ASTGameModePlay::GiveScroll(APlayerController* player)
+{
+	if (TurnManager)
+	{
+		if (TurnManager->IsFirstPlayer(player))
+		{
+			//second
+			APCPlay* Second = TurnManager->GetScondPlayer();
+			if (Second)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Give Second")));
+				Second->GetPlayerState<APSPlayerInfo>()->AddScroll(1);
+			}
+		}
+		else
+		{
+			//first
+			APCPlay* First = TurnManager->GetFirstPlayer();
+			if (First)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Give First")));
+				First->GetPlayerState<APSPlayerInfo>()->AddScroll(1);
+			}
+		}
 	}
 }
 

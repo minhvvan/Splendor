@@ -10,6 +10,7 @@
 #include "HUDCardHolder.h"
 #include "HUDOverToken.h"
 #include "PCPlay.h"
+#include "PSPlayerInfo.h"
 #include "Token.h"
 
 
@@ -29,10 +30,34 @@ void UHUDDesk::SetCrownTxt(int crown)
 
 void UHUDDesk::SetScrollTxt(int scroll)
 {
+	if (TxtScroll)
+	{
+		TxtScroll->SetText(FText::AsNumber(scroll));
+	}
 }
 
 void UHUDDesk::SetTurnTxt(FString turn)
 {
+}
+
+void UHUDDesk::BindState(APSPlayerInfo* ps)
+{
+	if (IsValid(ps))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("BindState")));
+		CurrentState = ps;
+		ps->OnScrollChanged.AddUObject(this, &UHUDDesk::ChangedScroll);
+	}
+}
+
+void UHUDDesk::ChangedScroll()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangeScroll")));
+
+	if (CurrentState.IsValid())
+	{
+		SetScrollTxt(CurrentState->GetScroll());
+	}
 }
 
 void UHUDDesk::RenderMessage(FString message)
@@ -78,7 +103,6 @@ void UHUDDesk::GetTokenClicked()
 			return A.GetIndex() < B.GetIndex();
 		});
 
-		//상하 : 5
 		bool flag = true;
 
 		int diff = -1;
@@ -132,6 +156,4 @@ void UHUDDesk::NotifyOverToken()
 			widget->AddToViewport();
 		}
 	}
-
-	//그쪽에서 확인이 눌리면 -> detatch
 }

@@ -5,8 +5,9 @@
 #include "Net/UnrealNetwork.h"
 #include "UObject/CoreNet.h"
 #include "Token.h"
+#include "PCPlay.h"
 
-APSPlayerInfo::APSPlayerInfo(): PName(""), MyTurn(false)
+APSPlayerInfo::APSPlayerInfo(): PName(""), bFirst(false)
 {
 }
 
@@ -14,7 +15,17 @@ void APSPlayerInfo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APSPlayerInfo, PName);
-	DOREPLIFETIME(APSPlayerInfo, MyTurn);
+	DOREPLIFETIME(APSPlayerInfo, bFirst);
+
+	DOREPLIFETIME(APSPlayerInfo, TokenNumRed);
+	DOREPLIFETIME(APSPlayerInfo, TokenNumGreen);
+	DOREPLIFETIME(APSPlayerInfo, TokenNumBlue);
+	DOREPLIFETIME(APSPlayerInfo, TokenNumWhite);
+	DOREPLIFETIME(APSPlayerInfo, TokenNumBlack);
+	DOREPLIFETIME(APSPlayerInfo, TokenNumGold);
+	DOREPLIFETIME(APSPlayerInfo, TokenNumPearl);
+
+	DOREPLIFETIME(APSPlayerInfo, ScrollNum);
 }
 
 void APSPlayerInfo::AddToken(ETokenType type)
@@ -86,6 +97,18 @@ void APSPlayerInfo::SetToken(ETokenType type, int num)
 	}
 }
 
+void APSPlayerInfo::AddScroll(int num)
+{
+	ScrollNum += num;
+	OnScrollChanged.Broadcast();
+}
+
+void APSPlayerInfo::OnRep_Scroll()
+{
+	//~왜 서버쪽 PS변경시 클라에서 동작?
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("scroll: %d"), ScrollNum));
+	OnScrollChanged.Broadcast();
+}
 
 void APSPlayerInfo::CopyProperties(APlayerState* PlayerState)
 {
@@ -93,11 +116,13 @@ void APSPlayerInfo::CopyProperties(APlayerState* PlayerState)
 
 	if (PlayerState)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("CopyProperties")));
+
 		APSPlayerInfo* NewPlayerState = Cast<APSPlayerInfo>(PlayerState);
 		if (NewPlayerState)
 		{
 			NewPlayerState->PName = PName;
-			NewPlayerState->MyTurn = MyTurn;
+			NewPlayerState->bFirst = bFirst;
 		}
 	}
 }
@@ -111,7 +136,14 @@ void APSPlayerInfo::OverrideWith(APlayerState* PlayerState)
 		if (OldPlayerState)
 		{
 			PName = OldPlayerState->PName;
-			MyTurn = OldPlayerState->MyTurn;
+			bFirst = OldPlayerState->bFirst;
 		}
 	}
+}
+
+void APSPlayerInfo::ClientInitialize(AController* C)
+{
+	Super::ClientInitialize(C);
+
+	Cast<APCPlay>(GetOwningController())->BindState();
 }

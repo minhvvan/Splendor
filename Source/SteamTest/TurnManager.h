@@ -28,6 +28,12 @@ public:
 
 	bool IsFirstPlayer(APlayerController* PC);
 
+	UFUNCTION()
+	APCPlay* GetFirstPlayer() { return Players[0]; };
+
+	UFUNCTION()
+	APCPlay* GetScondPlayer() { return Players[1]; };
+
 private:
 	int PlayerTurn = 0;
 
