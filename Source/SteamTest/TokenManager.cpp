@@ -232,8 +232,8 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 			}
 
 			RemainTokens.Remove(token);
-			if (bFirst) P1Tokens.Add({ tType, token });
-			else P2Tokens.Add({ tType, token });
+			if (bFirst) P1Tokens.Add(tType, token);
+			else P2Tokens.Add(tType, token);
 
 			PS->AddToken(token->GetTokenType());
 			token->SetActorLocation(FVector(-300, 0, 0));
@@ -250,6 +250,15 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 	}
 }
 
-void ATokenManager::UseTokens(TArray<AToken*>& Tokens, bool b1Player)
+void ATokenManager::UseTokens(FRestroeTokens Tokens, bool bFirst)
 {
+	auto& CurrentPlayer = bFirst ? P1Tokens : P2Tokens;
+
+
+	for (auto& token : Tokens.RestoreTokens)
+	{
+		//찾아서 제거 -> pouch로 옮겨야됨
+		auto removedToken = CurrentPlayer.Remove(token);
+		Pouch.Add(removedToken);
+	}
 }

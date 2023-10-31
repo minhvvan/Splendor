@@ -113,6 +113,14 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC, bool bFirst)
 	}
 }
 
+void ASTGameModePlay::RestoreTokens(FRestroeTokens Restore, bool bFirst)
+{
+	if (TokenManager)
+	{
+		TokenManager->UseTokens(Restore, bFirst);
+	}
+}
+
 void ASTGameModePlay::GiveScroll(APlayerController* player)
 {
 	int minus = 0;

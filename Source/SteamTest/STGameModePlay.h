@@ -27,6 +27,7 @@ public:
 
 	virtual void StartMatch() override;
 
+	//!-----------Token-----------------------
 	UFUNCTION()
 	void SetTokenSpawnLoc(TArray<class AToken*>& Tokens);
 
@@ -36,6 +37,10 @@ public:
 	UFUNCTION()
 	void PossessTokens(APlayerController* PC, bool bFirst);
 
+	UFUNCTION()
+	void RestoreTokens(FRestroeTokens Restore, bool bFirst);
+
+	//!-----------------Scroll---------------------
 	UFUNCTION()
 	void GiveScroll(APlayerController* player);
 

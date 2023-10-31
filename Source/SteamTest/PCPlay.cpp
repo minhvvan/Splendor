@@ -289,7 +289,7 @@ void APCPlay::BindState()
 	}
 }
 
-void APCPlay::SRPossessTokens_Implementation(TMap<ETokenType, int> Restore)
+void APCPlay::SRRestoreToken_Implementation(FRestroeTokens Restore)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 
@@ -297,6 +297,7 @@ void APCPlay::SRPossessTokens_Implementation(TMap<ETokenType, int> Restore)
 	{
 		//Tokenmanager
 		//전달받은 개수 만큼 반환
+		GM->RestoreTokens(Restore, GetPlayerState<APSPlayerInfo>()->GetBFirst());
 	}
 }
 

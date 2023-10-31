@@ -291,17 +291,25 @@ void UHUDOverToken::CommitTokens()
 	//! token manager에서  정해진 개수만큼 빼서 파우치로 옮기기
 	if (PS)
 	{
-		PS->SetToken(ETokenType::T_Red, RedNum);
-		PS->SetToken(ETokenType::T_Green, GreenNum);
-		PS->SetToken(ETokenType::T_Blue, BlueNum);
-		PS->SetToken(ETokenType::T_White, WhiteNum);
-		PS->SetToken(ETokenType::T_Black, BlackNum);
-		PS->SetToken(ETokenType::T_Gold, GoldNum);
-		PS->SetToken(ETokenType::T_Pearl, PearlNum);
-	}
+		auto Restore = FRestroeTokens();
 
-	//서버에 넣어야 됨 -> PC한테 요청
-	GetOwningPlayer<APCPlay>()->
+
+		for (ETokenType type : TEnumRange<ETokenType>())
+		{
+			int current = GetTokenNumByType(type);
+
+			int diff = PS->GetTokenNum(type) - current;
+			for (int i = 0; i < diff; i++)
+			{
+				Restore.RestoreTokens.Add(type);
+			}
+
+			PS->SetToken(ETokenType::T_Red, current);
+		}
+
+		//서버에 넣어야 됨 -> PC한테 요청
+		GetOwningPlayer<APCPlay>()->SRRestoreToken(Restore);
+	}
 
 	RemoveFromParent();
 }
@@ -319,6 +327,29 @@ void UHUDOverToken::UpdateTotalToken()
 	{
 		TxtCurrentToken->SetColorAndOpacity(FColor::White);
 	}
+}
+
+int UHUDOverToken::GetTokenNumByType(ETokenType type)
+{
+	switch (type)
+	{
+	case ETokenType::T_Red:
+		return RedNum;
+	case ETokenType::T_Green:
+		return GreenNum;
+	case ETokenType::T_Blue:
+		return BlueNum;
+	case ETokenType::T_White:
+		return WhiteNum;
+	case ETokenType::T_Black:
+		return BlackNum;
+	case ETokenType::T_Gold:
+		return GoldNum;
+	case ETokenType::T_Pearl:
+		return PearlNum;
+	}
+
+	return 0;
 }
 
 void UHUDOverToken::FailClick(ETokenType type, bool bUp)

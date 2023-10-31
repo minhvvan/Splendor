@@ -60,6 +60,9 @@ public:
 	int GetTokenPearl() { return TokenNumPearl; };
 
 	UFUNCTION()
+	int GetTokenNum(ETokenType type);
+
+	UFUNCTION()
 	void UpdateTotalToken(int num) { TotalTokenNum += num; };
 
 	UFUNCTION()

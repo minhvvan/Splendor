@@ -19,7 +19,7 @@ enum class ETokenType : uint8
 
 	E_End,
 };
-
+ENUM_RANGE_BY_COUNT(ETokenType, ETokenType::E_End);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSelected);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnSelected);

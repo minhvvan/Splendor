@@ -7,6 +7,78 @@
 #include "Token.h"
 #include "TokenManager.generated.h"
 
+USTRUCT()
+struct FTokens
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	UPROPERTY()
+	TArray<AToken*> RedTokens;
+
+	UPROPERTY()
+	TArray<AToken*> GreenTokens;
+
+	UPROPERTY()
+	TArray<AToken*> BlueTokens;
+
+	UPROPERTY()
+	TArray<AToken*> WhiteTokens;
+
+	UPROPERTY()
+	TArray<AToken*> BlackTokens;
+
+	UPROPERTY()
+	TArray<AToken*> GoldTokens;
+
+	UPROPERTY()
+	TArray<AToken*> PearlTokens;
+
+	UPROPERTY()
+	TArray<AToken*> Default;
+
+	TArray<AToken*>& GetTokenList(ETokenType type)
+	{
+		switch (type)
+		{
+		case ETokenType::T_Red:
+			return RedTokens;
+		case ETokenType::T_Green:
+			return GreenTokens;
+		case ETokenType::T_Blue:
+			return BlueTokens;
+		case ETokenType::T_White:
+			return WhiteTokens;
+		case ETokenType::T_Black:
+			return BlackTokens;
+		case ETokenType::T_Gold:
+			return GoldTokens;
+		case ETokenType::T_Pearl:
+			return PearlTokens;
+		}
+
+		return Default;
+	}
+
+	AToken* Remove(ETokenType type)
+	{
+		auto& TokenArray = GetTokenList(type);
+		return TokenArray.Pop();
+	}
+
+	void Add(ETokenType type, AToken* token)
+	{
+		auto& TokenArray = GetTokenList(type);
+		TokenArray.Add(token);
+	}
+
+	int Num()
+	{
+		return RedTokens.Num() + GreenTokens.Num() + BlueTokens.Num() + WhiteTokens.Num() + BlackTokens.Num() + GoldTokens.Num() + PearlTokens.Num();
+	}
+};
+
+
 DECLARE_MULTICAST_DELEGATE_OneParam(FDeleAddScroll, APlayerController*);
 
 UCLASS()
@@ -39,7 +111,7 @@ public:
 	void PossessTokens(APlayerController* PC, bool bFirst);
 	
 	UFUNCTION()
-	void UseTokens(TArray<AToken*>& Tokens, bool b1Player);
+	void UseTokens(FRestroeTokens Tokens, bool bFirst);
 
 	FDeleAddScroll AddScroll;
 
@@ -49,8 +121,8 @@ private:
 
 	TArray<AToken*> SelectedTokens;
 
-	TMap<ETokenType, AToken*> P1Tokens;
-	TMap<ETokenType, AToken*> P2Tokens;
+	FTokens P1Tokens;
+	FTokens P2Tokens;
 
 	TArray<TArray<AToken*>> Board;
 

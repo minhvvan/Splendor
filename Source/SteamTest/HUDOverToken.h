@@ -59,6 +59,9 @@ public:
 	UFUNCTION()
 	void UpdateTotalToken();
 
+	UFUNCTION()
+	int GetTokenNumByType(ETokenType type);
+
 private:
 	UFUNCTION()
 	void FailClick(ETokenType type, bool bUp);
@@ -158,7 +161,6 @@ private:
 
 	UPROPERTY()
 	class APSPlayerInfo* PS;
-
 
 	//!---------------Anim------------
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim, AllowPrivateAccess = "true"))

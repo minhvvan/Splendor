@@ -165,3 +165,26 @@ void APSPlayerInfo::ClientInitialize(AController* C)
 
 	Cast<APCPlay>(GetOwningController())->BindState();
 }
+
+int APSPlayerInfo::GetTokenNum(ETokenType type)
+{
+	switch (type)
+	{
+	case ETokenType::T_Red:
+		return TokenNumRed;
+	case ETokenType::T_Green:
+		return TokenNumGreen;
+	case ETokenType::T_Blue:
+		return TokenNumBlue;
+	case ETokenType::T_White:
+		return TokenNumWhite;
+	case ETokenType::T_Black:
+		return TokenNumBlack;
+	case ETokenType::T_Gold:
+		return TokenNumGold;
+	case ETokenType::T_Pearl:
+		return TokenNumPearl;
+	}
+
+	return 0;
+}

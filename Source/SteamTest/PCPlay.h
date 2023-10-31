@@ -4,14 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Token.h"
 #include "PCPlay.generated.h"
 
-class AToken;
 class ATile;
 
-/**
- * 
- */
+USTRUCT()
+struct FRestroeTokens
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	UPROPERTY()
+	TArray<ETokenType> RestoreTokens;
+};
+
+
 UCLASS()
 class STEAMTEST_API APCPlay : public APlayerController
 {
@@ -58,8 +66,7 @@ public:
 
 	//!------------DESK-------
 	UFUNCTION(Server, Reliable)
-	void SRPossessTokens(TMap<ETokenType, int> Restore/*ÂüÁ¶????*/);
-
+	void SRRestoreToken(FRestroeTokens Restore);
 
 protected:
 	virtual void SetupInputComponent() override;
