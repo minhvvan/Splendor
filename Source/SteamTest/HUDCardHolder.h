@@ -15,20 +15,14 @@ class STEAMTEST_API UHUDCardHolder : public UUserWidget
 	GENERATED_BODY()
 	
 protected:
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UImage* ImgToken;
-
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnBonus;
-
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnScore;
-
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UTextBlock* TxtBonus;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UTextBlock* TxtColorScore;
+	class UTextBlock* TxtScore;
 
 	virtual void NativeOnInitialized();
 

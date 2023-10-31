@@ -8,6 +8,7 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "HUDCardHolder.h"
+#include "HUDTokenHolder.h"
 #include "HUDOverToken.h"
 #include "PCPlay.h"
 #include "PSPlayerInfo.h"
@@ -47,15 +48,26 @@ void UHUDDesk::BindState(APSPlayerInfo* ps)
 		CurrentState = ps;
 		ps->OnScrollChanged.AddUObject(this, &UHUDDesk::ChangedScroll);
 		ps->OnOverToken.AddUObject(this, &UHUDDesk::NotifyOverToken);
+		ps->OnChangeToken.AddUObject(this, &UHUDDesk::ChangedToken);
 	}
 }
 
 void UHUDDesk::ChangedScroll()
 {
-
 	if (CurrentState.IsValid())
 	{
 		SetScrollTxt(CurrentState->GetScroll());
+	}
+}
+
+void UHUDDesk::ChangedToken()
+{
+	//!TODO: 클라는 동작 서버는 안됨
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangedToken")));
+
+	if (CurrentState.IsValid() && TokenHolder)
+	{
+		TokenHolder->UpdateTokenNum(CurrentState.Get());
 	}
 }
 

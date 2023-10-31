@@ -214,7 +214,7 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 
 	if (Player && PS)
 	{
-		bool flag = true;
+		bool flag = SelectedTokens.Num() == 3 ? true : false;
 		int pearlCnt = 0;
 		ETokenType current = ETokenType::E_End;
 		for (auto token : SelectedTokens)
@@ -253,7 +253,6 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 void ATokenManager::UseTokens(FRestroeTokens Tokens, bool bFirst)
 {
 	auto& CurrentPlayer = bFirst ? P1Tokens : P2Tokens;
-
 
 	for (auto& token : Tokens.RestoreTokens)
 	{

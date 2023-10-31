@@ -293,7 +293,6 @@ void UHUDOverToken::CommitTokens()
 	{
 		auto Restore = FRestroeTokens();
 
-
 		for (ETokenType type : TEnumRange<ETokenType>())
 		{
 			int current = GetTokenNumByType(type);

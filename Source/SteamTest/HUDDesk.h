@@ -41,6 +41,8 @@ protected:
 	//UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	//class UHUDCardHolder* CDHBlack;
 
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UHUDTokenHolder* TokenHolder;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UTextBlock* TxtScore;
@@ -78,10 +80,13 @@ public:
 	UFUNCTION()
 	void ChangedScroll();
 
-	void RenderMessage(FString message);
-
+	UFUNCTION()
 	void NotifyOverToken();
 
+	UFUNCTION()
+	void ChangedToken();
+
+	void RenderMessage(FString message);
 private:
 	UFUNCTION(BlueprintCallable)
 	void GetTokenClicked();

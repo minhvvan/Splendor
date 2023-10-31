@@ -8,6 +8,7 @@
 
 DECLARE_MULTICAST_DELEGATE(FDeleChangeScroll)
 DECLARE_MULTICAST_DELEGATE(FDeleOverToken)
+DECLARE_MULTICAST_DELEGATE(FDeleChangeToken)
 
 UCLASS()
 class STEAMTEST_API APSPlayerInfo : public APlayerState
@@ -84,6 +85,7 @@ public:
 	//!-------------Delegate-----------
 	FDeleChangeScroll OnScrollChanged;
 	FDeleOverToken OnOverToken;
+	FDeleChangeToken OnChangeToken;
 
 protected:
 	UFUNCTION()

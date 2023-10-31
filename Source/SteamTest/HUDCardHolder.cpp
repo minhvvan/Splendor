@@ -10,7 +10,7 @@
 void UHUDCardHolder::NativeOnInitialized()
 {
 	//~error
-	SetImage();
+	//SetImage();
 }
 
 void UHUDCardHolder::SetScoreTxt(int score)

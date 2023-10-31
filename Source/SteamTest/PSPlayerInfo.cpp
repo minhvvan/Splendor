@@ -124,6 +124,8 @@ void APSPlayerInfo::OnRep_Scroll()
 
 void APSPlayerInfo::OnRep_TotalTokenNum()
 {
+	OnChangeToken.Broadcast();
+
 	if (TotalTokenNum > 10)
 	{
 		OnOverToken.Broadcast();
