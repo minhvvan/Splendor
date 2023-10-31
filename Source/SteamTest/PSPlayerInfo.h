@@ -63,8 +63,8 @@ public:
 	UFUNCTION()
 	int GetTokenNum(ETokenType type);
 
-	UFUNCTION()
-	void UpdateTotalToken(int num) { TotalTokenNum += num; };
+	UFUNCTION(Server, Reliable)
+	void UpdateTotalToken(int num);
 
 	UFUNCTION()
 	void PrintToken();

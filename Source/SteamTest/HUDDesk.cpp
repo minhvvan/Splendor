@@ -62,9 +62,6 @@ void UHUDDesk::ChangedScroll()
 
 void UHUDDesk::ChangedToken()
 {
-	//!TODO: 클라는 동작 서버는 안됨
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangedToken")));
-
 	if (CurrentState.IsValid() && TokenHolder)
 	{
 		TokenHolder->UpdateTokenNum(CurrentState.Get());

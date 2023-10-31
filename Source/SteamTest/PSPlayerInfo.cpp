@@ -190,3 +190,9 @@ int APSPlayerInfo::GetTokenNum(ETokenType type)
 
 	return 0;
 }
+
+void APSPlayerInfo::UpdateTotalToken_Implementation(int num)
+{
+	TotalTokenNum += num;
+	OnChangeToken.Broadcast();
+}
