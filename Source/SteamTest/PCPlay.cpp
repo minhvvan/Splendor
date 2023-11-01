@@ -30,8 +30,9 @@ APCPlay::APCPlay()
 
 void APCPlay::BeginPlay()
 {
-	ShowDesk();
+	Super::BeginPlay();
 
+	ShowDesk();
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACameraActor::StaticClass(), FoundActors);
 	for (auto cam : FoundActors)

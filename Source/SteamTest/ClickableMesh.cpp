@@ -3,6 +3,7 @@
 
 #include "ClickableMesh.h"
 #include "Token.h"
+#include "Card.h"
 #include "Components/AudioComponent.h"
 
 UClickableMesh::UClickableMesh()
@@ -20,11 +21,23 @@ void UClickableMesh::InitializeComponent()
 
 void UClickableMesh::HighlightOn(UPrimitiveComponent* TouchComp)
 {
-	auto AudioComp = Cast<AToken>(GetOwner())->GetAudio();
-
-	if (AudioComp)
+	if (GetOwner()->IsA<AToken>())
 	{
-		AudioComp->Play();
+		auto AudioComp = Cast<AToken>(GetOwner())->GetAudio();
+
+		if (AudioComp)
+		{
+			AudioComp->Play();
+		}
+	}
+	else if (GetOwner()->IsA<ACard>())
+	{
+		auto AudioComp = Cast<ACard>(GetOwner())->GetAudio();
+
+		if (AudioComp)
+		{
+			AudioComp->Play();
+		}
 	}
 
 	SetRenderCustomDepth(true);
@@ -39,10 +52,10 @@ void UClickableMesh::SetSelectedMat(bool bSelected)
 {
 	if (bSelected)
 	{
-		SetMaterial(2, SelectedMat);
+		if(SelectedMat && IsValid(SelectedMat)) SetMaterial(2, SelectedMat);
 	}
 	else
 	{
-		SetMaterial(2, UnSelectedMat);
+		if (UnSelectedMat && IsValid(UnSelectedMat)) SetMaterial(2, UnSelectedMat);
 	}
 }

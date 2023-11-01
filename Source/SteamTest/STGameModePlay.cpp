@@ -6,6 +6,7 @@
 #include "GSPlay.h"
 #include "TileManager.h"
 #include "TokenManager.h"
+#include "CardManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "TurnManager.h"
 #include "PCPlay.h"
@@ -48,6 +49,7 @@ void ASTGameModePlay::StartMatch()
 	TileManager = GetWorld()->SpawnActor<ATileManager>();
 	TokenManager = GetWorld()->SpawnActor<ATokenManager>();
 	TurnManager = GetWorld()->SpawnActor<ATurnManager>();
+	CardManager = GetWorld()->SpawnActor<ACardManager>();
 
 	if (TokenManager)
 	{
