@@ -2,17 +2,25 @@
 
 
 #include "CardManager.h"
+#include "Card.h"
+#include "Algo/RandomShuffle.h"
 
 // Sets default values
-ACardManager::ACardManager()
+ACardManager::ACardManager() : StartOneTier(FVector(-15, -670, 0)), StartTwoTier(FVector(215, -580, 0)), StartThreeTier(FVector(455, -490, 0))
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	static ConstructorHelpers::FObjectFinder<UDataTable> CARD(TEXT("/Script/Engine.DataTable'/Game/Data/DT_CardInfo.DT_CardInfo'"));
+	static ConstructorHelpers::FObjectFinder<UDataTable> DATA(TEXT("/Script/Engine.DataTable'/Game/Data/DT_CardInfo.DT_CardInfo'"));
+	if (DATA.Succeeded())
+	{
+		CardData = DATA.Object;
+	}
+
+	ConstructorHelpers::FClassFinder<ACard> CARD(TEXT("/Script/Engine.Blueprint'/Game/Splendor/BP/BP_Card.BP_Card_C'"));
 	if (CARD.Succeeded())
 	{
-		CardData = CARD.Object;
+		CardClass = CARD.Class;
 	}
 }
 
@@ -20,10 +28,9 @@ ACardManager::ACardManager()
 void ACardManager::BeginPlay()
 {
 	Super::BeginPlay();
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("BeginPlay")));
 
 	InitData();
-	SpawnCards();
+	InitCards();
 }
 
 // Called every frame
@@ -71,36 +78,60 @@ void ACardManager::InitData()
 				break;
 			}
 		}
+		Algo::RandomShuffle(TierOneInfos);
+		Algo::RandomShuffle(TierTwoInfos);
+		Algo::RandomShuffle(TierThreeInfos);
 	}
 }
 
-void ACardManager::SpawnCards()
+void ACardManager::InitCards()
 {
-	for (auto one : TierOneInfos)
+	UWorld* world = GetWorld();
+	if (world)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("score: %d"), one.score));
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("bonus: %d"), one.bonus));
-		for (auto c : one.cost)
-		{
-			FString color;
-			switch (c.Key)
-			{
-			case EColor::E_Red:
-				color = TEXT("Red");
-			case EColor::E_Green:
-				color = TEXT("Green");
-			case EColor::E_Blue:
-				color = TEXT("Blue");
-			case EColor::E_White:
-				color = TEXT("White");
-			case EColor::E_Black:
-				color = TEXT("Black");
-			}
-			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("cost: %s, %d"), color, c.Value));
-		}
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("crown: %d"), one.crown));
+		FVector offset(0, 180, 0);
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		FRotator rotator;
 
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("----------------")));
+		{
+			FVector SpawnLoc = StartOneTier;
+			for (int i = 0; i < 5; i++)
+			{
+				auto Card = Cast<ACard>(world->SpawnActor<AActor>(CardClass, SpawnLoc, rotator, SpawnParams));
+
+				SpawnLoc += offset;
+				auto info = TierOneInfos.Pop();
+				Card->SetInfo(info);
+				TierOne.Add(Card);
+			}
+		}
+
+		{
+			FVector SpawnLoc = StartTwoTier;
+			for (int i = 0; i < 4; i++)
+			{
+				auto Card = Cast<ACard>(world->SpawnActor<AActor>(CardClass, SpawnLoc, rotator, SpawnParams));
+
+				SpawnLoc += offset;
+				auto info = TierTwoInfos.Pop();
+				Card->SetInfo(info);
+				TierTwo.Add(Card);
+			}
+		}
+
+		{
+			FVector SpawnLoc = StartThreeTier;
+			for (int i = 0; i < 3; i++)
+			{
+				auto Card = Cast<ACard>(world->SpawnActor<AActor>(CardClass, SpawnLoc, rotator, SpawnParams));
+
+				SpawnLoc += offset;
+				auto info = TierThreeInfos.Pop();
+				Card->SetInfo(info);
+				TierThree.Add(Card);
+			}
+		}
 	}
 }
 

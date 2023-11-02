@@ -22,7 +22,7 @@ ENUM_RANGE_BY_COUNT(ECardTier, ECardTier::E_End);
 
 
 UENUM(BlueprintType)
-enum class EColor : uint8
+enum class ETokenColor : uint8
 {
 	E_Red = 0   UMETA(DisplayName = "Red"),
 	E_Green		UMETA(DisplayName = "Green"),
@@ -34,7 +34,7 @@ enum class EColor : uint8
 
 	E_End,
 };
-ENUM_RANGE_BY_COUNT(EColor, EColor::E_End);
+ENUM_RANGE_BY_COUNT(ETokenColor, ETokenColor::E_End);
 
 
 UENUM(BlueprintType)
@@ -51,7 +51,7 @@ enum class EItem : uint8
 ENUM_RANGE_BY_COUNT(EItem, EItem::E_End);
 
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FCardInfo : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
@@ -70,10 +70,10 @@ public:
 	int crown;
 
 	UPROPERTY(EditAnywhere, Category = "Info")
-	EColor color;
+	ETokenColor color;
 
 	UPROPERTY(EditAnywhere, Category = "Info")
-	TMap<EColor, int> cost;
+	TMap<ETokenColor, int> cost;
 
 	UPROPERTY(EditAnywhere, Category = "Info")
 	TArray<EItem> item;
@@ -105,10 +105,13 @@ public:
 	void InitData();
 
 	UFUNCTION()
-	void SpawnCards();
+	void InitCards();
 	
 private:
 	//!----------------Card--------------
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<ACard> CardClass;
+
 	UPROPERTY()
 	TArray<ACard*> TierOne;
 	
@@ -130,4 +133,14 @@ private:
 	//!-------------Data--------
 	UPROPERTY()
 	class UDataTable* CardData;
+
+	//!-----------Position--------
+	UPROPERTY()
+	FVector StartOneTier;
+
+	UPROPERTY()
+	FVector StartTwoTier;
+
+	UPROPERTY()
+	FVector StartThreeTier;
 };

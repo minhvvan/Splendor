@@ -22,24 +22,24 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UButton* BtnFillToken;
-
-	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
-	class UHUDCardHolder* CDHRed;	
 	
 	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
 	class UHUDPopUpPannel* PUPannel;
 
-	//UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	//class UHUDCardHolder* CDHGreen;
+	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
+	class UHUDCardHolder* CDHRed;	
+	
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UHUDCardHolder* CDHGreen;
 
-	//UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	//class UHUDCardHolder* CDHBlue;
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UHUDCardHolder* CDHBlue;
 
-	//UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	//class UHUDCardHolder* CDHWhite;
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UHUDCardHolder* CDHWhite;
 
-	//UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	//class UHUDCardHolder* CDHBlack;
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UHUDCardHolder* CDHBlack;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UHUDTokenHolder* TokenHolder;

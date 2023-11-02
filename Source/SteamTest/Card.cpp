@@ -3,6 +3,7 @@
 
 #include "Card.h"
 #include "HUDCard.h"
+#include "CardManager.h"
 #include "Components/WidgetComponent.h"
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
@@ -36,8 +37,6 @@ ACard::ACard()
 void ACard::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	InitCardWidget();
 }
 
 // Called every frame
@@ -46,10 +45,12 @@ void ACard::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ACard::InitCardWidget()
+void ACard::SetInfo(FCardInfo& info)
 {
+	//Widget  º¯°æ(score, bonus, cost, item, crown)
 	if (CardWidgetComp && IsValid(CardWidgetComp))
 	{
+		Cast<UHUDCard>(CardWidgetComp->GetWidget())->SetInfo(info);
 	}
 }
 

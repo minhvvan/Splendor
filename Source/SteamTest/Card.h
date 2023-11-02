@@ -23,9 +23,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void InitCardWidget();
-
+	UFUNCTION()
 	UAudioComponent* GetAudio() const { return AudioComp; };
+
+	UFUNCTION()
+	void SetInfo(struct FCardInfo& info);
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))

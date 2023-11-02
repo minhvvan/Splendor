@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "CardManager.h"
 #include "HUDCardHolder.generated.h"
 
 /**
@@ -30,8 +31,8 @@ public:
 	void SetScoreTxt(int score);
 	void SetBonusTxt(int bonus);
 
-	void SetImage();
+	void SetImage(ETokenColor color);
 
-	UPROPERTY(EditAnywhere)
-	UTexture2D* IconImg;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	TMap<ETokenColor, UTexture2D*> TokenTexture;
 };

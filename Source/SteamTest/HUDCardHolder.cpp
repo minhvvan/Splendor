@@ -9,8 +9,6 @@
 
 void UHUDCardHolder::NativeOnInitialized()
 {
-	//~error
-	//SetImage();
 }
 
 void UHUDCardHolder::SetScoreTxt(int score)
@@ -21,13 +19,11 @@ void UHUDCardHolder::SetBonusTxt(int bonus)
 {
 }
 
-void UHUDCardHolder::SetImage()
+void UHUDCardHolder::SetImage(ETokenColor color)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("SetImage")));
-
-
-	//if (IsValid(IconImg))
-	//{
-	//	ImgToken->SetBrushFromTexture(IconImg);
-	//}
+	auto tex = TokenTexture.Find(color);
+	if (tex)
+	{
+		ImgToken->SetBrushFromTexture(*tex);
+	}
 }

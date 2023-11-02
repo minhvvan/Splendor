@@ -56,7 +56,6 @@ void UHUDTokenHolder::SetTokenNum(ETokenType type, int score)
 
 void UHUDTokenHolder::UpdateTokenNum(APSPlayerInfo* ps)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("UpdateTokenNum")));
 
 	if (PS == nullptr || !IsValid(PS))
 	{

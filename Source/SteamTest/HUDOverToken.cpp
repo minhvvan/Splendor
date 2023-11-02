@@ -287,8 +287,6 @@ void UHUDOverToken::CommitTokens()
 		return;
 	}
 
-	//!TODO: token 버려야됨
-	//! token manager에서  정해진 개수만큼 빼서 파우치로 옮기기
 	if (PS)
 	{
 		auto Restore = FRestroeTokens();
