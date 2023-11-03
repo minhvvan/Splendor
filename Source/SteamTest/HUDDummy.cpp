@@ -7,9 +7,13 @@
 void UHUDDummy::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("NativeOnInitialized")));
 }
 
-void UHUDDummy::SetRemainNum(int num)
+void UHUDDummy::SetRemainNumText(int num)
 {
-	TxtNum->SetText(FText::AsNumber(num));
+	if (TxtNum && IsValid(TxtNum))
+	{
+		TxtNum->SetText(FText::AsNumber(num));
+	}
 }

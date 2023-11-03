@@ -19,6 +19,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -41,6 +43,9 @@ public:
 	UFUNCTION()
 	void hideNum();
 
+	UFUNCTION()
+	void OnRep_RemainCardNum();
+
 private:
 	UPROPERTY()
 	ECardTier Tier;
@@ -56,4 +61,10 @@ private:
 
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
 	class UWidgetComponent* NumWidgetComp;
+
+	UPROPERTY(ReplicatedUsing = OnRep_RemainCardNum)
+	int RemainCardNum;
+
+	UPROPERTY()
+	bool bInitialized = false;
 };

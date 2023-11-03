@@ -7,12 +7,15 @@
 #include "Sound/SoundCue.h"
 #include "ClickableMesh.h"
 #include "HUDDummy.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ACardDummy::ACardDummy()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	bReplicates = true;
 
 	Mesh = CreateDefaultSubobject<UClickableMesh>(TEXT("Mesh"));
 	RootComponent = Mesh;
@@ -30,6 +33,7 @@ ACardDummy::ACardDummy()
 		NumWidgetComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 		NumWidgetComp->SetDrawSize(FVector2D(500.0f, 500.0f));
 		NumWidgetComp->SetWorldRotation(FRotator(90.0f, 180.0f, 0.0f));
+		NumWidgetComp->SetIsReplicated(true);
 		NumWidgetComp->SetVisibility(false);
 	}
 }
@@ -38,14 +42,23 @@ ACardDummy::ACardDummy()
 void ACardDummy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("BeginPlay")));
+
 	if (Mesh && IsValid(Mesh))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Binding")));
-
 		Mesh->OnHover.AddUObject(this, &ACardDummy::ShowNum);
 		Mesh->OnLeave.AddUObject(this, &ACardDummy::hideNum);
 	}
+
+	bInitialized = true;
+	Cast<UHUDDummy>(NumWidgetComp->GetWidget())->SetRemainNumText(RemainCardNum);
+}
+
+void ACardDummy::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACardDummy, RemainCardNum);
 }
 
 // Called every frame
@@ -57,9 +70,13 @@ void ACardDummy::Tick(float DeltaTime)
 
 void ACardDummy::SetNum(int cardNum)
 {
-	if (IsValid(NumWidgetComp))
+	if (RemainCardNum != cardNum)
 	{
-		Cast<UHUDDummy>(NumWidgetComp->GetWidget())->SetRemainNum(cardNum);
+		RemainCardNum = cardNum;
+		if (IsValid(NumWidgetComp))
+		{
+			Cast<UHUDDummy>(NumWidgetComp->GetWidget())->SetRemainNumText(RemainCardNum);
+		}
 	}
 }
 
@@ -76,5 +93,15 @@ void ACardDummy::hideNum()
 	if (IsValid(NumWidgetComp))
 	{
 		NumWidgetComp->SetVisibility(false);
+	}
+}
+
+void ACardDummy::OnRep_RemainCardNum()
+{
+	if (bInitialized && IsValid(NumWidgetComp))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("OnRep_RemainCardNum")));
+
+		Cast<UHUDDummy>(NumWidgetComp->GetWidget())->SetRemainNumText(RemainCardNum);
 	}
 }

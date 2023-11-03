@@ -8,11 +8,14 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 #include "ClickableMesh.h"
+#include "Net/UnrealNetwork.h"
 
 
 ACard::ACard()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	bReplicates = true;
 
 	Mesh = CreateDefaultSubobject<UClickableMesh>(TEXT("Mesh"));
 	RootComponent = Mesh;
@@ -30,6 +33,7 @@ ACard::ACard()
 		CardWidgetComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 		CardWidgetComp->SetDrawSize(FVector2D(500.0f, 500.0f));
 		CardWidgetComp->SetWorldRotation(FRotator(90.0f, 180.0f, 0.0f));
+		CardWidgetComp->SetIsReplicated(true);
 	}
 }
 
@@ -37,6 +41,8 @@ ACard::ACard()
 void ACard::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//!TODO: 클라 위젯 업데이트 
 }
 
 // Called every frame
@@ -54,3 +60,17 @@ void ACard::SetInfo(FCardInfo& info)
 	}
 }
 
+void ACard::ChangedCardInfo()
+{
+	//change
+	//!TODO: 클라 위젯 업데이트 
+
+}
+
+void ACard::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//!TODO: widget이 아니라 데이터를 replicate하고 onrep으로 업데이트
+	DOREPLIFETIME(ACard, CardInfo);
+}

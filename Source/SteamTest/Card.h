@@ -19,6 +19,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -27,7 +29,10 @@ public:
 	UAudioComponent* GetAudio() const { return AudioComp; };
 
 	UFUNCTION()
-	void SetInfo(struct FCardInfo& info);
+	void SetInfo(struct FCardInfo& info);	
+	
+	UFUNCTION()
+	void ChangedCardInfo();
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
@@ -39,6 +44,10 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
 	class USoundCue* HoverSound;
 
-	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadWrite, replicated, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
 	class UWidgetComponent* CardWidgetComp;
+
+	UPROPERTY(ReplicatedUsing = ChangedCardInfo)
+	FCardInfo* CardInfo;
+
 };

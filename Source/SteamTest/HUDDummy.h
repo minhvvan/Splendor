@@ -6,9 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "HUDDummy.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class STEAMTEST_API UHUDDummy : public UUserWidget
 {
@@ -22,5 +20,5 @@ protected:
 
 public:
 	UFUNCTION()
-	void SetRemainNum(int num);
+	void SetRemainNumText(int num);
 };
