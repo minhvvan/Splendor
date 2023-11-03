@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "CardManager.h"
 #include "HUDCard.generated.h"
 
 /**
@@ -31,6 +30,9 @@ protected:
 	class UTileView* TileCost;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UTileView* TileItem;
+
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UTextBlock* TxtScore;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
@@ -45,6 +47,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UImage* ImgToken;
 public:
+	//!-----------Setter--------------
 	UFUNCTION()
 	void SetInfo(struct FCardInfo& info);
 
@@ -60,12 +63,20 @@ public:
 	UFUNCTION()
 	void SetScore(int score);
 
+	UFUNCTION()
+	void SetItem(TArray<EItem> items);
 private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UHUDCost> CostClass;
 	
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UCardData> CostDataClass;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UHUDItem> ItemClass;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UItemData> ItemDataClass;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	TMap<ETokenColor, UTexture2D*> TokenTexture;

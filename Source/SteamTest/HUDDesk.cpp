@@ -18,13 +18,13 @@
 
 void UHUDDesk::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
+
 	CDHRed->SetImage(ETokenColor::E_Red);
 	CDHGreen->SetImage(ETokenColor::E_Green);
 	CDHBlue->SetImage(ETokenColor::E_Blue);
 	CDHWhite->SetImage(ETokenColor::E_White);
 	CDHBlack->SetImage(ETokenColor::E_Black);
-
-
 
 	BtnGetToken->OnClicked.AddDynamic(this, &UHUDDesk::GetTokenClicked);
 	BtnFillToken->OnClicked.AddDynamic(this, &UHUDDesk::FilTokenClicked);

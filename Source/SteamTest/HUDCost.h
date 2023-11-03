@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "CardManager.h"
 #include "HUDCost.generated.h"
 
 /**

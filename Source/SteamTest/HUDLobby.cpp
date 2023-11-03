@@ -14,6 +14,8 @@
 
 void UHUDLobby::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
+
 	BtnFirstPlayer->OnClicked.AddDynamic(this, &UHUDLobby::FirstPlayerClicked);
 	BtnSecondPlayer->OnClicked.AddDynamic(this, &UHUDLobby::SecondPlayerClicked);
 	BtnStartGame->OnClicked.AddDynamic(this, &UHUDLobby::StartGameClicked);

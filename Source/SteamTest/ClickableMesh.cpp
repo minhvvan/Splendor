@@ -4,6 +4,7 @@
 #include "ClickableMesh.h"
 #include "Token.h"
 #include "Card.h"
+#include "CardDummy.h"
 #include "Components/AudioComponent.h"
 
 UClickableMesh::UClickableMesh()
@@ -39,6 +40,18 @@ void UClickableMesh::HighlightOn(UPrimitiveComponent* TouchComp)
 			AudioComp->Play();
 		}
 	}
+	else if (GetOwner()->IsA<ACardDummy>())
+	{
+		auto AudioComp = Cast<ACardDummy>(GetOwner())->GetAudio();
+
+		if (AudioComp)
+		{
+			AudioComp->Play();
+		}
+
+		//dele
+		OnHover.Broadcast();
+	}
 
 	SetRenderCustomDepth(true);
 }
@@ -46,6 +59,7 @@ void UClickableMesh::HighlightOn(UPrimitiveComponent* TouchComp)
 void UClickableMesh::HighlightOff(UPrimitiveComponent* TouchComp)
 {
 	SetRenderCustomDepth(false);
+	OnLeave.Broadcast();
 }
 
 void UClickableMesh::SetSelectedMat(bool bSelected)

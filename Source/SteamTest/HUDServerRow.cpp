@@ -8,6 +8,8 @@
 
 void UHUDServerRow::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
+
 	BtnServerRow->OnClicked.AddDynamic(this, &UHUDServerRow::ClickedRow);
 }
 

@@ -15,6 +15,8 @@
 
 void UHUDMultMenu::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
+	
 	BtnHostGame->OnClicked.AddDynamic(this, &UHUDMultMenu::HostGameClicked);
 	BtnSearchGame->OnClicked.AddDynamic(this, &UHUDMultMenu::SearchGameClicked);
 	BtnBack->OnClicked.AddDynamic(this, &UHUDMultMenu::BackClicked);

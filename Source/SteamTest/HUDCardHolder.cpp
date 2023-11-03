@@ -9,6 +9,8 @@
 
 void UHUDCardHolder::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
+
 }
 
 void UHUDCardHolder::SetScoreTxt(int score)

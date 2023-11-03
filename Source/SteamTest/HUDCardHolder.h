@@ -4,12 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "CardManager.h"
+#include "GlobalEnum.h"
 #include "HUDCardHolder.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class STEAMTEST_API UHUDCardHolder : public UUserWidget
 {

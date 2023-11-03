@@ -12,6 +12,8 @@
 
 void UHUDOverToken::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
+	
 	BtnRedUp->OnClicked.AddDynamic(this, &UHUDOverToken::UpRed);
 	BtnRedDown->OnClicked.AddDynamic(this, &UHUDOverToken::DownRed);
 

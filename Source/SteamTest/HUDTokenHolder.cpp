@@ -9,6 +9,7 @@
 
 void UHUDTokenHolder::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
 	//auto player = GetOwningPlayer<APCPlay>();
 	//if (player)
 	//{

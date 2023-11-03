@@ -3,10 +3,14 @@
 
 #include "CardManager.h"
 #include "Card.h"
+#include "CardDummy.h"
 #include "Algo/RandomShuffle.h"
+#include "GlobalEnum.h"
+#include "GlobalStruct.h"
 
 // Sets default values
-ACardManager::ACardManager() : StartOneTier(FVector(-15, -670, 0)), StartTwoTier(FVector(215, -580, 0)), StartThreeTier(FVector(455, -490, 0))
+ACardManager::ACardManager() : StartOneTier(FVector(-15, -670, 0)), StartTwoTier(FVector(215, -580, 0)), StartThreeTier(FVector(445, -490, 0))
+, DummyOneTier(FVector(-15, -870.0, 0)), DummyTwoTier(FVector(215, -870.0, 0)), DummyThreeTier(FVector(445, -870.0, 0))
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -22,6 +26,12 @@ ACardManager::ACardManager() : StartOneTier(FVector(-15, -670, 0)), StartTwoTier
 	{
 		CardClass = CARD.Class;
 	}
+
+	ConstructorHelpers::FClassFinder<ACardDummy> DUMMY(TEXT("/Script/Engine.Blueprint'/Game/Splendor/BP/BP_CardDummy.BP_CardDummy_C'"));
+	if (DUMMY.Succeeded())
+	{
+		DummyClass = DUMMY.Class;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -31,6 +41,7 @@ void ACardManager::BeginPlay()
 
 	InitData();
 	InitCards();
+	InitDummy();
 }
 
 // Called every frame
@@ -135,3 +146,45 @@ void ACardManager::InitCards()
 	}
 }
 
+void ACardManager::InitDummy()
+{
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		FRotator rotator;
+
+		{
+			FVector SpawnLoc = DummyOneTier;
+			auto CardDumy = Cast<ACardDummy>(world->SpawnActor<AActor>(DummyClass, SpawnLoc, rotator, SpawnParams));
+			if (CardDumy)
+			{
+				CardDumy->SetTier(ECardTier::C_One);
+				CardDumy->SetNum(TierOneInfos.Num());
+				CardDummies.Add(CardDumy);
+			}
+		}
+		{
+			FVector SpawnLoc = DummyTwoTier;
+			auto CardDumy = Cast<ACardDummy>(world->SpawnActor<AActor>(DummyClass, SpawnLoc, rotator, SpawnParams));
+			if (CardDumy)
+			{
+				CardDumy->SetTier(ECardTier::C_Two);
+				CardDumy->SetNum(TierTwoInfos.Num());
+				CardDummies.Add(CardDumy);
+			}
+		} 
+		{
+			FVector SpawnLoc = DummyThreeTier;
+			auto CardDumy = Cast<ACardDummy>(world->SpawnActor<AActor>(DummyClass, SpawnLoc, rotator, SpawnParams));
+			if (CardDumy)
+			{
+				CardDumy->SetTier(ECardTier::C_Three);
+				CardDumy->SetNum(TierThreeInfos.Num());
+				CardDummies.Add(CardDumy);
+			}
+		}
+	}
+
+}

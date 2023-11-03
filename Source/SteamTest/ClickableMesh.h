@@ -6,9 +6,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "ClickableMesh.generated.h"
 
-/**
- * 
- */
+DECLARE_MULTICAST_DELEGATE(FDeleHover);
+DECLARE_MULTICAST_DELEGATE(FDeleLeave);
+
 UCLASS()
 class STEAMTEST_API UClickableMesh : public UStaticMeshComponent
 {
@@ -29,6 +29,9 @@ public:
 
 	UFUNCTION()
 	void SetSelectedMat(bool bSelected);
+
+	FDeleHover OnHover;
+	FDeleLeave OnLeave;
 
 private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))

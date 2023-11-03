@@ -3,18 +3,23 @@
 
 #include "HUDCard.h"
 #include "HUDCost.h"
+#include "HUDItem.h"
 #include "Components/Border.h"
 #include "Components/TileView.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "CardManager.h"
 #include "CardData.h"
+#include "ItemData.h"
 #include "GlobalConst.h"
+#include "GlobalEnum.h"
+#include "GlobalStruct.h"
 #include "Engine/Texture2D.h"
 
 
 void UHUDCard::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
 }
 
 void UHUDCard::SetInfo(FCardInfo& info)
@@ -32,6 +37,7 @@ void UHUDCard::SetInfo(FCardInfo& info)
 	SetBonus(color, bonus);
 	SetCost(costs);
 	SetScore(score);
+	SetItem(item);
 }
 
 void UHUDCard::SetBonus(ETokenColor color, int bonus)
@@ -39,6 +45,7 @@ void UHUDCard::SetBonus(ETokenColor color, int bonus)
 	if (bonus == 0)
 	{
 		ImgToken->SetVisibility(ESlateVisibility::Hidden);
+		TxtBonus->SetVisibility(ESlateVisibility::Hidden);
 	}
 	else
 	{
@@ -111,7 +118,6 @@ void UHUDCard::SetCrown(int crown)
 	}
 }
 
-
 void UHUDCard::SetScore(int score)
 {
 	TxtScore->SetText(FText::AsNumber(score));
@@ -122,3 +128,16 @@ void UHUDCard::SetScore(int score)
 	}
 }
 
+void UHUDCard::SetItem(TArray<EItem> items)
+{
+	if (ItemClass && IsValid(ItemClass))
+	{
+		for (auto item : items)
+		{
+			auto ItemData = NewObject<UItemData>(this, ItemDataClass);
+			ItemData->SetItem(item);
+
+			TileItem->AddItem(ItemData);
+		}
+	}
+}

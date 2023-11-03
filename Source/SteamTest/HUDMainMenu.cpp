@@ -12,6 +12,8 @@
 
 void UHUDMainMenu::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
+
 	BtnPlay->OnClicked.AddDynamic(this, &UHUDMainMenu::PlayGameClicked);
 	BtnQuitGame->OnClicked.AddDynamic(this, &UHUDMainMenu::QuitGameClicked);
 	EdtPlayerName->OnTextCommitted.AddDynamic(this, &UHUDMainMenu::ChangedPlayerName);
