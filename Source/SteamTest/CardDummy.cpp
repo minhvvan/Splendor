@@ -42,7 +42,6 @@ ACardDummy::ACardDummy()
 void ACardDummy::BeginPlay()
 {
 	Super::BeginPlay();
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("BeginPlay")));
 
 	if (Mesh && IsValid(Mesh))
 	{
@@ -100,8 +99,6 @@ void ACardDummy::OnRep_RemainCardNum()
 {
 	if (bInitialized && IsValid(NumWidgetComp))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("OnRep_RemainCardNum")));
-
 		Cast<UHUDDummy>(NumWidgetComp->GetWidget())->SetRemainNumText(RemainCardNum);
 	}
 }

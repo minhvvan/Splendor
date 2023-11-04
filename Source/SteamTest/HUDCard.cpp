@@ -49,6 +49,8 @@ void UHUDCard::SetBonus(ETokenColor color, int bonus)
 	}
 	else
 	{
+		ImgToken->SetVisibility(ESlateVisibility::Visible);
+		TxtBonus->SetVisibility(ESlateVisibility::Visible);
 		TxtBonus->SetText(FText::AsNumber(bonus));
 
 		switch (color)
@@ -92,7 +94,7 @@ void UHUDCard::SetBonus(ETokenColor color, int bonus)
 	}
 }
 
-void UHUDCard::SetCost(TMap<ETokenColor, int> costs)
+void UHUDCard::SetCost(TArray<FCost> costs)
 {
 	if (CostDataClass && IsValid(CostDataClass))
 	{
@@ -109,22 +111,29 @@ void UHUDCard::SetCost(TMap<ETokenColor, int> costs)
 
 void UHUDCard::SetCrown(int crown)
 {
-	TxtCrown->SetText(FText::AsNumber(crown));
-
 	if (crown == 0)
 	{
 		ImgCrown->SetVisibility(ESlateVisibility::Hidden);
 		TxtCrown->SetVisibility(ESlateVisibility::Hidden);
 	}
+	else
+	{
+		ImgCrown->SetVisibility(ESlateVisibility::Visible);
+		TxtCrown->SetVisibility(ESlateVisibility::Visible);
+		TxtCrown->SetText(FText::AsNumber(crown));
+	}
 }
 
 void UHUDCard::SetScore(int score)
 {
-	TxtScore->SetText(FText::AsNumber(score));
-
 	if (score == 0)
 	{
 		TxtScore->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
+	{
+		TxtScore->SetText(FText::AsNumber(score));
+		TxtScore->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 

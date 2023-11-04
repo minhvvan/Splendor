@@ -48,7 +48,6 @@ void ACardManager::BeginPlay()
 void ACardManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 ACard* ACardManager::GetCardByTier(ECardTier tier)
@@ -68,7 +67,6 @@ ACard* ACardManager::GetCardByTier(ECardTier tier)
 
 void ACardManager::InitData()
 {
-	//테이블에서 받아와서 array에 넣기
 	if(CardData && IsValid(CardData))
 	{
 		auto Names = CardData->GetRowNames();
@@ -92,6 +90,8 @@ void ACardManager::InitData()
 		Algo::RandomShuffle(TierOneInfos);
 		Algo::RandomShuffle(TierTwoInfos);
 		Algo::RandomShuffle(TierThreeInfos);
+
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("TierOneInfos: %d"), TierOneInfos.Num()));
 	}
 }
 

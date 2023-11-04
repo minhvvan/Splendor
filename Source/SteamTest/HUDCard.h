@@ -55,7 +55,7 @@ public:
 	void SetBonus(ETokenColor color, int bonus);
 
 	UFUNCTION()
-	void SetCost(TMap<ETokenColor, int> cost);	
+	void SetCost(TArray<FCost> costs);	
 	
 	UFUNCTION()
 	void SetCrown(int crown);	

@@ -10,6 +10,19 @@
 
 
 USTRUCT(BlueprintType)
+struct FCost
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	UPROPERTY(EditAnywhere)
+	ETokenColor Key;
+
+	UPROPERTY(EditAnywhere)
+	int Value;
+};
+
+USTRUCT(BlueprintType)
 struct FCardInfo : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
@@ -31,7 +44,7 @@ struct FCardInfo : public FTableRowBase
 	ETokenColor color;
 
 	UPROPERTY(EditAnywhere, Category = "Info")
-	TMap<ETokenColor, int> cost;
+	TArray< FCost> cost;
 
 	UPROPERTY(EditAnywhere, Category = "Info")
 	TArray<EItem> item;

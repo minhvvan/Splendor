@@ -33,7 +33,7 @@ ACard::ACard()
 		CardWidgetComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 		CardWidgetComp->SetDrawSize(FVector2D(500.0f, 500.0f));
 		CardWidgetComp->SetWorldRotation(FRotator(90.0f, 180.0f, 0.0f));
-		CardWidgetComp->SetIsReplicated(true);
+		//CardWidgetComp->SetIsReplicated(true);
 	}
 }
 
@@ -42,7 +42,8 @@ void ACard::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//!TODO: 클라 위젯 업데이트 
+	bInitialized = true;
+	UpdateWidget();
 }
 
 // Called every frame
@@ -53,24 +54,29 @@ void ACard::Tick(float DeltaTime)
 
 void ACard::SetInfo(FCardInfo& info)
 {
-	//Widget  변경(score, bonus, cost, item, crown)
+	CardInfo = info;
+	UpdateWidget();
+}
+
+void ACard::UpdateWidget()
+{
 	if (CardWidgetComp && IsValid(CardWidgetComp))
 	{
-		Cast<UHUDCard>(CardWidgetComp->GetWidget())->SetInfo(info);
+		Cast<UHUDCard>(CardWidgetComp->GetWidget())->SetInfo(CardInfo);
 	}
 }
 
-void ACard::ChangedCardInfo()
+void ACard::OnRep_CardInfo()
 {
-	//change
-	//!TODO: 클라 위젯 업데이트 
-
+	if (bInitialized)
+	{
+		UpdateWidget();
+	}
 }
 
 void ACard::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	//!TODO: widget이 아니라 데이터를 replicate하고 onrep으로 업데이트
 	DOREPLIFETIME(ACard, CardInfo);
 }

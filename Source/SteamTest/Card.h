@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GlobalStruct.h"
 #include "Card.generated.h"
 
 UCLASS()
@@ -32,7 +33,10 @@ public:
 	void SetInfo(struct FCardInfo& info);	
 	
 	UFUNCTION()
-	void ChangedCardInfo();
+	void UpdateWidget();
+
+	UFUNCTION()
+	void OnRep_CardInfo();
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
@@ -47,7 +51,9 @@ private:
 	UPROPERTY(BlueprintReadWrite, replicated, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
 	class UWidgetComponent* CardWidgetComp;
 
-	UPROPERTY(ReplicatedUsing = ChangedCardInfo)
-	FCardInfo* CardInfo;
+	UPROPERTY(ReplicatedUsing = OnRep_CardInfo)
+	FCardInfo CardInfo;
 
+	UPROPERTY()
+	bool bInitialized = false;
 };
