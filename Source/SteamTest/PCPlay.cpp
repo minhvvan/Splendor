@@ -9,9 +9,11 @@
 #include "Camera/CameraActor.h"
 #include "Tile.h"
 #include "Token.h"
+#include "Card.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "GlobalConst.h"
 
 APCPlay::APCPlay()
 {
@@ -75,92 +77,26 @@ void APCPlay::Click()
 
 		if (HitResult.bBlockingHit)
 		{
-			auto Token = Cast<AToken>(HitResult.GetActor());
-
-			if (IsTurn)
+			auto HittedActor = HitResult.GetActor();
+			if (HittedActor->IsA<AToken>())
 			{
+				auto Token = Cast<AToken>(HitResult.GetActor());
 				if (Token)
 				{
-					//연속 여부 판단
-					if (SelectedToken.Num() != 0)
+					if (IsTurn)
 					{
-						int tokenIdx = Token->GetIndex();
-						bool flag = false;
-						for (auto selectedToken : SelectedToken)
-						{
-							if (tokenIdx == selectedToken->GetIndex())
-							{
-								flag = true;
-								break;
-							}
-
-							if (IsNear(tokenIdx, selectedToken->GetIndex()))
-							{
-								flag = true;
-								break;
-							}
-						}
-
-						if (!flag)
-						{
-							if (WidgetDesk)
-							{
-								WidgetDesk->RenderMessage(FString::Printf(TEXT("연속하지 않은 토큰입니다.")));
-							}
-							return;
-						}
-					}
-
-					if (SelectedToken.Find(Token) == INDEX_NONE)
-					{
-						if (SelectedToken.Num() < 3)
-						{
-							if (SelectedToken.Num() != 0 && Token->GetTokenType() == ETokenType::T_Gold)
-							{
-								if (WidgetDesk)
-								{
-									WidgetDesk->RenderMessage(FString::Printf(TEXT("황금 토큰을 선택할 수 없습니다.")));
-								}
-								return;
-							}
-
-							for (auto SToken : SelectedToken)
-							{
-								if (SToken->GetTokenType() == ETokenType::T_Gold)
-								{
-									if (WidgetDesk)
-									{
-										WidgetDesk->RenderMessage(FString::Printf(TEXT("이미 황금 토큰을 선택하였습니다.")));
-									}
-									return;
-								}
-							}
-
-							SelectedToken.AddUnique(Token);
-							SRClickToken(Token, SelectedToken.Num(), true);
-						}
-						else
-						{
-							if (WidgetDesk)
-							{
-								WidgetDesk->RenderMessage(FString::Printf(TEXT("토큰은 3개까지 선택할 수 있습니다.")));
-							}
-						}
+						TokenClicked(Token);
 					}
 					else
 					{
-						//해제
-						SRClickToken(Token, SelectedToken.Num(), false);
-						SelectedToken.Remove(Token);
+						SendMessage(UGlobalConst::MsgNotTurn);
 					}
 				}
 			}
-			else
+			else if (HittedActor->IsA<ACard>())
 			{
-				if (WidgetDesk)
-				{
-					WidgetDesk->RenderMessage(FString::Printf(TEXT("당신의 차례가 아닙니다.")));
-				}
+				auto Card = Cast<ACard>(HitResult.GetActor());
+				if (Card) CardClicked(Card);
 			}
 		}
 	}
@@ -290,7 +226,7 @@ void APCPlay::BindState()
 	}
 }
 
-void APCPlay::SRRestoreToken_Implementation(FRestroeTokens Restore)
+void APCPlay::SRRestoreToken_Implementation(const TArray<FTokenCount>& Restore)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 
@@ -305,4 +241,100 @@ void APCPlay::SRRestoreToken_Implementation(FRestroeTokens Restore)
 void APCPlay::SetTurn(bool flag)
 {
 	IsTurn = flag;
+}
+
+void APCPlay::SendMessage(FString msg)
+{
+	if (WidgetDesk)
+	{
+		WidgetDesk->RenderMessage(msg);
+	}
+}
+
+void APCPlay::TokenClicked(AToken* ClickedToken)
+{
+	//연속 여부 판단
+	if (SelectedToken.Num() != 0)
+	{
+		int tokenIdx = ClickedToken->GetIndex();
+		bool flag = false;
+		for (auto selectedToken : SelectedToken)
+		{
+			if (tokenIdx == selectedToken->GetIndex())
+			{
+				flag = true;
+				break;
+			}
+
+			if (IsNear(tokenIdx, selectedToken->GetIndex()))
+			{
+				flag = true;
+				break;
+			}
+		}
+
+		if (!flag)
+		{
+			SendMessage(UGlobalConst::MsgNotContiue);
+			return;
+		}
+	}
+
+	if (SelectedToken.Find(ClickedToken) == INDEX_NONE)
+	{
+		//3개 over
+		if (SelectedToken.Num() >= 3)
+		{
+			SendMessage(UGlobalConst::MsgThreeToken);
+			return;
+		}
+
+		//황금토큰 check
+		if (ClickedToken->GetTokenType() == ETokenColor::E_Gold)
+		{
+			if (GoldCnt > 0)
+			{
+				SendMessage(UGlobalConst::MsgOneGold);
+				return;
+			}
+
+			if (SelectedToken.Num() != 0)
+			{
+				SendMessage(UGlobalConst::MsgUnableGold);
+				return;
+			}
+
+			GoldCnt++;
+		}
+		else
+		{
+			if (GoldCnt > 0)
+			{
+				SendMessage(UGlobalConst::MsgOneGold);
+				return;
+			}
+		}
+
+		SelectedToken.AddUnique(ClickedToken);
+		SRClickToken(ClickedToken, SelectedToken.Num(), true);
+	}
+	else
+	{
+		//해제
+		SRClickToken(ClickedToken, SelectedToken.Num(), false);
+		SelectedToken.Remove(ClickedToken);
+	}
+}
+
+void APCPlay::CardClicked(ACard* ClickedCard)
+{
+	if (IsLocalController())
+	{
+		if (WidgetDesk)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("CardClicked")));
+			auto info = ClickedCard->GetInfo();
+			WidgetDesk->PopUpDetailCard(info);
+		}
+	}
 }

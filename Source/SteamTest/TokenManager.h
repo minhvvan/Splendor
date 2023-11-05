@@ -5,14 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Token.h"
+#include "GlobalEnum.h"
 #include "TokenManager.generated.h"
 
-USTRUCT()
-struct FTokens
+USTRUCT(BlueprintType)
+struct FTokenList
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
+	public:
 	UPROPERTY()
 	TArray<AToken*> RedTokens;
 
@@ -35,38 +36,38 @@ public:
 	TArray<AToken*> PearlTokens;
 
 	UPROPERTY()
-	TArray<AToken*> Default;
+	TArray<AToken*> Dummy;
 
-	TArray<AToken*>& GetTokenList(ETokenType type)
+	TArray<AToken*>& GetTokenList(ETokenColor type)
 	{
 		switch (type)
 		{
-		case ETokenType::T_Red:
+		case ETokenColor::E_Red:
 			return RedTokens;
-		case ETokenType::T_Green:
+		case ETokenColor::E_Green:
 			return GreenTokens;
-		case ETokenType::T_Blue:
+		case ETokenColor::E_Blue:
 			return BlueTokens;
-		case ETokenType::T_White:
+		case ETokenColor::E_White:
 			return WhiteTokens;
-		case ETokenType::T_Black:
+		case ETokenColor::E_Black:
 			return BlackTokens;
-		case ETokenType::T_Gold:
+		case ETokenColor::E_Gold:
 			return GoldTokens;
-		case ETokenType::T_Pearl:
+		case ETokenColor::E_Pearl:
 			return PearlTokens;
 		}
 
-		return Default;
+		return Dummy;
 	}
 
-	AToken* Remove(ETokenType type)
+	AToken* Remove(ETokenColor type)
 	{
 		auto& TokenArray = GetTokenList(type);
 		return TokenArray.Pop();
 	}
 
-	void Add(ETokenType type, AToken* token)
+	void Add(ETokenColor type, AToken* token)
 	{
 		auto& TokenArray = GetTokenList(type);
 		TokenArray.Add(token);
@@ -77,7 +78,6 @@ public:
 		return RedTokens.Num() + GreenTokens.Num() + BlueTokens.Num() + WhiteTokens.Num() + BlackTokens.Num() + GoldTokens.Num() + PearlTokens.Num();
 	}
 };
-
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDeleAddScroll, APlayerController*);
 
@@ -111,7 +111,7 @@ public:
 	void PossessTokens(APlayerController* PC, bool bFirst);
 	
 	UFUNCTION()
-	void UseTokens(FRestroeTokens Tokens, bool bFirst);
+	void UseTokens(TArray<FTokenCount> Restore, bool bFirst);
 
 	FDeleAddScroll AddScroll;
 
@@ -121,8 +121,8 @@ private:
 
 	TArray<AToken*> SelectedTokens;
 
-	FTokens P1Tokens;
-	FTokens P2Tokens;
+	FTokenList P1Tokens;
+	FTokenList P2Tokens;
 
 	TArray<TArray<AToken*>> Board;
 

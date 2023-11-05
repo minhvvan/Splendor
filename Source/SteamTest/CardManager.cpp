@@ -90,8 +90,6 @@ void ACardManager::InitData()
 		Algo::RandomShuffle(TierOneInfos);
 		Algo::RandomShuffle(TierTwoInfos);
 		Algo::RandomShuffle(TierThreeInfos);
-
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("TierOneInfos: %d"), TierOneInfos.Num()));
 	}
 }
 

@@ -38,7 +38,7 @@ public:
 	void PossessTokens(APlayerController* PC, bool bFirst);
 
 	UFUNCTION()
-	void RestoreTokens(FRestroeTokens Restore, bool bFirst);
+	void RestoreTokens(TArray<FTokenCount> Restore, bool bFirst);
 
 	//!-----------------Scroll---------------------
 	UFUNCTION()

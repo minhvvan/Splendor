@@ -9,17 +9,6 @@
 
 class ATile;
 
-USTRUCT()
-struct FRestroeTokens
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-	UPROPERTY()
-	TArray<ETokenType> RestoreTokens;
-};
-
-
 UCLASS()
 class STEAMTEST_API APCPlay : public APlayerController
 {
@@ -31,20 +20,15 @@ public:
 	UFUNCTION()
 	void BeginPlay() override;
 
-	UFUNCTION(Server, Reliable)
-	void SRSetTurn();
-
-	UFUNCTION(Server, Reliable)
-	void SRClickToken(AToken* ClickedToken, int cnt, bool bAble);
-
 	UFUNCTION()
-	void ShowDesk();
-
 	void Click();
 
-	bool IsNear(int a, int b);
+	UFUNCTION()
+	void BindState();
 
-	TArray<AToken*>& GetSelectedTokens() { return SelectedToken; };
+	//!----------Turn--------
+	UFUNCTION(Server, Reliable)
+	void SRSetTurn();
 
 	UFUNCTION()
 	void SetTurn(bool flag);
@@ -52,6 +36,9 @@ public:
 	UFUNCTION()
 	bool GetTurn() { return IsTurn; };
 
+	//!--------------Token-----------
+	TArray<AToken*>& GetSelectedTokens() { return SelectedToken; };
+	
 	UFUNCTION(Server, Reliable)
 	void SRPossessTokens(bool bFirst);
 
@@ -61,12 +48,27 @@ public:
 	UFUNCTION(Client, Reliable)
 	void PopUpOverToken();
 
+	bool IsNear(int a, int b);
+
+	UFUNCTION(Server, Reliable)
+	void SRClickToken(AToken* ClickedToken, int cnt, bool bAble);
+
 	UFUNCTION()
-	void BindState();
+	void TokenClicked(AToken* ClickedToken);
+
+	//!--------------Token-----------
+	UFUNCTION()
+	void CardClicked(ACard* ClickedCard);
 
 	//!------------DESK-------
+	UFUNCTION()
+	void ShowDesk();
+
 	UFUNCTION(Server, Reliable)
-	void SRRestoreToken(FRestroeTokens Restore);
+	void SRRestoreToken(const TArray<FTokenCount>& Restore);
+
+	UFUNCTION()
+	void SendMessage(FString msg);
 
 protected:
 	virtual void SetupInputComponent() override;
@@ -98,4 +100,7 @@ private:
 
 	UPROPERTY(replicated)
 	bool IsTurn = false;
+
+	UPROPERTY(replicated)
+	int GoldCnt = 0;
 };

@@ -19,7 +19,7 @@ protected:
 	
 public:
 	UFUNCTION()
-	void SetTokenNum(ETokenType type, int score);
+	void SetTokenNum(enum ETokenColor type, int score);
 	
 	UFUNCTION()
 	void UpdateTokenNum(class APSPlayerInfo* ps);

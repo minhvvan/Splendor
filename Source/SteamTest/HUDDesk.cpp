@@ -10,10 +10,13 @@
 #include "HUDCardHolder.h"
 #include "HUDTokenHolder.h"
 #include "HUDOverToken.h"
+#include "HUDDetailCard.h"
+#include "Components/CanvasPanel.h"
 #include "PCPlay.h"
 #include "PSPlayerInfo.h"
 #include "Token.h"
 #include "CardManager.h"
+#include "GlobalEnum.h"
 
 
 void UHUDDesk::NativeOnInitialized()
@@ -89,7 +92,6 @@ void UHUDDesk::RenderMessage(FString message)
 		PlayAnimation(MessageAnim);
 	}
 }
-
 
 void UHUDDesk::GetTokenClicked()
 {
@@ -169,6 +171,19 @@ void UHUDDesk::NotifyOverToken()
 		auto widget = Cast<UHUDOverToken>(CreateWidget(GetWorld(), OverTokenClass));
 		if (widget)
 		{
+			widget->AddToViewport();
+		}
+	}
+}
+
+void UHUDDesk::PopUpDetailCard(FCardInfo& info)
+{
+	if (DetailCardClass)
+	{
+		auto widget = Cast<UHUDDetailCard>(CreateWidget(GetWorld(), DetailCardClass));
+		if (widget)
+		{
+			widget->SetCardInfo(info);
 			widget->AddToViewport();
 		}
 	}

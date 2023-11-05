@@ -7,6 +7,8 @@
 #include "STGameModePlay.h"
 #include "Algo/RandomShuffle.h"
 #include "PSPlayerInfo.h"
+#include "GlobalStruct.h"
+#include "GlobalEnum.h"
 
 // Sets default values
 ATokenManager::ATokenManager()
@@ -91,7 +93,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-				token->SetTokenType(ETokenType::T_Red);
+				token->SetTokenType(ETokenColor::E_Red);
 			}
 		}
 
@@ -104,7 +106,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-				token->SetTokenType(ETokenType::T_Green);
+				token->SetTokenType(ETokenColor::E_Green);
 			}
 		}
 
@@ -117,7 +119,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-				token->SetTokenType(ETokenType::T_Blue);
+				token->SetTokenType(ETokenColor::E_Blue);
 			}
 		}
 
@@ -130,7 +132,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-				token->SetTokenType(ETokenType::T_Black);
+				token->SetTokenType(ETokenColor::E_Black);
 			}
 		}
 
@@ -143,7 +145,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-				token->SetTokenType(ETokenType::T_White);
+				token->SetTokenType(ETokenColor::E_White);
 			}
 		}
 
@@ -156,7 +158,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-				token->SetTokenType(ETokenType::T_Gold);
+				token->SetTokenType(ETokenColor::E_Gold);
 			}
 		}
 
@@ -169,7 +171,7 @@ void ATokenManager::SpawnTokens()
 			{
 				token->SetActorScale3D(FVector(0.35f));
 				RemainTokens.Add(token);
-				token->SetTokenType(ETokenType::T_Pearl);
+				token->SetTokenType(ETokenColor::E_Pearl);
 			}
 		}
 
@@ -216,13 +218,13 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 	{
 		bool flag = SelectedTokens.Num() == 3 ? true : false;
 		int pearlCnt = 0;
-		ETokenType current = ETokenType::E_End;
+		ETokenColor current = ETokenColor::E_End;
 		for (auto token : SelectedTokens)
 		{
 			auto tType = token->GetTokenType();
-			if (tType == ETokenType::T_Pearl) pearlCnt++;
+			if (tType == ETokenColor::E_Pearl) pearlCnt++;
 
-			if (current == ETokenType::E_End)
+			if (current == ETokenColor::E_End)
 			{
 				current = tType;
 			}
@@ -250,14 +252,17 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 	}
 }
 
-void ATokenManager::UseTokens(FRestroeTokens Tokens, bool bFirst)
+void ATokenManager::UseTokens(TArray<FTokenCount> Restore, bool bFirst)
 {
 	auto& CurrentPlayer = bFirst ? P1Tokens : P2Tokens;
 
-	for (auto& token : Tokens.RestoreTokens)
+	for (auto& token : Restore)
 	{
 		//찾아서 제거 -> pouch로 옮겨야됨
-		auto removedToken = CurrentPlayer.Remove(token);
-		Pouch.Add(removedToken);
+		for (int i = 0; i < token.Value; i++)
+		{
+			auto removedToken = CurrentPlayer.Remove(token.Key);
+			Pouch.Add(removedToken);
+		}
 	}
 }

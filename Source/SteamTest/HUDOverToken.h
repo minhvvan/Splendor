@@ -60,12 +60,13 @@ public:
 	void UpdateTotalToken();
 
 	UFUNCTION()
-	int GetTokenNumByType(ETokenType type);
+	int GetTokenNumByType(ETokenColor type);
 
 private:
 	UFUNCTION()
-	void FailClick(ETokenType type, bool bUp);
-
+	void FailClick(ETokenColor type, bool bUp);
+	
+	UFUNCTION()
 	void RenderMessage();
 
 private:

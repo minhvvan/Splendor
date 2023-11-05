@@ -6,6 +6,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Engine/Texture2D.h"
+#include "GlobalEnum.h"
 
 void UHUDCardHolder::NativeOnInitialized()
 {

@@ -8,18 +8,72 @@
 #include "GlobalEnum.h"
 #include "GlobalStruct.generated.h"
 
-
 USTRUCT(BlueprintType)
-struct FCost
+struct FTokenCount
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
+	FTokenCount() : Key(ETokenColor::E_End), Value(0) {};
+
+	FTokenCount(ETokenColor key, int value) : Key(key), Value(value) {};
+
 	UPROPERTY(EditAnywhere)
 	ETokenColor Key;
 
 	UPROPERTY(EditAnywhere)
 	int Value;
+};
+
+USTRUCT(BlueprintType)
+struct FTokenCountList
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	TCheckedPointerIterator<FTokenCount,int32> begin()
+	{
+		return TokenCnt.begin();
+	}
+
+	TCheckedPointerIterator<FTokenCount, int32> end()
+	{
+		return TokenCnt.end();
+	}
+
+	void Init()
+	{
+		for (ETokenColor color : TEnumRange<ETokenColor>())
+		{
+			TokenCnt.Add({ color, 0 });
+		}
+	}
+
+	int& operator[] (ETokenColor color)
+	{
+		for (int i = 0; i < TokenCnt.Num(); i++)
+		{
+			if(TokenCnt[i].Key == color) return TokenCnt[i].Value;
+		}
+
+		return temp;
+	}
+
+	int Num()
+	{
+		int total = 0;
+		for (auto token : TokenCnt)
+		{
+			total += token.Value;
+		}
+
+		return total;
+	}
+
+private:
+	TArray<FTokenCount> TokenCnt;
+
+	int temp;
 };
 
 USTRUCT(BlueprintType)
@@ -44,7 +98,7 @@ struct FCardInfo : public FTableRowBase
 	ETokenColor color;
 
 	UPROPERTY(EditAnywhere, Category = "Info")
-	TArray< FCost> cost;
+	TArray<FTokenCount> cost;
 
 	UPROPERTY(EditAnywhere, Category = "Info")
 	TArray<EItem> item;

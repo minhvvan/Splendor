@@ -59,6 +59,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UTextBlock* TxtMessage;
 
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UCanvasPanel* PopUpPannel;
+
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* FailedGetAnim;
 
@@ -86,7 +89,12 @@ public:
 	UFUNCTION()
 	void ChangedToken();
 
+	UFUNCTION()
 	void RenderMessage(FString message);
+
+	UFUNCTION()
+	void PopUpDetailCard(struct FCardInfo& info);
+
 private:
 	UFUNCTION(BlueprintCallable)
 	void GetTokenClicked();
@@ -102,4 +110,7 @@ private:
 
 	UPROPERTY()
 	TWeakObjectPtr<APSPlayerInfo> CurrentState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> DetailCardClass;
 };

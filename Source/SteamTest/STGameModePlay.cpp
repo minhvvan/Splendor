@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "TurnManager.h"
 #include "PCPlay.h"
+#include "GlobalStruct.h"
 
 ASTGameModePlay::ASTGameModePlay()
 {
@@ -108,14 +109,9 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC, bool bFirst)
 	{
 		TurnManager->EndCurrentTurn();
 	}
-
-	for (auto ps : GetGameState<AGSPlay>()->PlayerArray)
-	{
-		Cast<APSPlayerInfo>(ps)->PrintToken();
-	}
 }
 
-void ASTGameModePlay::RestoreTokens(FRestroeTokens Restore, bool bFirst)
+void ASTGameModePlay::RestoreTokens(TArray<FTokenCount> Restore, bool bFirst)
 {
 	if (TokenManager)
 	{

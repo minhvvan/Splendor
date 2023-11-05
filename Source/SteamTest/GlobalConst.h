@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -28,4 +28,12 @@ public:
 	static const FVector4 StrongWhiteColor;
 	static const FVector4 StrongBlackColor;
 	static const FVector4 StrongPearlColor;
+
+	//!------------------Msg----------------------
+	static const FString MsgNotTurn;
+	static const FString MsgThreeToken;
+	static const FString MsgUnableGold;
+	static const FString MsgOneGold;
+	static const FString MsgNotContiue;
+
 };

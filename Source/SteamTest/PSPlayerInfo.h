@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
+#include "GlobalStruct.h"
 #include "PSPlayerInfo.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FDeleChangeScroll)
@@ -34,34 +35,13 @@ public:
 
 	//!------------------------token--------------------------------
 	UFUNCTION()
-	void AddToken(enum ETokenType type);
+	void AddToken(enum ETokenColor type);
 
 	UFUNCTION()
-	void SetToken(enum ETokenType type, int num);
+	void SetToken(enum ETokenColor type, int num);
 
 	UFUNCTION()
-	int GetTokenRed() { return TokenNumRed; };
-
-	UFUNCTION()
-	int GetTokenGreen() { return TokenNumGreen; };
-
-	UFUNCTION()
-	int GetTokenBlue() { return TokenNumBlue; };
-
-	UFUNCTION()
-	int GetTokenWhite() { return TokenNumWhite; };
-
-	UFUNCTION()
-	int GetTokenBlack() { return TokenNumBlack; };
-
-	UFUNCTION()
-	int GetTokenGold() { return TokenNumGold; };
-
-	UFUNCTION()
-	int GetTokenPearl() { return TokenNumPearl; };
-
-	UFUNCTION()
-	int GetTokenNum(ETokenType type);
+	int GetTokenNum(ETokenColor type);
 
 	UFUNCTION(Server, Reliable)
 	void UpdateTotalToken(int num);
@@ -105,25 +85,10 @@ private:
 	bool bFirst;
 
 	UPROPERTY(replicated)
-	int TokenNumRed;
+	FTokenCountList OwnTokens;
 
 	UPROPERTY(replicated)
-	int TokenNumGreen;
-
-	UPROPERTY(replicated)
-	int TokenNumBlue;
-
-	UPROPERTY(replicated)
-	int TokenNumWhite;
-
-	UPROPERTY(replicated)
-	int TokenNumBlack;
-
-	UPROPERTY(replicated)
-	int TokenNumGold;
-
-	UPROPERTY(replicated)
-	int TokenNumPearl;
+	FTokenCountList Bonus;
 
 	UPROPERTY(ReplicatedUsing = OnRep_TotalTokenNum)
 	int TotalTokenNum;

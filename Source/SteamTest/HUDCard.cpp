@@ -94,7 +94,7 @@ void UHUDCard::SetBonus(ETokenColor color, int bonus)
 	}
 }
 
-void UHUDCard::SetCost(TArray<FCost> costs)
+void UHUDCard::SetCost(TArray<FTokenCount> costs)
 {
 	if (CostDataClass && IsValid(CostDataClass))
 	{
