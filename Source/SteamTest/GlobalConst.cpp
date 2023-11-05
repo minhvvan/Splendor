@@ -23,3 +23,5 @@ const FString UGlobalConst::MsgThreeToken = FString::Printf(TEXT("토큰은 3개
 const FString UGlobalConst::MsgUnableGold = FString::Printf(TEXT("황금 토큰을 선택할 수 없습니다."));
 const FString UGlobalConst::MsgOneGold = FString::Printf(TEXT("이미 황금 토큰을 선택하였습니다."));
 const FString UGlobalConst::MsgNotContiue = FString::Printf(TEXT("연속하지 않은 토큰입니다."));
+const FString UGlobalConst::MsgNotSelect = FString::Printf(TEXT("토큰을 선택해 주세요."));
+const FString UGlobalConst::MsgUnableBuy = FString::Printf(TEXT("카드를 구매할 수 없습니다."));

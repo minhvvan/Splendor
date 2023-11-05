@@ -17,6 +17,7 @@
 #include "Token.h"
 #include "CardManager.h"
 #include "GlobalEnum.h"
+#include "GlobalConst.h"
 
 
 void UHUDDesk::NativeOnInitialized()
@@ -33,22 +34,6 @@ void UHUDDesk::NativeOnInitialized()
 	BtnFillToken->OnClicked.AddDynamic(this, &UHUDDesk::FilTokenClicked);
 }
 
-void UHUDDesk::SetScoreTxt(int score)
-{
-}
-
-void UHUDDesk::SetCrownTxt(int crown)
-{
-}
-
-void UHUDDesk::SetScrollTxt(int scroll)
-{
-	if (TxtScroll)
-	{
-		TxtScroll->SetText(FText::AsNumber(scroll));
-	}
-}
-
 void UHUDDesk::SetTurnTxt(FString turn)
 {
 }
@@ -61,6 +46,10 @@ void UHUDDesk::BindState(APSPlayerInfo* ps)
 		ps->OnScrollChanged.AddUObject(this, &UHUDDesk::ChangedScroll);
 		ps->OnOverToken.AddUObject(this, &UHUDDesk::NotifyOverToken);
 		ps->OnChangeToken.AddUObject(this, &UHUDDesk::ChangedToken);
+		ps->OnChangeBonus.AddUObject(this, &UHUDDesk::ChangedBonus);
+		ps->OnChangeScore.AddUObject(this, &UHUDDesk::ChangedScore);
+		ps->OnChangeColorScore.AddUObject(this, &UHUDDesk::ChangedColorScore);
+		ps->OnChangeCrown.AddUObject(this, &UHUDDesk::ChangedCrown);
 	}
 }
 
@@ -68,7 +57,7 @@ void UHUDDesk::ChangedScroll()
 {
 	if (CurrentState.IsValid())
 	{
-		SetScrollTxt(CurrentState->GetScroll());
+		TxtScroll->SetText(FText::AsNumber(CurrentState->GetScroll()));
 	}
 }
 
@@ -77,6 +66,80 @@ void UHUDDesk::ChangedToken()
 	if (CurrentState.IsValid() && TokenHolder)
 	{
 		TokenHolder->UpdateTokenNum(CurrentState.Get());
+	}
+}
+
+UHUDCardHolder* UHUDDesk::GetBonusWidget(ETokenColor color)
+{
+	switch (color)
+	{
+	case ETokenColor::E_Red:
+		return CDHRed;
+		break;
+	case ETokenColor::E_Green:
+		return CDHGreen;
+		break;
+	case ETokenColor::E_Blue:
+		return CDHBlue;
+		break;
+	case ETokenColor::E_White:
+		return CDHWhite;
+		break;
+	case ETokenColor::E_Black:
+		return CDHBlack;
+		break;
+	}
+
+	return nullptr;
+}
+
+
+void UHUDDesk::ChangedBonus()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangedBonus")));
+
+	if (CurrentState.IsValid())
+	{
+		for (auto color : TEnumRange<ETokenColor>())
+		{
+			auto widget = GetBonusWidget(color);
+
+			widget->SetBonusTxt(CurrentState->GetBonusNum(color));
+		}
+	}
+}
+
+void UHUDDesk::ChangedScore()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangedScore")));
+
+	if (CurrentState.IsValid())
+	{
+		TxtScore->SetText(FText::AsNumber(CurrentState->GetTotalScore()));
+	}
+}
+
+void UHUDDesk::ChangedColorScore()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangedColorScore")));
+
+	if (CurrentState.IsValid())
+	{
+		for (auto color : TEnumRange<ETokenColor>())
+		{
+			auto widget = GetBonusWidget(color);
+
+			widget->SetScoreTxt(CurrentState->GetScoreByColor(color));
+		}
+	}
+}
+
+void UHUDDesk::ChangedCrown()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangedCrown")));
+	if (CurrentState.IsValid())
+	{
+		TxtCrown->SetText(FText::AsNumber(CurrentState->GetCrown()));
 	}
 }
 
@@ -107,7 +170,7 @@ void UHUDDesk::GetTokenClicked()
 			{
 				PlayAnimation(FailedGetAnim);
 				
-				RenderMessage(FString::Printf(TEXT("토큰을 선택해 주세요.")));
+				RenderMessage(UGlobalConst::MsgNotSelect);
 
 				if (FailSound)
 				{

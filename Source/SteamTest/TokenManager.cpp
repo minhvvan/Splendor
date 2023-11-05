@@ -241,7 +241,7 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 			token->SetActorLocation(FVector(-300, 0, 0));
 		}
 
-		PS->UpdateTotalToken(SelectedTokens.Num());
+		PS->NotifyUpdateToken();
 
 		if (flag || pearlCnt >= 2)
 		{

@@ -191,6 +191,7 @@ void APCPlay::SRClickToken_Implementation(AToken* ClickedToken, int cnt, bool bA
 
 void APCPlay::SRPossessTokens_Implementation(bool bFirst)
 {
+	GoldCnt = 0;
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	if (GM)
@@ -320,6 +321,8 @@ void APCPlay::TokenClicked(AToken* ClickedToken)
 	}
 	else
 	{
+		if (ClickedToken->GetTokenType() == ETokenColor::E_Gold) GoldCnt--;
+
 		//해제
 		SRClickToken(ClickedToken, SelectedToken.Num(), false);
 		SelectedToken.Remove(ClickedToken);
@@ -332,7 +335,6 @@ void APCPlay::CardClicked(ACard* ClickedCard)
 	{
 		if (WidgetDesk)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("CardClicked")));
 			auto info = ClickedCard->GetInfo();
 			WidgetDesk->PopUpDetailCard(info);
 		}

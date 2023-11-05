@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "GlobalStruct.h"
 #include "HUDDetailCard.generated.h"
 
 /**
@@ -48,8 +49,34 @@ protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UTextBlock* TxtOwnPearl;
 
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UTextBlock* TxtMessage;
+
+	//!---------Anim-------------------
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* FailedBuy;	
+	
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* MessageAnim;
+
 
 public:
 	UFUNCTION()
 	void SetCardInfo(struct FCardInfo& info);
+
+	UFUNCTION()
+	void BuyClicked();
+
+	UFUNCTION()
+	void BackClicked();
+
+	UFUNCTION()
+	bool CheckCanBuy();
+
+	UFUNCTION()
+	void RenderMessage(FString message);
+
+private:
+	UPROPERTY()
+	FCardInfo Info;
 };

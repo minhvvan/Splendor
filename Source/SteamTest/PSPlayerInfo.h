@@ -10,6 +10,10 @@
 DECLARE_MULTICAST_DELEGATE(FDeleChangeScroll)
 DECLARE_MULTICAST_DELEGATE(FDeleOverToken)
 DECLARE_MULTICAST_DELEGATE(FDeleChangeToken)
+DECLARE_MULTICAST_DELEGATE(FDeleChangeBonus)
+DECLARE_MULTICAST_DELEGATE(FDeleChangeScore)
+DECLARE_MULTICAST_DELEGATE(FDeleChangeColorScore)
+DECLARE_MULTICAST_DELEGATE(FDeleChangeCrown)
 
 UCLASS()
 class STEAMTEST_API APSPlayerInfo : public APlayerState
@@ -44,10 +48,13 @@ public:
 	int GetTokenNum(ETokenColor type);
 
 	UFUNCTION(Server, Reliable)
-	void UpdateTotalToken(int num);
+	void NotifyUpdateToken();
 
 	UFUNCTION()
 	void PrintToken();
+
+	UFUNCTION()
+	void OnRep_TokenUpdated();
 
 	//!---------------Scroll---------------
 	UFUNCTION()
@@ -59,13 +66,50 @@ public:
 	UFUNCTION()
 	void OnRep_Scroll();
 
+	//!---------------Bonus---------------
 	UFUNCTION()
-	void OnRep_TotalTokenNum();
+	void AddBonus(enum ETokenColor color);
+
+	UFUNCTION()
+	int GetBonusNum(ETokenColor type);
+
+	UFUNCTION()
+	void OnRep_Bonus();
+
+	//!---------------Score---------------
+	UFUNCTION()
+	void AddScore(ETokenColor color, int s);
+
+	UFUNCTION()
+	int GetTotalScore() { return TotalScore; };	
+	
+	UFUNCTION()
+	int GetScoreByColor(ETokenColor color) { return ColorScore[color]; };
+
+	UFUNCTION()
+	void OnRep_TotalScore();
+
+	UFUNCTION()
+	void OnRep_ColorScore();
+
+	//!---------------Crown---------------
+	UFUNCTION()
+	void AddCrown(int crown);
+
+	UFUNCTION()
+	const int GetCrown() const { return Crown; };
+
+	UFUNCTION()
+	void OnRep_Crown();
 
 	//!-------------Delegate-----------
 	FDeleChangeScroll OnScrollChanged;
 	FDeleOverToken OnOverToken;
 	FDeleChangeToken OnChangeToken;
+	FDeleChangeBonus OnChangeBonus;
+	FDeleChangeScore OnChangeScore;
+	FDeleChangeColorScore OnChangeColorScore;
+	FDeleChangeCrown OnChangeCrown;
 
 protected:
 	UFUNCTION()
@@ -87,12 +131,21 @@ private:
 	UPROPERTY(replicated)
 	FTokenCountList OwnTokens;
 
-	UPROPERTY(replicated)
-	FTokenCountList Bonus;
+	UPROPERTY(ReplicatedUsing = OnRep_Bonus)
+	FTokenCountList OwnBonus;
 
-	UPROPERTY(ReplicatedUsing = OnRep_TotalTokenNum)
-	int TotalTokenNum;
+	UPROPERTY(ReplicatedUsing = OnRep_ColorScore)
+	FTokenCountList ColorScore;
+
+	UPROPERTY(ReplicatedUsing = OnRep_TokenUpdated)
+	bool bTokenUpdated;
+
+	UPROPERTY(ReplicatedUsing = OnRep_TotalScore)
+	int TotalScore;
 
 	UPROPERTY(ReplicatedUsing = OnRep_Scroll)
 	int ScrollNum;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Crown)
+	int Crown;
 };

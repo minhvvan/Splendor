@@ -53,7 +53,7 @@ public:
 	{
 		for (int i = 0; i < TokenCnt.Num(); i++)
 		{
-			if(TokenCnt[i].Key == color) return TokenCnt[i].Value;
+			if(this->TokenCnt[i].Key == color) return this->TokenCnt[i].Value;
 		}
 
 		return temp;
@@ -71,6 +71,7 @@ public:
 	}
 
 private:
+	UPROPERTY()
 	TArray<FTokenCount> TokenCnt;
 
 	int temp;

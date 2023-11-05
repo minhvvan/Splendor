@@ -8,10 +8,11 @@
 #include "PCPlay.h"
 #include "GlobalEnum.h"
 
-APSPlayerInfo::APSPlayerInfo(): PName(""), bFirst(false)
+APSPlayerInfo::APSPlayerInfo(): PName(""), bFirst(false), bTokenUpdated(false), ScrollNum(0), TotalScore(0)
 {
 	OwnTokens.Init();
-	Bonus.Init();
+	OwnBonus.Init();
+	ColorScore.Init();
 }
 
 void APSPlayerInfo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -21,54 +22,13 @@ void APSPlayerInfo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(APSPlayerInfo, bFirst);
 
 	DOREPLIFETIME(APSPlayerInfo, OwnTokens);
-	DOREPLIFETIME(APSPlayerInfo, Bonus);
+	DOREPLIFETIME(APSPlayerInfo, OwnBonus);
+	DOREPLIFETIME(APSPlayerInfo, ColorScore);
 
+	DOREPLIFETIME(APSPlayerInfo, bTokenUpdated);
 	DOREPLIFETIME(APSPlayerInfo, ScrollNum);
-}
-
-void APSPlayerInfo::AddToken(ETokenColor type)
-{
-	OwnTokens[type]++;
-}
-
-
-void APSPlayerInfo::SetToken(ETokenColor type, int num)
-{
-	OwnTokens[type] = num;
-}
-
-void APSPlayerInfo::PrintToken()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Red: %d"), OwnTokens[ETokenColor::E_Red]));
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Green: %d"), OwnTokens[ETokenColor::E_Green]));
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Blue: %d"), OwnTokens[ETokenColor::E_Blue]));
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("White: %d"), OwnTokens[ETokenColor::E_White]));
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Black: %d"), OwnTokens[ETokenColor::E_Black]));
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Gold: %d"), OwnTokens[ETokenColor::E_Gold]));
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Pearl: %d"), OwnTokens[ETokenColor::E_Pearl]));
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("-----------------------------")));
-}
-
-void APSPlayerInfo::AddScroll(int num)
-{
-	ScrollNum += num;
-	OnScrollChanged.Broadcast();
-}
-
-void APSPlayerInfo::OnRep_Scroll()
-{
-	//~왜 서버쪽 PS변경시 클라에서 동작?
-	OnScrollChanged.Broadcast();
-}
-
-void APSPlayerInfo::OnRep_TotalTokenNum()
-{
-	OnChangeToken.Broadcast();
-
-	if (TotalTokenNum > 10)
-	{
-		OnOverToken.Broadcast();
-	}
+	DOREPLIFETIME(APSPlayerInfo, TotalScore);
+	DOREPLIFETIME(APSPlayerInfo, Crown);
 }
 
 void APSPlayerInfo::CopyProperties(APlayerState* PlayerState)
@@ -107,14 +67,113 @@ void APSPlayerInfo::ClientInitialize(AController* C)
 	Cast<APCPlay>(GetOwningController())->BindState();
 }
 
+
+//!-----------------Token---------------------
+void APSPlayerInfo::AddToken(ETokenColor type)
+{
+	if (bTokenUpdated) bTokenUpdated = false;
+
+	OwnTokens[type]++;
+}
+
+void APSPlayerInfo::SetToken(ETokenColor type, int num)
+{
+	OwnTokens[type] = num;
+}
+
+void APSPlayerInfo::PrintToken()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Red: %d"), OwnTokens[ETokenColor::E_Red]));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Green: %d"), OwnTokens[ETokenColor::E_Green]));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Blue: %d"), OwnTokens[ETokenColor::E_Blue]));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("White: %d"), OwnTokens[ETokenColor::E_White]));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Black: %d"), OwnTokens[ETokenColor::E_Black]));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Gold: %d"), OwnTokens[ETokenColor::E_Gold]));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Pearl: %d"), OwnTokens[ETokenColor::E_Pearl]));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("-----------------------------")));
+}
+
 int APSPlayerInfo::GetTokenNum(ETokenColor color)
 {
 	return OwnTokens[color];
 }
 
-//!TODO: 변경 필요
-void APSPlayerInfo::UpdateTotalToken_Implementation(int num)
+void APSPlayerInfo::OnRep_TokenUpdated()
 {
-	TotalTokenNum += num;
 	OnChangeToken.Broadcast();
+
+	if (OwnTokens.Num() > 10)
+	{
+		OnOverToken.Broadcast();
+	}
+}
+
+void APSPlayerInfo::NotifyUpdateToken_Implementation()
+{
+	bTokenUpdated = true;
+	OnChangeToken.Broadcast();
+}
+
+
+//!-----------------Bonus---------------------
+void APSPlayerInfo::AddBonus(ETokenColor color)
+{
+	OwnBonus[color]++;
+
+	//!TODO: 여기서 boradcast??????
+}
+
+int APSPlayerInfo::GetBonusNum(ETokenColor color)
+{
+	return OwnBonus[color];
+}
+
+void APSPlayerInfo::OnRep_Bonus()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("OnRep_Bonus")));
+	OnChangeBonus.Broadcast();
+}
+
+
+//!-----------------Score---------------------
+void APSPlayerInfo::AddScore(ETokenColor color, int s)
+{
+	TotalScore += s;
+	ColorScore[color] += s;
+}
+
+void APSPlayerInfo::OnRep_TotalScore()
+{
+	OnChangeScore.Broadcast();
+}
+
+void APSPlayerInfo::OnRep_ColorScore()
+{
+	OnChangeColorScore.Broadcast();
+}
+
+//!-----------------Scroll---------------------
+void APSPlayerInfo::AddScroll(int num)
+{
+	ScrollNum += num;
+	OnScrollChanged.Broadcast();
+}
+
+void APSPlayerInfo::OnRep_Scroll()
+{
+	//~왜 서버쪽 PS변경시 클라에서 동작?
+	OnScrollChanged.Broadcast();
+}
+
+
+
+//!-----------------Crown---------------------
+void APSPlayerInfo::AddCrown(int crown)
+{
+	Crown += crown;
+}
+
+void APSPlayerInfo::OnRep_Crown()
+{
+	OnChangeCrown.Broadcast();
 }

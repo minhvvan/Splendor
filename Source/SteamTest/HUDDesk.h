@@ -70,11 +70,6 @@ protected:
 
 	virtual void NativeOnInitialized();
 public:
-	void SetScoreTxt(int score);
-	void SetCrownTxt(int crown);
-
-	UFUNCTION()
-	void SetScrollTxt(int scroll);
 	void SetTurnTxt(FString turn);
 
 	UFUNCTION()
@@ -90,10 +85,25 @@ public:
 	void ChangedToken();
 
 	UFUNCTION()
+	void ChangedBonus();
+
+	UFUNCTION()
+	void ChangedScore();
+
+	UFUNCTION()
+	void ChangedColorScore();
+
+	UFUNCTION()
+	void ChangedCrown();
+
+	UFUNCTION()
 	void RenderMessage(FString message);
 
 	UFUNCTION()
 	void PopUpDetailCard(struct FCardInfo& info);
+
+	UFUNCTION()
+	UHUDCardHolder* GetBonusWidget(ETokenColor color);
 
 private:
 	UFUNCTION(BlueprintCallable)

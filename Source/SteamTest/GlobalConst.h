@@ -35,5 +35,7 @@ public:
 	static const FString MsgUnableGold;
 	static const FString MsgOneGold;
 	static const FString MsgNotContiue;
+	static const FString MsgNotSelect;
+	static const FString MsgUnableBuy;
 
 };

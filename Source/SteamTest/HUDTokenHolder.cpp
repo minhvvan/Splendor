@@ -43,7 +43,6 @@ void UHUDTokenHolder::SetTokenNum(ETokenColor type, int score)
 
 void UHUDTokenHolder::UpdateTokenNum(APSPlayerInfo* ps)
 {
-
 	if (PS == nullptr || !IsValid(PS))
 	{
 		PS = ps;
