@@ -59,6 +59,16 @@ public:
 		return temp;
 	}
 
+	const int& operator[] (ETokenColor color) const
+	{
+		for (int i = 0; i < TokenCnt.Num(); i++)
+		{
+			if (this->TokenCnt[i].Key == color) return this->TokenCnt[i].Value;
+		}
+
+		return temp;
+	}
+
 	int Num()
 	{
 		int total = 0;
@@ -68,6 +78,11 @@ public:
 		}
 
 		return total;
+	}
+
+	const TArray<FTokenCount>& Get()
+	{
+		return TokenCnt;
 	}
 
 private:

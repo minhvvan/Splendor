@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CardManager.h"
@@ -112,6 +111,7 @@ void ACardManager::InitCards()
 				SpawnLoc += offset;
 				auto info = TierOneInfos.Pop();
 				Card->SetInfo(info);
+				Card->OnCardDestroy.AddUObject(this, &ACardManager::DestoryCard);
 				TierOne.Add(Card);
 			}
 		}
@@ -125,6 +125,7 @@ void ACardManager::InitCards()
 				SpawnLoc += offset;
 				auto info = TierTwoInfos.Pop();
 				Card->SetInfo(info);
+				Card->OnCardDestroy.AddUObject(this, &ACardManager::DestoryCard);
 				TierTwo.Add(Card);
 			}
 		}
@@ -138,6 +139,7 @@ void ACardManager::InitCards()
 				SpawnLoc += offset;
 				auto info = TierThreeInfos.Pop();
 				Card->SetInfo(info);
+				Card->OnCardDestroy.AddUObject(this, &ACardManager::DestoryCard);
 				TierThree.Add(Card);
 			}
 		}
@@ -185,4 +187,50 @@ void ACardManager::InitDummy()
 		}
 	}
 
+}
+
+void ACardManager::DestoryCard(FVector loc, ECardTier tier)
+{
+	TArray<FCardInfo> CurrentTier;
+
+	switch (tier)
+	{
+	case ECardTier::C_One:
+		CurrentTier = TierOneInfos;
+		break;
+	case ECardTier::C_Two:
+		CurrentTier = TierTwoInfos;
+		break;
+	case ECardTier::C_Three:
+		CurrentTier = TierThreeInfos;
+		break;
+	}
+
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		FRotator rotator;
+		auto Card = Cast<ACard>(world->SpawnActor<AActor>(CardClass, loc, rotator, SpawnParams));
+		auto info = CurrentTier.Pop();
+		Card->SetInfo(info);
+
+		switch (tier)
+		{
+		case ECardTier::C_One:
+			TierOne.Add(Card);
+			break;
+		case ECardTier::C_Two:
+			TierTwo.Add(Card);
+			break;
+		case ECardTier::C_Three:
+			TierThree.Add(Card);
+			break;
+		}
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("CardNum: %d"), TierOne.Num()));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("CardNum: %d"), TierTwo.Num()));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("CardNum: %d"), TierThree.Num()));
 }

@@ -227,7 +227,7 @@ void APCPlay::BindState()
 	}
 }
 
-void APCPlay::SRRestoreToken_Implementation(const TArray<FTokenCount>& Restore)
+void APCPlay::SRRestoreToken_Implementation(const FTokenCountList& Restore)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 
@@ -235,7 +235,7 @@ void APCPlay::SRRestoreToken_Implementation(const TArray<FTokenCount>& Restore)
 	{
 		//Tokenmanager
 		//전달받은 개수 만큼 반환
-		GM->RestoreTokens(Restore, GetPlayerState<APSPlayerInfo>()->GetBFirst());
+		GM->RestoreTokens(Restore, this);
 	}
 }
 
@@ -336,7 +336,17 @@ void APCPlay::CardClicked(ACard* ClickedCard)
 		if (WidgetDesk)
 		{
 			auto info = ClickedCard->GetInfo();
-			WidgetDesk->PopUpDetailCard(info);
+			WidgetDesk->PopUpDetailCard(ClickedCard);
 		}
+	}
+}
+
+void APCPlay::SRBuyCard_Implementation(FCardInfo cardInfo, const FTokenCountList& UseTokens)
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GM)
+	{
+		GM->BuyCard(this, cardInfo, UseTokens);
 	}
 }

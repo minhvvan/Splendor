@@ -293,7 +293,9 @@ void UHUDOverToken::CommitTokens()
 
 	if (PS)
 	{
-		auto Restore = TArray<FTokenCount>();
+		//auto Restore = TArray<FTokenCount>();
+		auto Restore = FTokenCountList();
+		Restore.Init();
 
 		for (ETokenColor type : TEnumRange<ETokenColor>())
 		{
@@ -302,11 +304,11 @@ void UHUDOverToken::CommitTokens()
 
 			if (diff > 0)
 			{
-				Restore.Add({type, diff});
+				Restore[type] += diff;
 			}
 
 			//!TODO: 서버에서 처리하는게 맞을듯 
-			PS->SetToken(type, current);
+			//PS->SetToken(type, current);
 		}
 
 		//서버에 넣어야 됨 -> PC한테 요청

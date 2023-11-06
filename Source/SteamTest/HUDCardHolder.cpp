@@ -16,12 +16,18 @@ void UHUDCardHolder::NativeOnInitialized()
 
 void UHUDCardHolder::SetScoreTxt(int score)
 {
-	TxtScore->SetText(FText::AsNumber(score));
+	if (TxtScore)
+	{
+		TxtScore->SetText(FText::AsNumber(score));
+	}
 }
 
 void UHUDCardHolder::SetBonusTxt(int bonus)
 {
-	TxtBonus->SetText(FText::AsNumber(bonus));
+	if (TxtBonus)
+	{
+		TxtBonus->SetText(FText::AsNumber(bonus));
+	}
 }
 
 void UHUDCardHolder::SetImage(ETokenColor color)

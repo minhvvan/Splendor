@@ -74,6 +74,12 @@ void ACard::OnRep_CardInfo()
 	}
 }
 
+void ACard::DestroyWithDele()
+{
+	OnCardDestroy.Broadcast(GetActorLocation(), CardInfo.tier);
+	Destroy();
+}
+
 void ACard::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

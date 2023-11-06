@@ -7,6 +7,9 @@
 #include "GlobalStruct.h"
 #include "Card.generated.h"
 
+
+DECLARE_MULTICAST_DELEGATE_TwoParams(FCardDestroy, FVector, ECardTier);
+
 UCLASS()
 class STEAMTEST_API ACard : public AActor
 {
@@ -40,6 +43,11 @@ public:
 
 	UFUNCTION()
 	void OnRep_CardInfo();
+
+	UFUNCTION()
+	void DestroyWithDele();
+
+	FCardDestroy OnCardDestroy;
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))

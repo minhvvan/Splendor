@@ -4,20 +4,22 @@
 #include "HUDDesk.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
-#include "Sound/SoundCue.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Sound/SoundCue.h"
 #include "HUDCardHolder.h"
 #include "HUDTokenHolder.h"
 #include "HUDOverToken.h"
 #include "HUDDetailCard.h"
-#include "Components/CanvasPanel.h"
 #include "PCPlay.h"
 #include "PSPlayerInfo.h"
 #include "Token.h"
+#include "Card.h"
 #include "CardManager.h"
 #include "GlobalEnum.h"
 #include "GlobalConst.h"
+
+#include "STGameModePlay.h"
 
 
 void UHUDDesk::NativeOnInitialized()
@@ -93,26 +95,24 @@ UHUDCardHolder* UHUDDesk::GetBonusWidget(ETokenColor color)
 	return nullptr;
 }
 
-
 void UHUDDesk::ChangedBonus()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangedBonus")));
-
 	if (CurrentState.IsValid())
 	{
 		for (auto color : TEnumRange<ETokenColor>())
 		{
 			auto widget = GetBonusWidget(color);
 
-			widget->SetBonusTxt(CurrentState->GetBonusNum(color));
+			if (widget)
+			{
+				widget->SetBonusTxt(CurrentState->GetBonusNum(color));
+			}
 		}
 	}
 }
 
 void UHUDDesk::ChangedScore()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangedScore")));
-
 	if (CurrentState.IsValid())
 	{
 		TxtScore->SetText(FText::AsNumber(CurrentState->GetTotalScore()));
@@ -121,15 +121,16 @@ void UHUDDesk::ChangedScore()
 
 void UHUDDesk::ChangedColorScore()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangedColorScore")));
-
 	if (CurrentState.IsValid())
 	{
 		for (auto color : TEnumRange<ETokenColor>())
 		{
 			auto widget = GetBonusWidget(color);
 
-			widget->SetScoreTxt(CurrentState->GetScoreByColor(color));
+			if (widget)
+			{
+				widget->SetScoreTxt(CurrentState->GetScoreByColor(color));
+			}
 		}
 	}
 }
@@ -239,15 +240,26 @@ void UHUDDesk::NotifyOverToken()
 	}
 }
 
-void UHUDDesk::PopUpDetailCard(FCardInfo& info)
+void UHUDDesk::PopUpDetailCard(ACard* card)
 {
 	if (DetailCardClass)
 	{
 		auto widget = Cast<UHUDDetailCard>(CreateWidget(GetWorld(), DetailCardClass));
 		if (widget)
 		{
+			ClickedCard = card;
+			widget->OnBuyCard.AddUObject(this, &UHUDDesk::OnBuyCard);
+			auto info = card->GetInfo();
 			widget->SetCardInfo(info);
 			widget->AddToViewport();
 		}
+	}
+}
+
+void UHUDDesk::OnBuyCard()
+{
+	if (ClickedCard.IsValid())
+	{
+		ClickedCard->DestroyWithDele();
 	}
 }

@@ -29,19 +29,19 @@ protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
 	class UHUDCardHolder* CDHRed;	
 	
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
 	class UHUDCardHolder* CDHGreen;
 
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
 	class UHUDCardHolder* CDHBlue;
 
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
 	class UHUDCardHolder* CDHWhite;
 
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
 	class UHUDCardHolder* CDHBlack;
 
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
 	class UHUDTokenHolder* TokenHolder;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
@@ -58,9 +58,6 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UTextBlock* TxtMessage;
-
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UCanvasPanel* PopUpPannel;
 
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* FailedGetAnim;
@@ -100,10 +97,13 @@ public:
 	void RenderMessage(FString message);
 
 	UFUNCTION()
-	void PopUpDetailCard(struct FCardInfo& info);
+	void PopUpDetailCard(class ACard* card);
 
 	UFUNCTION()
 	UHUDCardHolder* GetBonusWidget(ETokenColor color);
+
+	UFUNCTION()
+	void OnBuyCard();
 
 private:
 	UFUNCTION(BlueprintCallable)
@@ -123,4 +123,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> DetailCardClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TWeakObjectPtr<ACard> ClickedCard;
 };

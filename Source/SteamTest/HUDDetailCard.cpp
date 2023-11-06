@@ -15,6 +15,8 @@ void UHUDDetailCard::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+	UseTokens.Init();
+
 	BtnBuy->OnClicked.AddDynamic(this, &UHUDDetailCard::BuyClicked);
 	BtnBack->OnClicked.AddDynamic(this, &UHUDDetailCard::BackClicked);
 }
@@ -74,17 +76,14 @@ void UHUDDetailCard::BuyClicked()
 		return;
 	}
 
-	//구매성공
-	//token 사용 & bonus, score, crown update
-	//item 사용
-	//try1: 여기서 직접 업데이트
-	auto PS = GetOwningPlayer()->GetPlayerState<APSPlayerInfo>();
-	if (PS)
+	auto PC = Cast<APCPlay>(GetOwningPlayer());
+	if (PC)
 	{
-		PS->AddBonus(Info.color);
-		PS->AddScore(Info.color, Info.score);
-		PS->AddCrown(Info.crown);
+		PC->SRBuyCard(Info, UseTokens);
 	}
+
+	//dele 호출(문제 없음)
+	//OnBuyCard.Broadcast();
 
 	RemoveFromParent();
 }
@@ -101,15 +100,40 @@ bool UHUDDetailCard::CheckCanBuy()
 	{
 		bool flag = true;
 		auto costs = Info.cost;
+
+		FTokenCountList OwnTokens;
+		OwnTokens.Init();
+
+		OwnTokens[ETokenColor::E_Red] = PS->GetTokenNum(ETokenColor::E_Red);
+		OwnTokens[ETokenColor::E_Green] = PS->GetTokenNum(ETokenColor::E_Green);
+		OwnTokens[ETokenColor::E_Blue] = PS->GetTokenNum(ETokenColor::E_Blue);
+		OwnTokens[ETokenColor::E_White] = PS->GetTokenNum(ETokenColor::E_White);
+		OwnTokens[ETokenColor::E_Black] = PS->GetTokenNum(ETokenColor::E_Black);
+		OwnTokens[ETokenColor::E_Gold] = PS->GetTokenNum(ETokenColor::E_Gold);
+		OwnTokens[ETokenColor::E_Pearl] = PS->GetTokenNum(ETokenColor::E_Pearl);
+
 		for (auto cost : costs)
 		{
-			int ownToken = PS->GetTokenNum(cost.Key);
+			int ownToken = OwnTokens[cost.Key];
 			int ownBonus = PS->GetBonusNum(cost.Key);
 
-			if (cost.Value > ownToken + ownBonus)
+			int diff = cost.Value - (ownToken + ownBonus);
+			if (diff > 0)
 			{
+				//gold 사용
+				if (OwnTokens[ETokenColor::E_Gold] >= diff)
+				{
+					OwnTokens[ETokenColor::E_Gold] -= diff;
+					UseTokens[ETokenColor::E_Gold] += diff;
+					continue;
+				}
+
 				flag = false;
 				break;
+			}
+			else
+			{
+				UseTokens[cost.Key] += (cost.Value - ownBonus);
 			}
 		}
 

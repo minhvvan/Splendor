@@ -27,6 +27,11 @@ public:
 
 	virtual void StartMatch() override;
 
+	UFUNCTION()
+	void PrintBonus();
+
+	UFUNCTION()
+	void PrintToken();
 	//!-----------Token-----------------------
 	UFUNCTION()
 	void SetTokenSpawnLoc(TArray<class AToken*>& Tokens);
@@ -38,11 +43,15 @@ public:
 	void PossessTokens(APlayerController* PC, bool bFirst);
 
 	UFUNCTION()
-	void RestoreTokens(TArray<FTokenCount> Restore, bool bFirst);
+	void RestoreTokens(const FTokenCountList& Restore, APlayerController* PC);
 
 	//!-----------------Scroll---------------------
 	UFUNCTION()
 	void GiveScroll(APlayerController* player);
+
+	//!-----------------Scroll---------------------
+	UFUNCTION()
+	void BuyCard(APlayerController* player, FCardInfo cardInfo, const FTokenCountList& UseTokens);
 
 protected:
 	virtual void HandleSeamlessTravelPlayer(AController*& C) override;

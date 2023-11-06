@@ -56,16 +56,19 @@ public:
 	UFUNCTION()
 	void TokenClicked(AToken* ClickedToken);
 
-	//!--------------Token-----------
+	//!--------------Card-----------
 	UFUNCTION()
 	void CardClicked(ACard* ClickedCard);
+
+	UFUNCTION(Server, Reliable)
+	void SRBuyCard(FCardInfo cardInfo,const FTokenCountList& UseTokens);
 
 	//!------------DESK-------
 	UFUNCTION()
 	void ShowDesk();
 
 	UFUNCTION(Server, Reliable)
-	void SRRestoreToken(const TArray<FTokenCount>& Restore);
+	void SRRestoreToken(const FTokenCountList& Restore);
 
 	UFUNCTION()
 	void SendMessage(FString msg);

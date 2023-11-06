@@ -111,7 +111,7 @@ public:
 	void PossessTokens(APlayerController* PC, bool bFirst);
 	
 	UFUNCTION()
-	void UseTokens(TArray<FTokenCount> Restore, bool bFirst);
+	void UseTokens(FTokenCountList Restore, bool bFirst);
 
 	FDeleAddScroll AddScroll;
 

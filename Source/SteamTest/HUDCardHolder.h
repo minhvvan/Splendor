@@ -25,7 +25,10 @@ protected:
 	virtual void NativeOnInitialized();
 
 public:
+	UFUNCTION()
 	void SetScoreTxt(int score);
+
+	UFUNCTION()
 	void SetBonusTxt(int bonus);
 
 	void SetImage(ETokenColor color);

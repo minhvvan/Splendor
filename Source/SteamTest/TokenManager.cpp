@@ -237,7 +237,7 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 			if (bFirst) P1Tokens.Add(tType, token);
 			else P2Tokens.Add(tType, token);
 
-			PS->AddToken(token->GetTokenType());
+			PS->AddToken(token->GetTokenType(), 1);
 			token->SetActorLocation(FVector(-300, 0, 0));
 		}
 
@@ -252,7 +252,7 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 	}
 }
 
-void ATokenManager::UseTokens(TArray<FTokenCount> Restore, bool bFirst)
+void ATokenManager::UseTokens(FTokenCountList Restore, bool bFirst)
 {
 	auto& CurrentPlayer = bFirst ? P1Tokens : P2Tokens;
 

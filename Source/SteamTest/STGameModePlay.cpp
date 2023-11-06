@@ -111,11 +111,23 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC, bool bFirst)
 	}
 }
 
-void ASTGameModePlay::RestoreTokens(TArray<FTokenCount> Restore, bool bFirst)
+void ASTGameModePlay::RestoreTokens(const FTokenCountList& Restore, APlayerController* player)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("RestoreTokens")));
+
+	//PS Update
+	auto PS = player->GetPlayerState<APSPlayerInfo>();
+	if (PS)
+	{
+		for (auto color : TEnumRange<ETokenColor>())
+		{
+			PS->AddToken(color, -Restore[color]);
+		}
+	}
+
 	if (TokenManager)
 	{
-		TokenManager->UseTokens(Restore, bFirst);
+		TokenManager->UseTokens(Restore, PS->GetBFirst());
 	}
 }
 
@@ -171,4 +183,60 @@ void ASTGameModePlay::HandleSeamlessTravelPlayer(AController*& C)
 	Super::HandleSeamlessTravelPlayer(C);
 
 	Cast<APCPlay>(C)->SRSetTurn();
+}
+
+void ASTGameModePlay::BuyCard(APlayerController* player, FCardInfo cardInfo, const FTokenCountList& UseTokens)
+{
+	auto PS = player->GetPlayerState<APSPlayerInfo>();
+	if (PS)
+	{
+		PS->AddBonus(cardInfo.color);
+		PS->AddScore(cardInfo.color, cardInfo.score);
+		PS->AddCrown(cardInfo.crown);
+		
+		//토큰 소비
+		RestoreTokens(UseTokens, player);
+	}
+
+	//아이템, crown 처리
+
+
+
+	//턴변경
+	if (TurnManager)
+	{
+		TurnManager->EndCurrentTurn();
+	}
+}
+
+
+
+void ASTGameModePlay::PrintBonus()
+{
+	auto GS = GetGameState<AGSPlay>();
+
+	if (GS)
+	{
+		for (auto PS : GS->PlayerArray)
+		{
+			for (auto color : TEnumRange<ETokenColor>())
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("bonus: %d"), Cast<APSPlayerInfo>(PS)->GetBonusNum(color)));
+			}
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("-------------------------")));
+		}
+	}
+}
+
+void ASTGameModePlay::PrintToken()
+{
+	auto GS = GetGameState<AGSPlay>();
+
+	if (GS)
+	{
+		for (auto PS : GS->PlayerArray)
+		{
+			Cast<APSPlayerInfo>(PS)->PrintToken();
+		}
+	}
 }

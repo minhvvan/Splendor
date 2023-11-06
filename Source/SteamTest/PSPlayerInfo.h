@@ -39,7 +39,7 @@ public:
 
 	//!------------------------token--------------------------------
 	UFUNCTION()
-	void AddToken(enum ETokenColor type);
+	void AddToken(enum ETokenColor type, int cnt);
 
 	UFUNCTION()
 	void SetToken(enum ETokenColor type, int num);

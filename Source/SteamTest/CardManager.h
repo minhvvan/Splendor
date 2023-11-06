@@ -39,6 +39,11 @@ public:
 	
 	UFUNCTION()
 	void InitDummy();
+
+
+	//!-------------Card----------
+	UFUNCTION()
+	void DestoryCard(FVector loc, ECardTier tier);
 	
 private:
 	//!----------------Card--------------

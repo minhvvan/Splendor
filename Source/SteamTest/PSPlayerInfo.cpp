@@ -69,11 +69,11 @@ void APSPlayerInfo::ClientInitialize(AController* C)
 
 
 //!-----------------Token---------------------
-void APSPlayerInfo::AddToken(ETokenColor type)
+void APSPlayerInfo::AddToken(ETokenColor type, int cnt)
 {
 	if (bTokenUpdated) bTokenUpdated = false;
 
-	OwnTokens[type]++;
+	OwnTokens[type] += cnt;
 }
 
 void APSPlayerInfo::SetToken(ETokenColor type, int num)
@@ -121,6 +121,7 @@ void APSPlayerInfo::AddBonus(ETokenColor color)
 	OwnBonus[color]++;
 
 	//!TODO: ¿©±â¼­ boradcast??????
+	OnChangeBonus.Broadcast();
 }
 
 int APSPlayerInfo::GetBonusNum(ETokenColor color)
@@ -130,7 +131,6 @@ int APSPlayerInfo::GetBonusNum(ETokenColor color)
 
 void APSPlayerInfo::OnRep_Bonus()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("OnRep_Bonus")));
 	OnChangeBonus.Broadcast();
 }
 
@@ -140,6 +140,9 @@ void APSPlayerInfo::AddScore(ETokenColor color, int s)
 {
 	TotalScore += s;
 	ColorScore[color] += s;
+
+	OnChangeScore.Broadcast();
+	OnChangeColorScore.Broadcast();
 }
 
 void APSPlayerInfo::OnRep_TotalScore()
@@ -171,6 +174,7 @@ void APSPlayerInfo::OnRep_Scroll()
 void APSPlayerInfo::AddCrown(int crown)
 {
 	Crown += crown;
+	OnChangeCrown.Broadcast();
 }
 
 void APSPlayerInfo::OnRep_Crown()

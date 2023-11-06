@@ -7,9 +7,8 @@
 #include "GlobalStruct.h"
 #include "HUDDetailCard.generated.h"
 
-/**
- * 
- */
+DECLARE_MULTICAST_DELEGATE(FBuyCard);
+
 UCLASS()
 class STEAMTEST_API UHUDDetailCard : public UUserWidget
 {
@@ -76,7 +75,13 @@ public:
 	UFUNCTION()
 	void RenderMessage(FString message);
 
+	FBuyCard OnBuyCard;
+
 private:
 	UPROPERTY()
-	FCardInfo Info;
+	FCardInfo Info;	
+	
+	//smartPtr 필요할수도
+	UPROPERTY()
+	FTokenCountList UseTokens;
 };
