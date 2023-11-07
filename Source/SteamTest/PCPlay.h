@@ -62,6 +62,9 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void SRBuyCard(FCardInfo cardInfo,const FTokenCountList& UseTokens);
+	
+	UFUNCTION(Server, Reliable)
+	void SRCardClicked(ACard* ClickedCard);
 
 	//!------------DESK-------
 	UFUNCTION()

@@ -111,7 +111,6 @@ void ACardManager::InitCards()
 				SpawnLoc += offset;
 				auto info = TierOneInfos.Pop();
 				Card->SetInfo(info);
-				Card->OnCardDestroy.AddUObject(this, &ACardManager::DestoryCard);
 				TierOne.Add(Card);
 			}
 		}
@@ -125,7 +124,6 @@ void ACardManager::InitCards()
 				SpawnLoc += offset;
 				auto info = TierTwoInfos.Pop();
 				Card->SetInfo(info);
-				Card->OnCardDestroy.AddUObject(this, &ACardManager::DestoryCard);
 				TierTwo.Add(Card);
 			}
 		}
@@ -139,7 +137,6 @@ void ACardManager::InitCards()
 				SpawnLoc += offset;
 				auto info = TierThreeInfos.Pop();
 				Card->SetInfo(info);
-				Card->OnCardDestroy.AddUObject(this, &ACardManager::DestoryCard);
 				TierThree.Add(Card);
 			}
 		}
@@ -189,22 +186,28 @@ void ACardManager::InitDummy()
 
 }
 
-void ACardManager::DestoryCard(FVector loc, ECardTier tier)
+void ACardManager::DestoryCard(FVector loc, ECardTier tier, ACard* card)
 {
 	TArray<FCardInfo> CurrentTier;
+	TArray<ACard*> CurrentTokenList;
 
 	switch (tier)
 	{
 	case ECardTier::C_One:
 		CurrentTier = TierOneInfos;
+		CurrentTokenList = TierOne;
 		break;
 	case ECardTier::C_Two:
 		CurrentTier = TierTwoInfos;
+		CurrentTokenList = TierTwo;
 		break;
 	case ECardTier::C_Three:
 		CurrentTier = TierThreeInfos;
+		CurrentTokenList = TierThree;
 		break;
 	}
+
+	CurrentTokenList.Remove(card);
 
 	UWorld* world = GetWorld();
 	if (world)
@@ -212,25 +215,42 @@ void ACardManager::DestoryCard(FVector loc, ECardTier tier)
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		FRotator rotator;
-		auto Card = Cast<ACard>(world->SpawnActor<AActor>(CardClass, loc, rotator, SpawnParams));
-		auto info = CurrentTier.Pop();
-		Card->SetInfo(info);
 
-		switch (tier)
+		if (CurrentTier.Num() > 0)
 		{
-		case ECardTier::C_One:
-			TierOne.Add(Card);
-			break;
-		case ECardTier::C_Two:
-			TierTwo.Add(Card);
-			break;
-		case ECardTier::C_Three:
-			TierThree.Add(Card);
-			break;
+			auto SpawnedCard = Cast<ACard>(world->SpawnActor<AActor>(CardClass, loc, rotator, SpawnParams));
+			auto info = CurrentTier.Pop();
+			SpawnedCard->SetInfo(info);
+
+			CurrentTokenList.Add(SpawnedCard);
 		}
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("CardNum: %d"), TierOne.Num()));
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("CardNum: %d"), TierTwo.Num()));
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("CardNum: %d"), TierThree.Num()));
+	//Udate Remain Dummy
+	for (auto dummy : CardDummies)
+	{
+		if (dummy->GetTier() == tier)
+		{
+			dummy->AddNum(-1);
+		}
+	}
+}
+
+void ACardManager::ChangeCard()
+{
+	if (CurrentClickCard.IsValid())
+	{
+		auto CurrentCard = CurrentClickCard.Get();
+
+		auto loc = CurrentCard->GetActorLocation();
+		auto tier = CurrentCard->GetInfo().tier;
+
+		CurrentCard->Destroy();
+		DestoryCard(loc, tier, CurrentCard);
+	}
+}
+
+void ACardManager::SetCurrentSelectedCard(ACard* Card)
+{
+	CurrentClickCard = Card;
 }

@@ -22,20 +22,11 @@ void ASTGameModePlay::SwapPlayerControllers(APlayerController* OldPC, APlayerCon
 	Super::SwapPlayerControllers(OldPC, NewPC);
 }
 
-void ASTGameModePlay::InitPlayerTurn(APlayerController* Player, bool bFirst)
+void ASTGameModePlay::HandleSeamlessTravelPlayer(AController*& C)
 {
-	if (TurnManager)
-	{
-		auto GS = GetGameState<AGSPlay>();
-		
-		if (GS)
-		{
-			for (auto PS : GS->PlayerArray)
-			{
-				TurnManager->InitPlayerTurn(PS->GetPlayerController(), Cast<APSPlayerInfo>(PS)->GetBFirst());
-			}
-		}
-	}
+	Super::HandleSeamlessTravelPlayer(C);
+
+	Cast<APCPlay>(C)->SRSetTurn();
 }
 
 void ASTGameModePlay::StartPlay()
@@ -58,12 +49,30 @@ void ASTGameModePlay::StartMatch()
 	}
 
 	auto GS = GetGameState<AGSPlay>();
-	if (GS && IsValid(GS)) 
+	if (GS && IsValid(GS))
 	{
 		GS->InitState();
 	}
 }
 
+//!-------------Turn-------------------
+void ASTGameModePlay::InitPlayerTurn(APlayerController* Player, bool bFirst)
+{
+	if (TurnManager)
+	{
+		auto GS = GetGameState<AGSPlay>();
+		
+		if (GS)
+		{
+			for (auto PS : GS->PlayerArray)
+			{
+				TurnManager->InitPlayerTurn(PS->GetPlayerController(), Cast<APSPlayerInfo>(PS)->GetBFirst());
+			}
+		}
+	}
+}
+
+//!-------------Token-------------------
 void ASTGameModePlay::SetTokenSpawnLoc(TArray<class AToken*>& Tokens)
 {
 	if (TileManager)
@@ -131,6 +140,45 @@ void ASTGameModePlay::RestoreTokens(const FTokenCountList& Restore, APlayerContr
 	}
 }
 
+//!-------------Card-------------------
+void ASTGameModePlay::BuyCard(APlayerController* player, FCardInfo cardInfo, const FTokenCountList& UseTokens)
+{
+	auto PS = player->GetPlayerState<APSPlayerInfo>();
+	if (PS)
+	{
+		PS->AddBonus(cardInfo.color);
+		PS->AddScore(cardInfo.color, cardInfo.score);
+		PS->AddCrown(cardInfo.crown);
+		
+		//토큰 소비
+		RestoreTokens(UseTokens, player);
+	}
+
+	//아이템, crown 처리
+	UseItem(cardInfo.item);
+
+	//카드 교체
+	if (CardManager)
+	{
+		CardManager->ChangeCard();
+	}
+
+	//턴변경
+	if (TurnManager)
+	{
+		TurnManager->EndCurrentTurn();
+	}
+}
+
+void ASTGameModePlay::CardClicked(ACard* ClickedCard)
+{
+	if (CardManager)
+	{
+		CardManager->SetCurrentSelectedCard(ClickedCard);
+	}
+}
+
+//!-------------Scroll-------------------
 void ASTGameModePlay::GiveScroll(APlayerController* player)
 {
 	int minus = 0;
@@ -178,37 +226,26 @@ void ASTGameModePlay::GiveScroll(APlayerController* player)
 	}
 }
 
-void ASTGameModePlay::HandleSeamlessTravelPlayer(AController*& C)
+//!-------------Item-------------------
+void ASTGameModePlay::UseItem(TArray<EItem> items)
 {
-	Super::HandleSeamlessTravelPlayer(C);
-
-	Cast<APCPlay>(C)->SRSetTurn();
-}
-
-void ASTGameModePlay::BuyCard(APlayerController* player, FCardInfo cardInfo, const FTokenCountList& UseTokens)
-{
-	auto PS = player->GetPlayerState<APSPlayerInfo>();
-	if (PS)
+	for (auto item : items)
 	{
-		PS->AddBonus(cardInfo.color);
-		PS->AddScore(cardInfo.color, cardInfo.score);
-		PS->AddCrown(cardInfo.crown);
-		
-		//토큰 소비
-		RestoreTokens(UseTokens, player);
-	}
-
-	//아이템, crown 처리
-
-
-
-	//턴변경
-	if (TurnManager)
-	{
-		TurnManager->EndCurrentTurn();
+		switch (item)
+		{
+			case EItem::I_AnyColor:
+				break;
+			case EItem::I_GetScroll:
+				break;			
+			case EItem::I_GetToken:
+				break;			
+			case EItem::I_RePlay:
+				break;			
+			case EItem::I_TakeToken:
+				break;			
+		}
 	}
 }
-
 
 
 void ASTGameModePlay::PrintBonus()

@@ -21,9 +21,9 @@ void UHUDDetailCard::NativeOnInitialized()
 	BtnBack->OnClicked.AddDynamic(this, &UHUDDetailCard::BackClicked);
 }
 
-void UHUDDetailCard::SetCardInfo(FCardInfo& info)
+void UHUDDetailCard::SetCardInfo(FCardInfo& info_)
 {
-	Info = info;
+	Info = info_;
 
 	if (IsValid(CardInfo))
 	{
@@ -51,7 +51,6 @@ void UHUDDetailCard::SetCardInfo(FCardInfo& info)
 			}
 		}
 
-		//!TODO: info 조정(전체에서 bonus 빼기)
 		auto PS = GetOwningPlayer()->GetPlayerState<APSPlayerInfo>();
 		if (PS)
 		{
@@ -63,7 +62,7 @@ void UHUDDetailCard::SetCardInfo(FCardInfo& info)
 			}
 		}
 		
-		CardInfo->SetInfo(info);
+		CardInfo->SetInfo(Info);
 	}
 }
 
@@ -81,9 +80,6 @@ void UHUDDetailCard::BuyClicked()
 	{
 		PC->SRBuyCard(Info, UseTokens);
 	}
-
-	//dele 호출(문제 없음)
-	//OnBuyCard.Broadcast();
 
 	RemoveFromParent();
 }
@@ -142,7 +138,6 @@ bool UHUDDetailCard::CheckCanBuy()
 
 	return false;
 }
-
 
 void UHUDDetailCard::RenderMessage(FString message)
 {

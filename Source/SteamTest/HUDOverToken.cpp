@@ -306,9 +306,6 @@ void UHUDOverToken::CommitTokens()
 			{
 				Restore[type] += diff;
 			}
-
-			//!TODO: 서버에서 처리하는게 맞을듯 
-			//PS->SetToken(type, current);
 		}
 
 		//서버에 넣어야 됨 -> PC한테 요청

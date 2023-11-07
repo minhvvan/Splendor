@@ -58,10 +58,21 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* MessageAnim;
 
+public:
+	//!-----Dele----------
+	//FBuyCard OnBuyCard;
+
+private:
+	UPROPERTY()
+	FCardInfo Info;
+
+	//smartPtr 필요할수도
+	UPROPERTY()
+	FTokenCountList UseTokens;
 
 public:
 	UFUNCTION()
-	void SetCardInfo(struct FCardInfo& info);
+	void SetCardInfo(struct FCardInfo& info_);
 
 	UFUNCTION()
 	void BuyClicked();
@@ -74,14 +85,4 @@ public:
 
 	UFUNCTION()
 	void RenderMessage(FString message);
-
-	FBuyCard OnBuyCard;
-
-private:
-	UPROPERTY()
-	FCardInfo Info;	
-	
-	//smartPtr 필요할수도
-	UPROPERTY()
-	FTokenCountList UseTokens;
 };

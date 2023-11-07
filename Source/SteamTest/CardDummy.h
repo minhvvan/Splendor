@@ -35,6 +35,9 @@ public:
 	void SetNum(int cardNum);
 
 	UFUNCTION()
+	void AddNum(int num);
+
+	UFUNCTION()
 	UAudioComponent* GetAudio() const { return AudioComp; };	
 	
 	UFUNCTION()

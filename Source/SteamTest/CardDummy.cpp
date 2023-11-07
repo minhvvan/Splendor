@@ -79,6 +79,15 @@ void ACardDummy::SetNum(int cardNum)
 	}
 }
 
+void ACardDummy::AddNum(int num)
+{
+	RemainCardNum += num;
+	if (IsValid(NumWidgetComp))
+	{
+		Cast<UHUDDummy>(NumWidgetComp->GetWidget())->SetRemainNumText(RemainCardNum);
+	}
+}
+
 void ACardDummy::ShowNum()
 {
 	if (IsValid(NumWidgetComp))

@@ -137,7 +137,6 @@ void UHUDDesk::ChangedColorScore()
 
 void UHUDDesk::ChangedCrown()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangedCrown")));
 	if (CurrentState.IsValid())
 	{
 		TxtCrown->SetText(FText::AsNumber(CurrentState->GetCrown()));
@@ -247,19 +246,9 @@ void UHUDDesk::PopUpDetailCard(ACard* card)
 		auto widget = Cast<UHUDDetailCard>(CreateWidget(GetWorld(), DetailCardClass));
 		if (widget)
 		{
-			ClickedCard = card;
-			widget->OnBuyCard.AddUObject(this, &UHUDDesk::OnBuyCard);
 			auto info = card->GetInfo();
 			widget->SetCardInfo(info);
 			widget->AddToViewport();
 		}
-	}
-}
-
-void UHUDDesk::OnBuyCard()
-{
-	if (ClickedCard.IsValid())
-	{
-		ClickedCard->DestroyWithDele();
 	}
 }

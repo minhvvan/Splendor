@@ -102,9 +102,6 @@ public:
 	UFUNCTION()
 	UHUDCardHolder* GetBonusWidget(ETokenColor color);
 
-	UFUNCTION()
-	void OnBuyCard();
-
 private:
 	UFUNCTION(BlueprintCallable)
 	void GetTokenClicked();
@@ -123,7 +120,4 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> DetailCardClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TWeakObjectPtr<ACard> ClickedCard;
 };

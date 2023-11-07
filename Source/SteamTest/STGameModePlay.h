@@ -49,9 +49,16 @@ public:
 	UFUNCTION()
 	void GiveScroll(APlayerController* player);
 
-	//!-----------------Scroll---------------------
+	//!-----------------Card---------------------
 	UFUNCTION()
 	void BuyCard(APlayerController* player, FCardInfo cardInfo, const FTokenCountList& UseTokens);
+	
+	UFUNCTION()
+	void CardClicked(class ACard* ClickedCard);
+
+	//!-----------Item----------------------
+	UFUNCTION()
+	void UseItem(TArray<EItem> items);
 
 protected:
 	virtual void HandleSeamlessTravelPlayer(AController*& C) override;

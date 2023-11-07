@@ -72,6 +72,12 @@ void APCPlay::Click()
 {
 	if (IsLocalController())
 	{
+		if (!IsTurn)
+		{
+			SendMessage(UGlobalConst::MsgNotTurn);
+			return;
+		}
+
 		FHitResult HitResult;
 		GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
 
@@ -81,17 +87,7 @@ void APCPlay::Click()
 			if (HittedActor->IsA<AToken>())
 			{
 				auto Token = Cast<AToken>(HitResult.GetActor());
-				if (Token)
-				{
-					if (IsTurn)
-					{
-						TokenClicked(Token);
-					}
-					else
-					{
-						SendMessage(UGlobalConst::MsgNotTurn);
-					}
-				}
+				if (Token) TokenClicked(Token);
 			}
 			else if (HittedActor->IsA<ACard>())
 			{
@@ -338,6 +334,18 @@ void APCPlay::CardClicked(ACard* ClickedCard)
 			auto info = ClickedCard->GetInfo();
 			WidgetDesk->PopUpDetailCard(ClickedCard);
 		}
+
+		SRCardClicked(ClickedCard);
+	}
+}
+
+void APCPlay::SRCardClicked_Implementation(ACard* ClickedCard)
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GM)
+	{
+		GM->CardClicked(ClickedCard);
 	}
 }
 
