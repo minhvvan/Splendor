@@ -139,9 +139,14 @@ void APSPlayerInfo::OnRep_Bonus()
 void APSPlayerInfo::AddScore(ETokenColor color, int s)
 {
 	TotalScore += s;
-	ColorScore[color] += s;
 
 	OnChangeScore.Broadcast();
+	AddColorScore(color, s);
+}
+
+void APSPlayerInfo::AddColorScore(ETokenColor color, int s)
+{
+	ColorScore[color] += s;
 	OnChangeColorScore.Broadcast();
 }
 

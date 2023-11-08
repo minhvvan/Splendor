@@ -58,7 +58,18 @@ public:
 
 	//!-----------Item----------------------
 	UFUNCTION()
-	void UseItem(TArray<EItem> items);
+	bool UseItem(FCardInfo cardInfo, APlayerController* player);
+
+
+	//!-----------Bonus----------------------
+	UFUNCTION()
+	void AddBonus(ETokenColor color, APlayerController* player);
+
+
+	//!-----------Score----------------------
+	UFUNCTION()
+	void AddScore(ETokenColor color, int score, APlayerController* player);
+
 
 protected:
 	virtual void HandleSeamlessTravelPlayer(AController*& C) override;

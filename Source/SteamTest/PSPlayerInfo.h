@@ -81,6 +81,9 @@ public:
 	void AddScore(ETokenColor color, int s);
 
 	UFUNCTION()
+	void AddColorScore(ETokenColor color, int s);
+
+	UFUNCTION()
 	int GetTotalScore() { return TotalScore; };	
 	
 	UFUNCTION()

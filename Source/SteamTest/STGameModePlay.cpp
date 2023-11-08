@@ -155,7 +155,8 @@ void ASTGameModePlay::BuyCard(APlayerController* player, FCardInfo cardInfo, con
 	}
 
 	//아이템, crown 처리
-	UseItem(cardInfo.item);
+	bool bPassTurn = true;
+	bPassTurn = UseItem(cardInfo, player);
 
 	//카드 교체
 	if (CardManager)
@@ -164,7 +165,7 @@ void ASTGameModePlay::BuyCard(APlayerController* player, FCardInfo cardInfo, con
 	}
 
 	//턴변경
-	if (TurnManager)
+	if (TurnManager && bPassTurn)
 	{
 		TurnManager->EndCurrentTurn();
 	}
@@ -227,23 +228,51 @@ void ASTGameModePlay::GiveScroll(APlayerController* player)
 }
 
 //!-------------Item-------------------
-void ASTGameModePlay::UseItem(TArray<EItem> items)
+bool ASTGameModePlay::UseItem(FCardInfo cardInfo, APlayerController* player)
 {
-	for (auto item : items)
+	for (auto i : cardInfo.item)
 	{
-		switch (item)
+		switch (i)
 		{
 			case EItem::I_AnyColor:
+				//widget
+				Cast<APCPlay>(player)->ShowItemWidget(EItem::I_AnyColor, cardInfo);
 				break;
 			case EItem::I_GetScroll:
+				GiveScroll(player);
 				break;			
 			case EItem::I_GetToken:
-				break;			
+				//widget
+				Cast<APCPlay>(player)->ShowItemWidget(EItem::I_GetToken, cardInfo);
+				break;
 			case EItem::I_RePlay:
+				return false;
 				break;			
 			case EItem::I_TakeToken:
-				break;			
+				//widget
+				Cast<APCPlay>(player)->ShowItemWidget(EItem::I_TakeToken, cardInfo);
+				break;
 		}
+	}
+
+	return true;
+}
+
+void ASTGameModePlay::AddBonus(ETokenColor color, APlayerController* player)
+{
+	auto PS = player->GetPlayerState<APSPlayerInfo>();
+	if (PS)
+	{
+		PS->AddBonus(color);
+	}
+}
+
+void ASTGameModePlay::AddScore(ETokenColor color, int score, APlayerController* player)
+{
+	auto PS = player->GetPlayerState<APSPlayerInfo>();
+	if (PS)
+	{
+		PS->AddColorScore(color, score);
 	}
 }
 

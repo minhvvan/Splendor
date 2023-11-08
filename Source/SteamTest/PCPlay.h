@@ -76,6 +76,16 @@ public:
 	UFUNCTION()
 	void SendMessage(FString msg);
 
+	UFUNCTION(Client, Reliable)
+	void ShowItemWidget(EItem itemType, const FCardInfo& cardInfo);
+
+	UFUNCTION(Server, Reliable)
+	void SRAddBonus(ETokenColor color);
+
+	UFUNCTION(Server, Reliable)
+	void SRAddScore(ETokenColor color, int score);
+
+
 protected:
 	virtual void SetupInputComponent() override;
 

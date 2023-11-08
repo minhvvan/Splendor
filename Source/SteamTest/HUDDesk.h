@@ -100,6 +100,9 @@ public:
 	void PopUpDetailCard(class ACard* card);
 
 	UFUNCTION()
+	void PopUpItemWidget(EItem itemType, const FCardInfo& cardInfo);
+
+	UFUNCTION()
 	UHUDCardHolder* GetBonusWidget(ETokenColor color);
 
 private:
@@ -120,4 +123,13 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> DetailCardClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> GetTokenWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> TakeTokenWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> AnyColorWidgetClass;
 };

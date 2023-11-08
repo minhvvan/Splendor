@@ -18,6 +18,7 @@
 #include "CardManager.h"
 #include "GlobalEnum.h"
 #include "GlobalConst.h"
+#include "HUDAnyColor.h"
 
 #include "STGameModePlay.h"
 
@@ -250,5 +251,31 @@ void UHUDDesk::PopUpDetailCard(ACard* card)
 			widget->SetCardInfo(info);
 			widget->AddToViewport();
 		}
+	}
+}
+
+void UHUDDesk::PopUpItemWidget(EItem itemType, const FCardInfo& cardInfo)
+{
+	switch (itemType)
+	{
+	case EItem::I_GetToken:
+		{
+			auto widget = (CreateWidget(GetWorld(), GetTokenWidgetClass));
+			widget->AddToViewport();
+		}
+		break;
+	case EItem::I_TakeToken:
+		{
+			auto widget = (CreateWidget(GetWorld(), TakeTokenWidgetClass));
+			widget->AddToViewport();
+		}
+		break;
+	case EItem::I_AnyColor:
+		{
+			auto widget = Cast<UHUDAnyColor>(CreateWidget(GetWorld(), AnyColorWidgetClass));
+			widget->SetInfo(cardInfo);
+			widget->AddToViewport();
+		}
+		break;
 	}
 }

@@ -248,6 +248,14 @@ void APCPlay::SendMessage(FString msg)
 	}
 }
 
+void APCPlay::ShowItemWidget_Implementation(EItem itemType, const FCardInfo& cardInfo)
+{
+	if (WidgetDesk)
+	{
+		WidgetDesk->PopUpItemWidget(itemType, cardInfo);
+	}
+}
+
 void APCPlay::TokenClicked(AToken* ClickedToken)
 {
 	//연속 여부 판단
@@ -356,5 +364,26 @@ void APCPlay::SRBuyCard_Implementation(FCardInfo cardInfo, const FTokenCountList
 	if (GM)
 	{
 		GM->BuyCard(this, cardInfo, UseTokens);
+	}
+}
+
+
+void APCPlay::SRAddBonus_Implementation(ETokenColor color)
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GM)
+	{
+		GM->AddBonus(color, this);
+	}
+}
+
+void APCPlay::SRAddScore_Implementation(ETokenColor color, int score)
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GM)
+	{
+		GM->AddScore(color, score, this);
 	}
 }
