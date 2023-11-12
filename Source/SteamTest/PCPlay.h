@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Token.h"
+#include "GlobalStruct.h"
 #include "PCPlay.generated.h"
 
 class ATile;

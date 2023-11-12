@@ -119,15 +119,20 @@ public:
 	FDeleAddScroll AddScroll;
 
 private:
+	UPROPERTY()
 	TArray<AToken*> RemainTokens;
+
+	UPROPERTY()
 	TArray<AToken*> Pouch;
 
+	UPROPERTY()
 	TArray<AToken*> SelectedTokens;
 
+	UPROPERTY()
 	FTokenList P1Tokens;
-	FTokenList P2Tokens;
 
-	TArray<TArray<AToken*>> Board;
+	UPROPERTY()
+	FTokenList P2Tokens;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AToken> RedTokenClass;

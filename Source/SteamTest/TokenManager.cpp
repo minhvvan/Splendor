@@ -7,6 +7,7 @@
 #include "STGameModePlay.h"
 #include "Algo/RandomShuffle.h"
 #include "PSPlayerInfo.h"
+#include "GSPlay.h"
 #include "GlobalStruct.h"
 #include "GlobalEnum.h"
 
@@ -213,43 +214,45 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 {
 	auto Player = Cast<APCPlay>(PC);
 	auto PS = Player->GetPlayerState<APSPlayerInfo>();
+	auto GS = GetWorld()->GetGameState<AGSPlay>();
 
-	if (Player && PS)
+	check(PS && GS && Player);
+
+	bool flag = SelectedTokens.Num() == 3 ? true : false;
+	int pearlCnt = 0;
+	ETokenColor current = ETokenColor::E_End;
+	for (auto token : SelectedTokens)
 	{
-		bool flag = SelectedTokens.Num() == 3 ? true : false;
-		int pearlCnt = 0;
-		ETokenColor current = ETokenColor::E_End;
-		for (auto token : SelectedTokens)
+		auto tType = token->GetTokenType();
+		if (tType == ETokenColor::E_Pearl) pearlCnt++;
+
+		if (current == ETokenColor::E_End)
 		{
-			auto tType = token->GetTokenType();
-			if (tType == ETokenColor::E_Pearl) pearlCnt++;
-
-			if (current == ETokenColor::E_End)
-			{
-				current = tType;
-			}
-			else
-			{
-				if (current != tType) flag = false;
-			}
-
-			RemainTokens.Remove(token);
-			if (bFirst) P1Tokens.Add(tType, token);
-			else P2Tokens.Add(tType, token);
-
-			PS->AddToken(token->GetTokenType(), 1);
-			token->SetActorLocation(FVector(-300, 0, 0));
+			current = tType;
+		}
+		else
+		{
+			if (current != tType) flag = false;
 		}
 
-		PS->NotifyUpdateToken();
+		RemainTokens.Remove(token);
+		GS->RemoveTokenIdx(token->GetIndex(), token->GetTokenType());
 
-		if (flag || pearlCnt >= 2)
-		{
-			AddScroll.Broadcast(Player);
-		}
+		if (bFirst) P1Tokens.Add(tType, token);
+		else P2Tokens.Add(tType, token);
 
-		SelectedTokens.Reset();
+		PS->AddToken(token->GetTokenType(), 1);
+		token->SetActorLocation(FVector(-300, 0, 0));
 	}
+
+	PS->NotifyUpdateToken();
+
+	if (flag || pearlCnt >= 2)
+	{
+		AddScroll.Broadcast(Player);
+	}
+
+	SelectedTokens.Reset();
 }
 
 void ATokenManager::UseTokens(FTokenCountList Restore, bool bFirst)

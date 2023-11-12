@@ -120,6 +120,34 @@ struct FCardInfo : public FTableRowBase
 	TArray<EItem> item;
 };
 
+USTRUCT(BlueprintType)
+struct FTokenIdxColor
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FTokenIdxColor() : Idx(0), Color(ETokenColor::E_End) {};
+
+	FTokenIdxColor(int idx, ETokenColor color) : Idx(idx), Color(color) {};
+
+	UPROPERTY(EditAnywhere)
+	int Idx;
+	
+	UPROPERTY(EditAnywhere)
+	ETokenColor Color;
+
+	bool operator== (const FTokenIdxColor& rhs)
+	{
+		return this->Idx == rhs.Idx && this->Color == rhs.Color;
+	}
+
+	bool operator< (const FTokenIdxColor& rhs) const
+	{
+		return this->Idx < rhs.Idx;
+	}
+};
+
+
 UCLASS()
 class STEAMTEST_API UGlobalStruct : public UObject
 {

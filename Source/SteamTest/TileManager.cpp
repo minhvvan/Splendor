@@ -3,8 +3,9 @@
 
 #include "TileManager.h"
 #include "STGameModePlay.h"
-#include "Tile.h"
 #include "Kismet/GameplayStatics.h"
+#include "GSPlay.h"
+#include "Tile.h"
 #include "Token.h"
 
 // Sets default values
@@ -168,8 +169,11 @@ void ATileManager::SpawnTiles()
 	}
 }
 
-void ATileManager::SetTokenLocs(TArray<class AToken*>& Tokens)
+void ATileManager::SetTokenLocs(TArray<AToken*>& Tokens)
 {
+	auto GS = GetWorld()->GetGameState<AGSPlay>();
+	check(GS);
+
 	for (auto token : Tokens)
 	{
 		for (int i = 0; i < Tiles.Num(); i++)
@@ -179,6 +183,7 @@ void ATileManager::SetTokenLocs(TArray<class AToken*>& Tokens)
 			if (tile->GetOnToken()) continue;
 
 			token->SetIndex(FillIdx[i]);
+			GS->AddTokenIdx(FillIdx[i], token->GetTokenType());
 			token->SetActorLocation(tile->GetTokenLoc());
 			tile->SetOnToken(token);
 

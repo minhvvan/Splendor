@@ -66,8 +66,8 @@ public:
 	UFUNCTION()
 	void SetItem(TArray<EItem> items);
 private:
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class UHUDCost> CostClass;
+	//UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	//TSubclassOf<class UHUDCost> CostClass;
 	
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UCardData> CostDataClass;

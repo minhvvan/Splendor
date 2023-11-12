@@ -11,8 +11,10 @@
 #include "HUDTokenHolder.h"
 #include "HUDOverToken.h"
 #include "HUDDetailCard.h"
+#include "HUDGetToken.h"
 #include "PCPlay.h"
 #include "PSPlayerInfo.h"
+#include "GSPlay.h"
 #include "Token.h"
 #include "Card.h"
 #include "CardManager.h"
@@ -270,7 +272,9 @@ void UHUDDesk::PopUpItemWidget(EItem itemType, const FCardInfo& cardInfo)
 	{
 	case EItem::I_GetToken:
 		{
-			auto widget = (CreateWidget(GetWorld(), GetTokenWidgetClass));
+			auto widget = Cast<UHUDGetToken>(CreateWidget(GetWorld(), GetTokenWidgetClass));
+			auto TileIdxs = GetWorld()->GetGameState<AGSPlay>()->GetRemainTokenIdx();
+			widget->SetTiles(TileIdxs);
 			widget->AddToViewport();
 		}
 		break;
