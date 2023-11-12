@@ -122,8 +122,6 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC, bool bFirst)
 
 void ASTGameModePlay::RestoreTokens(const FTokenCountList& Restore, APlayerController* player)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("RestoreTokens")));
-
 	//PS Update
 	auto PS = player->GetPlayerState<APSPlayerInfo>();
 	if (PS)
@@ -139,6 +137,34 @@ void ASTGameModePlay::RestoreTokens(const FTokenCountList& Restore, APlayerContr
 		TokenManager->UseTokens(Restore, PS->GetBFirst());
 	}
 }
+
+void ASTGameModePlay::TakeToken(APlayerController* PC, ETokenColor color)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("TakeToken")));
+
+	if (TokenManager)
+	{
+		TokenManager->MoveToken(color, PC);
+
+		//PS update
+		bool bFirst = PC->GetPlayerState<APSPlayerInfo>()->GetBFirst();
+		for (auto ps : GetGameState<AGSPlay>()->PlayerArray)
+		{
+			auto casted = Cast<APSPlayerInfo>(ps);
+			if (casted->GetBFirst() == bFirst)
+			{
+				casted->AddToken(color, 1);
+			}
+			else
+			{
+				casted->AddToken(color, -1);
+			}
+
+			casted->NotifyUpdateToken();
+		}
+	}
+}
+
 
 //!-------------Card-------------------
 void ASTGameModePlay::BuyCard(APlayerController* player, FCardInfo cardInfo, const FTokenCountList& UseTokens)

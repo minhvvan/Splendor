@@ -18,6 +18,7 @@
 #include "CardManager.h"
 #include "GlobalEnum.h"
 #include "GlobalConst.h"
+#include "HUDTakeToken.h"
 #include "HUDAnyColor.h"
 
 #include "STGameModePlay.h"
@@ -94,6 +95,15 @@ UHUDCardHolder* UHUDDesk::GetBonusWidget(ETokenColor color)
 	}
 
 	return nullptr;
+}
+
+void UHUDDesk::CloseItemWidget(EItem itemType)
+{
+	if (TakeWidget.IsValid())
+	{
+		TakeWidget->RemoveFromParent();
+		TakeWidget.Reset();
+	}
 }
 
 void UHUDDesk::ChangedBonus()
@@ -266,8 +276,10 @@ void UHUDDesk::PopUpItemWidget(EItem itemType, const FCardInfo& cardInfo)
 		break;
 	case EItem::I_TakeToken:
 		{
-			auto widget = (CreateWidget(GetWorld(), TakeTokenWidgetClass));
-			widget->AddToViewport();
+			TakeWidget = Cast<UHUDTakeToken>(CreateWidget(GetWorld(), TakeTokenWidgetClass));
+			auto TokenList = Cast<APCPlay>(GetOwningPlayer())->GetOppTokens();
+			TakeWidget->SetTokens(TokenList);
+			TakeWidget->AddToViewport();
 		}
 		break;
 	case EItem::I_AnyColor:

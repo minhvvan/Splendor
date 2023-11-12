@@ -14,7 +14,7 @@ UCLASS(BlueprintType)
 class STEAMTEST_API UCardData : public UObject
 {
 	GENERATED_BODY()
-	
+
 public:
 	UFUNCTION(BlueprintCallable)
 	ETokenColor GetColor() { return color; };

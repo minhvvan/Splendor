@@ -105,6 +105,9 @@ public:
 	UFUNCTION()
 	UHUDCardHolder* GetBonusWidget(ETokenColor color);
 
+	UFUNCTION()
+	void CloseItemWidget(EItem itemType);
+
 private:
 	UFUNCTION(BlueprintCallable)
 	void GetTokenClicked();
@@ -132,4 +135,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> AnyColorWidgetClass;
+
+	UPROPERTY()
+	TWeakObjectPtr<class UHUDTakeToken> TakeWidget;
 };

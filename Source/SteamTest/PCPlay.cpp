@@ -1,18 +1,18 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
+﻿
 
 #include "PCPlay.h"
-#include "PSPlayerInfo.h"
-#include "Kismet/GameplayStatics.h"
 #include "STGameModePlay.h"
-#include "HUDDesk.h"
+#include "PSPlayerInfo.h"
+#include "GSPlay.h"
+#include "Kismet/GameplayStatics.h"
 #include "Camera/CameraActor.h"
-#include "Tile.h"
-#include "Token.h"
-#include "Card.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "HUDDesk.h"
+#include "Tile.h"
+#include "Token.h"
+#include "Card.h"
 #include "GlobalConst.h"
 
 APCPlay::APCPlay()
@@ -333,6 +333,28 @@ void APCPlay::TokenClicked(AToken* ClickedToken)
 	}
 }
 
+void APCPlay::TakeTokenFromOpp(ETokenColor color)
+{
+	//창닫기
+	if (WidgetDesk)
+	{
+		WidgetDesk->CloseItemWidget(EItem::I_TakeToken);
+	}
+
+	//  + (SR)토큰 가져오기 
+	SRTakeToken(color);
+}
+
+void APCPlay::SRTakeToken_Implementation(ETokenColor color)
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GM)
+	{
+		GM->TakeToken(this, color);
+	}
+}
+
 void APCPlay::CardClicked(ACard* ClickedCard)
 {
 	if (IsLocalController())
@@ -367,7 +389,6 @@ void APCPlay::SRBuyCard_Implementation(FCardInfo cardInfo, const FTokenCountList
 	}
 }
 
-
 void APCPlay::SRAddBonus_Implementation(ETokenColor color)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -386,4 +407,26 @@ void APCPlay::SRAddScore_Implementation(ETokenColor color, int score)
 	{
 		GM->AddScore(color, score, this);
 	}
+}
+
+TArray<FTokenCount> APCPlay::GetOppTokens()
+{
+	bool bFirst = GetPlayerState<APSPlayerInfo>()->GetBFirst();
+
+	TArray<FTokenCount> result;
+
+	auto GS = GetWorld()->GetGameState<AGSPlay>();
+	if (GS)
+	{
+		for (auto PS : GS->PlayerArray)
+		{
+			auto cated = Cast<APSPlayerInfo>(PS);
+			if (bFirst != cated->GetBFirst())
+			{
+				result = cated->GetOwnTokens();
+			}
+		}
+	}
+
+	return result;
 }

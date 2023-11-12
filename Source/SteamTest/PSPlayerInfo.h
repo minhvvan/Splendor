@@ -56,6 +56,9 @@ public:
 	UFUNCTION()
 	void OnRep_TokenUpdated();
 
+	UFUNCTION()
+	const TArray<FTokenCount>& GetOwnTokens();
+
 	//!---------------Scroll---------------
 	UFUNCTION()
 	void AddScroll(int num);

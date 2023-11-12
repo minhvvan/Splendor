@@ -45,6 +45,9 @@ public:
 	UFUNCTION()
 	void RestoreTokens(const FTokenCountList& Restore, APlayerController* PC);
 
+	UFUNCTION()
+	void TakeToken(APlayerController* PC, ETokenColor color);
+
 	//!-----------------Scroll---------------------
 	UFUNCTION()
 	void GiveScroll(APlayerController* player);

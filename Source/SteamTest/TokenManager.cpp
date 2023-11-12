@@ -266,3 +266,16 @@ void ATokenManager::UseTokens(FTokenCountList Restore, bool bFirst)
 		}
 	}
 }
+
+void ATokenManager::MoveToken(ETokenColor color, APlayerController* PC)
+{
+	//!bFirst 는 받는 사람
+	auto PS = PC->GetPlayerState<APSPlayerInfo>();
+	bool bFirst = PS->GetBFirst();
+
+	FTokenList to = bFirst ? P1Tokens : P2Tokens;
+	FTokenList from = bFirst ? P2Tokens : P1Tokens;
+
+	//from에서 찾아서 제거 -> to에 추가
+	to.Add(color, from.Remove(color));
+} 

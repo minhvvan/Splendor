@@ -56,6 +56,15 @@ public:
 	UFUNCTION()
 	void TokenClicked(AToken* ClickedToken);
 
+	UFUNCTION()
+	void TakeTokenFromOpp(ETokenColor color);	
+	
+	UFUNCTION(Server, Reliable)
+	void SRTakeToken(ETokenColor color);
+
+	UFUNCTION()
+	TArray<FTokenCount> GetOppTokens();
+
 	//!--------------Card-----------
 	UFUNCTION()
 	void CardClicked(ACard* ClickedCard);
@@ -84,6 +93,7 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void SRAddScore(ETokenColor color, int score);
+
 
 
 protected:

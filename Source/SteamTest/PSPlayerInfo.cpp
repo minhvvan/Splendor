@@ -114,13 +114,16 @@ void APSPlayerInfo::NotifyUpdateToken_Implementation()
 	OnChangeToken.Broadcast();
 }
 
+const TArray<FTokenCount>& APSPlayerInfo::GetOwnTokens()
+{
+	return OwnTokens.Get();
+}
 
 //!-----------------Bonus---------------------
 void APSPlayerInfo::AddBonus(ETokenColor color)
 {
 	OwnBonus[color]++;
 
-	//!TODO: ¿©±â¼­ boradcast??????
 	OnChangeBonus.Broadcast();
 }
 

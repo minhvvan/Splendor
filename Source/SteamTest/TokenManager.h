@@ -111,7 +111,10 @@ public:
 	void PossessTokens(APlayerController* PC, bool bFirst);
 	
 	UFUNCTION()
-	void UseTokens(FTokenCountList Restore, bool bFirst);
+	void UseTokens(FTokenCountList Restore, bool bFirst);	
+	
+	UFUNCTION()
+	void MoveToken(ETokenColor color, APlayerController* PC);
 
 	FDeleAddScroll AddScroll;
 

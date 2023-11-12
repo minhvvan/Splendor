@@ -6,12 +6,21 @@
 #include "Blueprint/UserWidget.h"
 #include "HUDCost.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class STEAMTEST_API UHUDCost : public UUserWidget
 {
 	GENERATED_BODY()
 	
+protected:
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget))
+	class UBorder* BorderColor;
+
+public:
+	UFUNCTION()
+	void OnClicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent);
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	class UCardData* CardData;
+protected:
+	virtual void NativeOnInitialized();
 };
