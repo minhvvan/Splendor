@@ -101,10 +101,18 @@ UHUDCardHolder* UHUDDesk::GetBonusWidget(ETokenColor color)
 
 void UHUDDesk::CloseItemWidget(EItem itemType)
 {
-	if (TakeWidget.IsValid())
+	switch (itemType)
 	{
+	case EItem::I_GetToken:
+		check(GetWidget.IsValid());
+		GetWidget->RemoveFromParent();
+		GetWidget.Reset();
+		break;
+	case EItem::I_TakeToken:
+		check(TakeWidget.IsValid());
 		TakeWidget->RemoveFromParent();
 		TakeWidget.Reset();
+		break;
 	}
 }
 
@@ -272,10 +280,10 @@ void UHUDDesk::PopUpItemWidget(EItem itemType, const FCardInfo& cardInfo)
 	{
 	case EItem::I_GetToken:
 		{
-			auto widget = Cast<UHUDGetToken>(CreateWidget(GetWorld(), GetTokenWidgetClass));
+			GetWidget = Cast<UHUDGetToken>(CreateWidget(GetWorld(), GetTokenWidgetClass));
 			auto TileIdxs = GetWorld()->GetGameState<AGSPlay>()->GetRemainTokenIdx();
-			widget->SetTiles(TileIdxs);
-			widget->AddToViewport();
+			GetWidget->SetTiles(TileIdxs, cardInfo);
+			GetWidget->AddToViewport();
 		}
 		break;
 	case EItem::I_TakeToken:

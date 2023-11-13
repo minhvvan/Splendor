@@ -28,10 +28,19 @@ public:
 	UFUNCTION()
 	void SetIdx(int n) { idx = n; };
 
+	UFUNCTION(BlueprintCallable)
+	bool GetEnable() { return enable; };
+
+	UFUNCTION()
+	void SetEnable(bool b) { enable = b; };
+
 private: 	
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	ETokenColor color;
 
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	int idx;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	bool enable;
 };

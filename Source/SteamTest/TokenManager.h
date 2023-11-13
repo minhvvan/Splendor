@@ -98,7 +98,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
 	void SpawnTokens();
+	
+	UFUNCTION()
 	void PlaceTokens(TArray<AToken*>& Tokens);
 
 	UFUNCTION()
@@ -115,6 +118,9 @@ public:
 	
 	UFUNCTION()
 	void MoveToken(ETokenColor color, APlayerController* PC);
+
+	UFUNCTION()
+	void GetTokenByIdx(APlayerController* PC, int idx);
 
 	FDeleAddScroll AddScroll;
 

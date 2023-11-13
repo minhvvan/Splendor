@@ -64,6 +64,12 @@ public:
 	void SRTakeToken(ETokenColor color);
 
 	UFUNCTION()
+	void GetTokenByIdx(int idx);
+
+	UFUNCTION(Server, Reliable)
+	void SRGetToken(int idx);
+
+	UFUNCTION()
 	TArray<FTokenCount> GetOppTokens();
 
 	//!--------------Card-----------

@@ -138,4 +138,7 @@ private:
 
 	UPROPERTY()
 	TWeakObjectPtr<class UHUDTakeToken> TakeWidget;
+
+	UPROPERTY()
+	TWeakObjectPtr<class UHUDGetToken> GetWidget;
 };

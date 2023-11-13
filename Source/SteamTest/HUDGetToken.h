@@ -17,7 +17,7 @@ class STEAMTEST_API UHUDGetToken : public UUserWidget
 	
 public:
 	UFUNCTION()
-	void SetTiles(TArray<FTokenIdxColor> tokens);
+	void SetTiles(TArray<FTokenIdxColor> tokens, const FCardInfo& cardInfo);
 
 protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))

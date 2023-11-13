@@ -281,4 +281,25 @@ void ATokenManager::MoveToken(ETokenColor color, APlayerController* PC)
 
 	//from에서 찾아서 제거 -> to에 추가
 	to.Add(color, from.Remove(color));
-} 
+}
+
+void ATokenManager::GetTokenByIdx(APlayerController* PC, int idx)
+{
+	for (auto token : RemainTokens)
+	{
+		if (token->GetIndex() == idx)
+		{
+			auto PS = PC->GetPlayerState<APSPlayerInfo>();
+			auto tokenList = PS->GetBFirst() ? P1Tokens : P2Tokens;
+
+			tokenList.Add(token->GetTokenType(), token);
+			RemainTokens.Remove(token);
+
+			token->SetActorLocation(FVector(-300, 0, 0));
+
+			//ps update
+			PS->AddToken(token->GetTokenType(), 1);
+		}
+	}
+}
+

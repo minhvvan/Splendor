@@ -140,8 +140,6 @@ void ASTGameModePlay::RestoreTokens(const FTokenCountList& Restore, APlayerContr
 
 void ASTGameModePlay::TakeToken(APlayerController* PC, ETokenColor color)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("TakeToken")));
-
 	if (TokenManager)
 	{
 		TokenManager->MoveToken(color, PC);
@@ -163,6 +161,13 @@ void ASTGameModePlay::TakeToken(APlayerController* PC, ETokenColor color)
 			casted->NotifyUpdateToken();
 		}
 	}
+}
+
+void ASTGameModePlay::GetTokenByIdx(APlayerController* PC, int idx)
+{
+	check(IsValid(TokenManager));
+
+	TokenManager->GetTokenByIdx(PC, idx);
 }
 
 

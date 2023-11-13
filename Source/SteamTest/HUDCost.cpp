@@ -13,7 +13,6 @@ void UHUDCost::OnClicked(const FGeometry& Geometry, const FPointerEvent& MouseEv
 	{
 		auto color = CardData->GetColor();
 
-		//!TODO: color에 해당하는 토큰을 owner에게 넘기게 해야함 + 창닫기
 		auto PC = Cast<APCPlay>(GetOwningPlayer());
 		if (PC)
 		{

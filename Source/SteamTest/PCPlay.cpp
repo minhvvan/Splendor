@@ -345,6 +345,15 @@ void APCPlay::TakeTokenFromOpp(ETokenColor color)
 	SRTakeToken(color);
 }
 
+void APCPlay::GetTokenByIdx(int idx)
+{
+	check(IsValid(WidgetDesk));
+
+	WidgetDesk->CloseItemWidget(EItem::I_GetToken);
+
+	SRGetToken(idx);
+}
+
 void APCPlay::SRTakeToken_Implementation(ETokenColor color)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -406,6 +415,16 @@ void APCPlay::SRAddScore_Implementation(ETokenColor color, int score)
 	if (GM)
 	{
 		GM->AddScore(color, score, this);
+	}
+}
+
+void APCPlay::SRGetToken_Implementation(int idx)
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GM)
+	{
+		GM->GetTokenByIdx(this, idx);
 	}
 }
 
