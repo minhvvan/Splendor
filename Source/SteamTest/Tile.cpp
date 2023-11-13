@@ -20,6 +20,8 @@ ATile::ATile()
 		Mesh->SetRelativeLocation(FVector(-210.0f, -450.0f, 0.0f));
 		Mesh->SetWorldScale3D(FVector(0.5f));
 	}
+
+	NetUpdateFrequency = 10;
 }
 
 // Called when the game starts or when spawned

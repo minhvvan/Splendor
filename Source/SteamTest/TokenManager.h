@@ -114,12 +114,6 @@ public:
 	void PossessTokens(APlayerController* PC, bool bFirst);
 	
 	UFUNCTION()
-	void UseTokens(FTokenCountList Restore, bool bFirst);	
-	
-	UFUNCTION()
-	void MoveToken(ETokenColor color, APlayerController* PC);
-
-	UFUNCTION()
 	void GetTokenByIdx(APlayerController* PC, int idx);
 
 	FDeleAddScroll AddScroll;
@@ -134,11 +128,11 @@ private:
 	UPROPERTY()
 	TArray<AToken*> SelectedTokens;
 
-	UPROPERTY()
-	FTokenList P1Tokens;
+	//UPROPERTY()
+	//FTokenList P1Tokens;
 
-	UPROPERTY()
-	FTokenList P2Tokens;
+	//UPROPERTY()
+	//FTokenList P2Tokens;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AToken> RedTokenClass;

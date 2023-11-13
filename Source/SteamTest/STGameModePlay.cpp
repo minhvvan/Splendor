@@ -124,17 +124,13 @@ void ASTGameModePlay::RestoreTokens(const FTokenCountList& Restore, APlayerContr
 {
 	//PS Update
 	auto PS = player->GetPlayerState<APSPlayerInfo>();
-	if (PS)
-	{
-		for (auto color : TEnumRange<ETokenColor>())
-		{
-			PS->AddToken(color, -Restore[color]);
-		}
-	}
+	auto GS = GetGameState<AGSPlay>();
+	check(IsValid(GS) && IsValid(PS));
 
-	if (TokenManager)
+	for (auto color : TEnumRange<ETokenColor>())
 	{
-		TokenManager->UseTokens(Restore, PS->GetBFirst());
+		PS->AddToken(color, -Restore[color]);
+		GS->AddPouch(color, Restore[color]);
 	}
 }
 
@@ -142,8 +138,6 @@ void ASTGameModePlay::TakeToken(APlayerController* PC, ETokenColor color)
 {
 	if (TokenManager)
 	{
-		TokenManager->MoveToken(color, PC);
-
 		//PS update
 		bool bFirst = PC->GetPlayerState<APSPlayerInfo>()->GetBFirst();
 		for (auto ps : GetGameState<AGSPlay>()->PlayerArray)
@@ -157,8 +151,6 @@ void ASTGameModePlay::TakeToken(APlayerController* PC, ETokenColor color)
 			{
 				casted->AddToken(color, -1);
 			}
-
-			casted->NotifyUpdateToken();
 		}
 	}
 }

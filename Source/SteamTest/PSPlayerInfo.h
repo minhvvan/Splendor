@@ -42,19 +42,22 @@ public:
 	void AddToken(enum ETokenColor type, int cnt);
 
 	UFUNCTION()
+	void AddTokenByList(FTokenCountList& tokens);
+
+	UFUNCTION()
 	void SetToken(enum ETokenColor type, int num);
 
 	UFUNCTION()
 	int GetTokenNum(ETokenColor type);
 
-	UFUNCTION(Server, Reliable)
-	void NotifyUpdateToken();
+	UFUNCTION()
+	void OnRep_Tokens();
 
 	UFUNCTION()
 	void PrintToken();
 
-	UFUNCTION()
-	void OnRep_TokenUpdated();
+	//UFUNCTION()
+	//void OnRep_TokenUpdated();
 
 	UFUNCTION()
 	const TArray<FTokenCount>& GetOwnTokens();
@@ -134,7 +137,7 @@ private:
 	UPROPERTY(replicated)
 	bool bFirst;
 
-	UPROPERTY(replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_Tokens)
 	FTokenCountList OwnTokens;
 
 	UPROPERTY(ReplicatedUsing = OnRep_Bonus)
@@ -143,8 +146,8 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_ColorScore)
 	FTokenCountList ColorScore;
 
-	UPROPERTY(ReplicatedUsing = OnRep_TokenUpdated)
-	bool bTokenUpdated;
+	//UPROPERTY(ReplicatedUsing = OnRep_TokenUpdated)
+	//bool bTokenUpdated;
 
 	UPROPERTY(ReplicatedUsing = OnRep_TotalScore)
 	int TotalScore;

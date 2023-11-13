@@ -34,6 +34,12 @@ public:
 	UFUNCTION()
 	void AddTokenIdx(int idx, ETokenColor color);
 
+	UFUNCTION()
+	void AddPouch(ETokenColor color, int cnt);
+
+	UFUNCTION()
+	FTokenCountList& GetPouch() { return Pouch; };
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
 
@@ -42,4 +48,7 @@ protected:
 
 	UPROPERTY(Replicated)
 	TArray<FTokenIdxColor> RemainTokenIdx;
+
+	UPROPERTY(Replicated)
+	FTokenCountList Pouch;
 };

@@ -22,8 +22,14 @@ void AGSPlay::AddTokenIdx(int idx, ETokenColor color)
 	RemainTokenIdx.Add({ idx, color });
 }
 
+void AGSPlay::AddPouch(ETokenColor color, int cnt)
+{
+	Pouch[color] += cnt;
+}
+
 void AGSPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AGSPlay, RemainTokenIdx);
+	DOREPLIFETIME(AGSPlay, Pouch);
 }

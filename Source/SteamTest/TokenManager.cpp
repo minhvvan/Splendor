@@ -218,6 +218,9 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 
 	check(PS && GS && Player);
 
+	FTokenCountList selected;
+	selected.Init();
+
 	bool flag = SelectedTokens.Num() == 3 ? true : false;
 	int pearlCnt = 0;
 	ETokenColor current = ETokenColor::E_End;
@@ -238,14 +241,12 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 		RemainTokens.Remove(token);
 		GS->RemoveTokenIdx(token->GetIndex(), token->GetTokenType());
 
-		if (bFirst) P1Tokens.Add(tType, token);
-		else P2Tokens.Add(tType, token);
+		selected[tType]++;
 
-		PS->AddToken(token->GetTokenType(), 1);
-		token->SetActorLocation(FVector(-300, 0, 0));
+		token->Destroy();
 	}
 
-	PS->NotifyUpdateToken();
+	PS->AddTokenByList(selected);
 
 	if (flag || pearlCnt >= 2)
 	{
@@ -255,34 +256,6 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 	SelectedTokens.Reset();
 }
 
-void ATokenManager::UseTokens(FTokenCountList Restore, bool bFirst)
-{
-	auto& CurrentPlayer = bFirst ? P1Tokens : P2Tokens;
-
-	for (auto& token : Restore)
-	{
-		//찾아서 제거 -> pouch로 옮겨야됨
-		for (int i = 0; i < token.Value; i++)
-		{
-			auto removedToken = CurrentPlayer.Remove(token.Key);
-			Pouch.Add(removedToken);
-		}
-	}
-}
-
-void ATokenManager::MoveToken(ETokenColor color, APlayerController* PC)
-{
-	//!bFirst 는 받는 사람
-	auto PS = PC->GetPlayerState<APSPlayerInfo>();
-	bool bFirst = PS->GetBFirst();
-
-	FTokenList to = bFirst ? P1Tokens : P2Tokens;
-	FTokenList from = bFirst ? P2Tokens : P1Tokens;
-
-	//from에서 찾아서 제거 -> to에 추가
-	to.Add(color, from.Remove(color));
-}
-
 void ATokenManager::GetTokenByIdx(APlayerController* PC, int idx)
 {
 	for (auto token : RemainTokens)
@@ -290,12 +263,10 @@ void ATokenManager::GetTokenByIdx(APlayerController* PC, int idx)
 		if (token->GetIndex() == idx)
 		{
 			auto PS = PC->GetPlayerState<APSPlayerInfo>();
-			auto tokenList = PS->GetBFirst() ? P1Tokens : P2Tokens;
 
-			tokenList.Add(token->GetTokenType(), token);
 			RemainTokens.Remove(token);
 
-			token->SetActorLocation(FVector(-300, 0, 0));
+			token->Destroy();
 
 			//ps update
 			PS->AddToken(token->GetTokenType(), 1);

@@ -8,11 +8,13 @@
 #include "PCPlay.h"
 #include "GlobalEnum.h"
 
-APSPlayerInfo::APSPlayerInfo(): PName(""), bFirst(false), bTokenUpdated(false), ScrollNum(0), TotalScore(0)
+APSPlayerInfo::APSPlayerInfo(): PName(""), bFirst(false), ScrollNum(0), TotalScore(0)
 {
 	OwnTokens.Init();
 	OwnBonus.Init();
 	ColorScore.Init();
+
+	NetUpdateFrequency = 5;
 }
 
 void APSPlayerInfo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -25,7 +27,6 @@ void APSPlayerInfo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(APSPlayerInfo, OwnBonus);
 	DOREPLIFETIME(APSPlayerInfo, ColorScore);
 
-	DOREPLIFETIME(APSPlayerInfo, bTokenUpdated);
 	DOREPLIFETIME(APSPlayerInfo, ScrollNum);
 	DOREPLIFETIME(APSPlayerInfo, TotalScore);
 	DOREPLIFETIME(APSPlayerInfo, Crown);
@@ -71,9 +72,22 @@ void APSPlayerInfo::ClientInitialize(AController* C)
 //!-----------------Token---------------------
 void APSPlayerInfo::AddToken(ETokenColor type, int cnt)
 {
-	if (bTokenUpdated) bTokenUpdated = false;
-
 	OwnTokens[type] += cnt;
+}
+
+void APSPlayerInfo::AddTokenByList(FTokenCountList& tokens)
+{
+	for (auto token : tokens)
+	{
+		OwnTokens[token.Key] += token.Value;
+	}
+
+	OnChangeToken.Broadcast();
+
+	if (OwnTokens.Num() > 10)
+	{
+		OnOverToken.Broadcast();
+	}
 }
 
 void APSPlayerInfo::SetToken(ETokenColor type, int num)
@@ -98,7 +112,7 @@ int APSPlayerInfo::GetTokenNum(ETokenColor color)
 	return OwnTokens[color];
 }
 
-void APSPlayerInfo::OnRep_TokenUpdated()
+void APSPlayerInfo::OnRep_Tokens()
 {
 	OnChangeToken.Broadcast();
 
@@ -108,11 +122,27 @@ void APSPlayerInfo::OnRep_TokenUpdated()
 	}
 }
 
-void APSPlayerInfo::NotifyUpdateToken_Implementation()
-{
-	bTokenUpdated = true;
-	OnChangeToken.Broadcast();
-}
+//void APSPlayerInfo::OnRep_TokenUpdated()
+//{
+//	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("OnRep_TokenUpdated")));
+//
+//	OnChangeToken.Broadcast();
+//
+//	if (OwnTokens.Num() > 10)
+//	{
+//		OnOverToken.Broadcast();
+//	}
+//}
+//
+//void APSPlayerInfo::NotifyUpdateToken_Implementation()
+//{
+//	if (!bTokenUpdated)
+//	{
+//		bTokenUpdated = true;
+//		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("NotifyUpdateToken")));
+//		OnChangeToken.Broadcast();
+//	}
+//}
 
 const TArray<FTokenCount>& APSPlayerInfo::GetOwnTokens()
 {
