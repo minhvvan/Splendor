@@ -56,9 +56,6 @@ public:
 	UFUNCTION()
 	void PrintToken();
 
-	//UFUNCTION()
-	//void OnRep_TokenUpdated();
-
 	UFUNCTION()
 	const TArray<FTokenCount>& GetOwnTokens();
 

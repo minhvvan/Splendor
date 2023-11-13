@@ -246,6 +246,7 @@ void UHUDDesk::GetTokenClicked()
 
 void UHUDDesk::FilTokenClicked()
 {
+	Cast<APCPlay>(GetOwningPlayer())->SRFillToken();
 }
 
 void UHUDDesk::NotifyOverToken()

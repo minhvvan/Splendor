@@ -98,50 +98,6 @@ void APCPlay::Click()
 	}
 }
 
-bool APCPlay::IsNear(int a, int b)
-{
-	int minVal = a < b ? a : b;
-	int maxVal = a > b ? a : b;
-
-	int diff = maxVal - minVal;
-
-	if (minVal % 5 == 0)
-	{
-		if (diff == 1 || diff == 5 || diff == 6)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	else if (minVal % 5 == 4)
-	{
-		if (diff == 4 || diff == 5)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	else
-	{
-		if (diff == 1 || diff == 4 || diff == 5 || diff == 6)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	return false;
-}
-
 void APCPlay::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -160,6 +116,19 @@ void APCPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 	DOREPLIFETIME(APCPlay, IsTurn);
 }
 
+void APCPlay::BindState()
+{
+	if (IsLocalController())
+	{
+		if (WidgetDesk && IsValid(WidgetDesk))
+		{
+			WidgetDesk->BindState(GetPlayerState<APSPlayerInfo>());
+		}
+	}
+}
+
+
+//!------------Turn----------------
 void APCPlay::SRSetTurn_Implementation()
 {
 	auto PS = GetPlayerState<APSPlayerInfo>();
@@ -176,6 +145,12 @@ void APCPlay::SRSetTurn_Implementation()
 	}
 }
 
+void APCPlay::SetTurn(bool flag)
+{
+	IsTurn = flag;
+}
+
+//!------------Token----------------
 void APCPlay::SRClickToken_Implementation(AToken* ClickedToken, int cnt, bool bAble)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -204,25 +179,6 @@ void APCPlay::ClearSelectedTokens_Implementation()
 	SelectedToken.Reset();
 }
 
-void APCPlay::PopUpOverToken_Implementation()
-{
-	if (WidgetDesk)
-	{
-		WidgetDesk->NotifyOverToken();
-	}
-}
-
-void APCPlay::BindState()
-{
-	if (IsLocalController())
-	{
-		if (WidgetDesk && IsValid(WidgetDesk))
-		{
-			WidgetDesk->BindState(GetPlayerState<APSPlayerInfo>());
-		}
-	}
-}
-
 void APCPlay::SRRestoreToken_Implementation(const FTokenCountList& Restore)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -232,27 +188,6 @@ void APCPlay::SRRestoreToken_Implementation(const FTokenCountList& Restore)
 		//Tokenmanager
 		//전달받은 개수 만큼 반환
 		GM->RestoreTokens(Restore, this);
-	}
-}
-
-void APCPlay::SetTurn(bool flag)
-{
-	IsTurn = flag;
-}
-
-void APCPlay::SendMessage(FString msg)
-{
-	if (WidgetDesk)
-	{
-		WidgetDesk->RenderMessage(msg);
-	}
-}
-
-void APCPlay::ShowItemWidget_Implementation(EItem itemType, const FCardInfo& cardInfo)
-{
-	if (WidgetDesk)
-	{
-		WidgetDesk->PopUpItemWidget(itemType, cardInfo);
 	}
 }
 
@@ -364,6 +299,48 @@ void APCPlay::SRTakeToken_Implementation(ETokenColor color)
 	}
 }
 
+void APCPlay::SRGetToken_Implementation(int idx)
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GM)
+	{
+		GM->GetTokenByIdx(this, idx);
+	}
+}
+
+void APCPlay::SRFillToken_Implementation()
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+	check(IsValid(GM));
+
+	GM->FillToken(this);
+}
+
+TArray<FTokenCount> APCPlay::GetOppTokens()
+{
+	bool bFirst = GetPlayerState<APSPlayerInfo>()->GetBFirst();
+
+	TArray<FTokenCount> result;
+
+	auto GS = GetWorld()->GetGameState<AGSPlay>();
+	if (GS)
+	{
+		for (auto PS : GS->PlayerArray)
+		{
+			auto cated = Cast<APSPlayerInfo>(PS);
+			if (bFirst != cated->GetBFirst())
+			{
+				result = cated->GetOwnTokens();
+			}
+		}
+	}
+
+	return result;
+}
+
+
+//!------------Card----------------
 void APCPlay::CardClicked(ACard* ClickedCard)
 {
 	if (IsLocalController())
@@ -398,6 +375,78 @@ void APCPlay::SRBuyCard_Implementation(FCardInfo cardInfo, const FTokenCountList
 	}
 }
 
+
+//!------------Desk----------------
+void APCPlay::PopUpOverToken_Implementation()
+{
+	if (WidgetDesk)
+	{
+		WidgetDesk->NotifyOverToken();
+	}
+}
+
+void APCPlay::SendMessage(FString msg)
+{
+	if (WidgetDesk)
+	{
+		WidgetDesk->RenderMessage(msg);
+	}
+}
+
+void APCPlay::ShowItemWidget_Implementation(EItem itemType, const FCardInfo& cardInfo)
+{
+	if (WidgetDesk)
+	{
+		WidgetDesk->PopUpItemWidget(itemType, cardInfo);
+	}
+}
+
+
+//!------------Util--------------
+bool APCPlay::IsNear(int a, int b)
+{
+	int minVal = a < b ? a : b;
+	int maxVal = a > b ? a : b;
+
+	int diff = maxVal - minVal;
+
+	if (minVal % 5 == 0)
+	{
+		if (diff == 1 || diff == 5 || diff == 6)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else if (minVal % 5 == 4)
+	{
+		if (diff == 4 || diff == 5)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		if (diff == 1 || diff == 4 || diff == 5 || diff == 6)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	return false;
+}
+
 void APCPlay::SRAddBonus_Implementation(ETokenColor color)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -416,36 +465,4 @@ void APCPlay::SRAddScore_Implementation(ETokenColor color, int score)
 	{
 		GM->AddScore(color, score, this);
 	}
-}
-
-void APCPlay::SRGetToken_Implementation(int idx)
-{
-	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
-
-	if (GM)
-	{
-		GM->GetTokenByIdx(this, idx);
-	}
-}
-
-TArray<FTokenCount> APCPlay::GetOppTokens()
-{
-	bool bFirst = GetPlayerState<APSPlayerInfo>()->GetBFirst();
-
-	TArray<FTokenCount> result;
-
-	auto GS = GetWorld()->GetGameState<AGSPlay>();
-	if (GS)
-	{
-		for (auto PS : GS->PlayerArray)
-		{
-			auto cated = Cast<APSPlayerInfo>(PS);
-			if (bFirst != cated->GetBFirst())
-			{
-				result = cated->GetOwnTokens();
-			}
-		}
-	}
-
-	return result;
 }

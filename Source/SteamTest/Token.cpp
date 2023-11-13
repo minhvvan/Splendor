@@ -22,7 +22,7 @@ AToken::AToken()
 	AudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("HoverSound"));
 	AudioComp->SetupAttachment(Mesh);
 
-	bSelected = false;
+	NetUpdateFrequency = 10;
 
 	Index = 25;
 }
@@ -36,8 +36,6 @@ void AToken::BeginPlay()
 void AToken::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AToken, bSelected);
 }
 
 void AToken::PostInitializeComponents()
@@ -50,23 +48,12 @@ void AToken::PostInitializeComponents()
 	}
 }
 
-void AToken::Clicked_Implementation()
+void AToken::SetTokenType(ETokenColor color)
 {
-	if (bSelected)
-	{
-		bSelected = false;
-		OnUnSelected.Broadcast();
-	}
-	else
-	{
-		bSelected = true;
-		OnSelected.Broadcast();
-	}
+	TokenType = color;
 
-	if (Mesh)
-	{
-		Mesh->SetSelectedMat(bSelected);
-	}
+	check(IsValid(Mesh));
+	Mesh->SetStaticMesh(TokenMesh[color]);
 }
 
 // Called every frame

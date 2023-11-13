@@ -96,8 +96,6 @@ void ASTGameModePlay::TokenClicked(AToken* ClickedToken, int cnt, bool bAble)
 		{
 			TokenManager->SelectedToken(ClickedToken, bAble);
 		}
-
-		ClickedToken->Clicked();
 	}
 }
 
@@ -160,6 +158,20 @@ void ASTGameModePlay::GetTokenByIdx(APlayerController* PC, int idx)
 	check(IsValid(TokenManager));
 
 	TokenManager->GetTokenByIdx(PC, idx);
+}
+
+void ASTGameModePlay::FillToken(APlayerController* PC)
+{
+	//GS에서 pouch받아서 다시 스폰
+	auto GS = GetGameState<AGSPlay>();
+	check(IsValid(TokenManager) && IsValid(GS));
+	auto pouch = GS->GetPouch();
+
+	TokenManager->SpawnTokensByList(pouch);
+	GS->ClearPouch();
+
+	//상대에게 특권하나
+	GiveScroll(PC);
 }
 
 

@@ -39,6 +39,9 @@ public:
 
 	UFUNCTION()
 	FTokenCountList& GetPouch() { return Pouch; };
+	
+	UFUNCTION()
+	void ClearPouch();
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;

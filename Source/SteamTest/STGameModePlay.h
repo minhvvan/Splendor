@@ -49,7 +49,10 @@ public:
 	void TakeToken(APlayerController* PC, ETokenColor color);	
 	
 	UFUNCTION()
-	void GetTokenByIdx(APlayerController* PC, int idx);
+	void GetTokenByIdx(APlayerController* PC, int idx);	
+	
+	UFUNCTION()
+	void FillToken(APlayerController* PC);
 
 	//!-----------------Scroll---------------------
 	UFUNCTION()

@@ -99,7 +99,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	void SpawnTokens();
+	void SpawnTokens();	
+	
+	UFUNCTION()
+	void SpawnTokensByList(FTokenCountList countList);
 	
 	UFUNCTION()
 	void PlaceTokens(TArray<AToken*>& Tokens);
@@ -128,31 +131,6 @@ private:
 	UPROPERTY()
 	TArray<AToken*> SelectedTokens;
 
-	//UPROPERTY()
-	//FTokenList P1Tokens;
-
-	//UPROPERTY()
-	//FTokenList P2Tokens;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AToken> RedTokenClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AToken> GreenTokenClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AToken> BlueTokenClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AToken> BlackTokenClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AToken> WhileTokenClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AToken> GoldTokenClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AToken> PearlTokenClass;
-
+	TSubclassOf<AToken> TokenClass;
 };

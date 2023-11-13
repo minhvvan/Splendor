@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GlobalEnum.h"
 #include "Token.generated.h"
 
 
@@ -32,15 +33,6 @@ public:
 
 	UAudioComponent* GetAudio() const { return AudioComp; };
 
-	bool GetSelected() const { return bSelected; };
-	void SetSelected(bool flag) { bSelected = flag; };
-
-	UFUNCTION(NetMulticast, Reliable)
-	void Clicked();
-
-	FSelected OnSelected;
-	FUnSelected OnUnSelected;
-
 	UFUNCTION()
 	int GetIndex() const { return Index; };
 
@@ -51,7 +43,7 @@ public:
 	ETokenColor GetTokenType() const { return TokenType; };
 
 	UFUNCTION()
-	void SetTokenType(ETokenColor color) { TokenType = color; };
+	void SetTokenType(ETokenColor color);
 
 protected:
 
@@ -66,8 +58,8 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
 	class USoundCue* HoverSound;
 
-	UPROPERTY(replicated)
-	bool bSelected;
+	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
+	TMap<ETokenColor, UStaticMesh*> TokenMesh;
 
 	UPROPERTY()
 	int Index;

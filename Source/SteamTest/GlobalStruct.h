@@ -85,6 +85,14 @@ public:
 		return TokenCnt;
 	}
 
+	void Clear()
+	{
+		for (int i = 0; i < TokenCnt.Num(); i++)
+		{
+			this->TokenCnt[i].Value = 0;
+		}
+	}
+
 private:
 	UPROPERTY()
 	TArray<FTokenCount> TokenCnt;

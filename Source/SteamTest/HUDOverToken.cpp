@@ -293,7 +293,6 @@ void UHUDOverToken::CommitTokens()
 
 	if (PS)
 	{
-		//auto Restore = TArray<FTokenCount>();
 		auto Restore = FTokenCountList();
 		Restore.Init();
 

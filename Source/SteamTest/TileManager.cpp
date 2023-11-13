@@ -194,8 +194,16 @@ void ATileManager::SetTokenLocs(TArray<AToken*>& Tokens)
 
 void ATileManager::Clicked(int selectedIdx, int dist, bool bAble)
 {
-	if (bAble) SelectedTiles.Add(selectedIdx);
-	else SelectedTiles.Remove(selectedIdx);
+	if (bAble)
+	{
+		SelectedTiles.Add(selectedIdx);
+		Tiles[selectedIdx]->OnSelected();
+	}
+	else
+	{
+		SelectedTiles.Remove(selectedIdx);
+		Tiles[selectedIdx]->OnUnSelected();
+	}
 
 	UpdateBoardState();
 }
@@ -293,6 +301,4 @@ void ATileManager::ClearSeletedTiles()
 
 	//모든 타일 정리
 	UpdateBoardState();
-
-	//!TODO: 가져간 타일을 끌지 말지 정해야함
 }

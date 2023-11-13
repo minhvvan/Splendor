@@ -70,11 +70,14 @@ void APSPlayerInfo::ClientInitialize(AController* C)
 
 
 //!-----------------Token---------------------
+//Single Uipdate
 void APSPlayerInfo::AddToken(ETokenColor type, int cnt)
 {
 	OwnTokens[type] += cnt;
+	OnChangeToken.Broadcast();
 }
 
+//Multi Uipdate
 void APSPlayerInfo::AddTokenByList(FTokenCountList& tokens)
 {
 	for (auto token : tokens)
@@ -121,28 +124,6 @@ void APSPlayerInfo::OnRep_Tokens()
 		OnOverToken.Broadcast();
 	}
 }
-
-//void APSPlayerInfo::OnRep_TokenUpdated()
-//{
-//	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("OnRep_TokenUpdated")));
-//
-//	OnChangeToken.Broadcast();
-//
-//	if (OwnTokens.Num() > 10)
-//	{
-//		OnOverToken.Broadcast();
-//	}
-//}
-//
-//void APSPlayerInfo::NotifyUpdateToken_Implementation()
-//{
-//	if (!bTokenUpdated)
-//	{
-//		bTokenUpdated = true;
-//		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("NotifyUpdateToken")));
-//		OnChangeToken.Broadcast();
-//	}
-//}
 
 const TArray<FTokenCount>& APSPlayerInfo::GetOwnTokens()
 {
@@ -213,6 +194,11 @@ void APSPlayerInfo::AddCrown(int crown)
 {
 	Crown += crown;
 	OnChangeCrown.Broadcast();
+
+	if (Crown == 3 || Crown == 6)
+	{
+		//noti
+	}
 }
 
 void APSPlayerInfo::OnRep_Crown()

@@ -10,6 +10,7 @@
 void AGSPlay::InitState()
 {
 	GlobalScroll = 3;
+	Pouch.Init();
 }
 
 void AGSPlay::RemoveTokenIdx(int idx, ETokenColor color)
@@ -25,6 +26,11 @@ void AGSPlay::AddTokenIdx(int idx, ETokenColor color)
 void AGSPlay::AddPouch(ETokenColor color, int cnt)
 {
 	Pouch[color] += cnt;
+}
+
+void AGSPlay::ClearPouch()
+{
+	Pouch.Clear();
 }
 
 void AGSPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -67,7 +67,10 @@ public:
 	void GetTokenByIdx(int idx);
 
 	UFUNCTION(Server, Reliable)
-	void SRGetToken(int idx);
+	void SRGetToken(int idx);	
+	
+	UFUNCTION(Server, Reliable)
+	void SRFillToken();
 
 	UFUNCTION()
 	TArray<FTokenCount> GetOppTokens();
