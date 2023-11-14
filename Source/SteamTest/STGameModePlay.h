@@ -32,6 +32,11 @@ public:
 
 	UFUNCTION()
 	void PrintToken();
+
+	//!-----------Token-----------------------
+	UFUNCTION()
+	void EndCurrentTurn();
+
 	//!-----------Token-----------------------
 	UFUNCTION()
 	void SetTokenSpawnLoc(TArray<class AToken*>& Tokens);
@@ -56,7 +61,10 @@ public:
 
 	//!-----------------Scroll---------------------
 	UFUNCTION()
-	void GiveScroll(APlayerController* player);
+	void GiveScroll(APlayerController* player);	
+	
+	UFUNCTION()
+	void GetScroll(APlayerController* player);
 
 	//!-----------------Card---------------------
 	UFUNCTION()
@@ -67,7 +75,7 @@ public:
 
 	//!-----------Item----------------------
 	UFUNCTION()
-	bool UseItem(FCardInfo cardInfo, APlayerController* player);
+	void UseItem(FCardInfo cardInfo, APlayerController* player);
 
 
 	//!-----------Bonus----------------------

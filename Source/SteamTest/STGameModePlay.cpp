@@ -72,6 +72,13 @@ void ASTGameModePlay::InitPlayerTurn(APlayerController* Player, bool bFirst)
 	}
 }
 
+void ASTGameModePlay::EndCurrentTurn()
+{
+	check(IsValid(TurnManager));
+
+	TurnManager->EndCurrentTurn();
+}
+
 //!-------------Token-------------------
 void ASTGameModePlay::SetTokenSpawnLoc(TArray<class AToken*>& Tokens)
 {
@@ -190,19 +197,17 @@ void ASTGameModePlay::BuyCard(APlayerController* player, FCardInfo cardInfo, con
 	}
 
 	//아이템, crown 처리
-	bool bPassTurn = true;
-	bPassTurn = UseItem(cardInfo, player);
+	UseItem(cardInfo, player);
 
 	//카드 교체
 	if (CardManager)
-	{
+	{ 
 		CardManager->ChangeCard();
 	}
 
-	//턴변경
-	if (TurnManager && bPassTurn)
+	if(PS->GetCrown() != 3 && PS->GetCrown() != 6 && cardInfo.item.Num() == 0)
 	{
-		TurnManager->EndCurrentTurn();
+		EndCurrentTurn();
 	}
 }
 
@@ -262,35 +267,73 @@ void ASTGameModePlay::GiveScroll(APlayerController* player)
 	}
 }
 
+void ASTGameModePlay::GetScroll(APlayerController* player)
+{
+	int minus = 0;
+
+	auto GS = GetGameState<AGSPlay>();
+	if (GS && IsValid(GS))
+	{
+		int scroll = GS->GetGlobalScroll();
+
+		if (scroll == 0)
+		{
+			minus = -1;
+		}
+		else
+		{
+			GS->AddGlobalScroll(-1);
+		}
+	}
+	
+	check(IsValid(TurnManager));
+
+	player->GetPlayerState<APSPlayerInfo>()->AddScroll(1);
+
+	if (minus < 0)
+	{
+		if (TurnManager->IsFirstPlayer(player))
+		{
+			//second
+			APCPlay* Second = TurnManager->GetScondPlayer();
+			if (Second)
+			{
+				Second->GetPlayerState<APSPlayerInfo>()->AddScroll(minus);
+			}
+		}
+		else
+		{
+			//first
+			APCPlay* First = TurnManager->GetFirstPlayer();
+			if (First)
+			{
+				First->GetPlayerState<APSPlayerInfo>()->AddScroll(minus);
+			}
+		}
+	}
+}
+
 //!-------------Item-------------------
-bool ASTGameModePlay::UseItem(FCardInfo cardInfo, APlayerController* player)
+void ASTGameModePlay::UseItem(FCardInfo cardInfo, APlayerController* player)
 {
 	for (auto i : cardInfo.item)
 	{
 		switch (i)
 		{
 			case EItem::I_AnyColor:
-				//widget
-				Cast<APCPlay>(player)->ShowItemWidget(EItem::I_AnyColor, cardInfo);
+				Cast<APCPlay>(player)->UseItemAnyColor(cardInfo);
 				break;
 			case EItem::I_GetScroll:
-				GiveScroll(player);
+				GetScroll(player);
 				break;			
 			case EItem::I_GetToken:
-				//widget
-				Cast<APCPlay>(player)->ShowItemWidget(EItem::I_GetToken, cardInfo);
+				Cast<APCPlay>(player)->UseItemGetToken(cardInfo);
 				break;
-			case EItem::I_RePlay:
-				return false;
-				break;			
 			case EItem::I_TakeToken:
-				//widget
-				Cast<APCPlay>(player)->ShowItemWidget(EItem::I_TakeToken, cardInfo);
+				Cast<APCPlay>(player)->UseItemTakeToken();
 				break;
 		}
 	}
-
-	return true;
 }
 
 void ASTGameModePlay::AddBonus(ETokenColor color, APlayerController* player)

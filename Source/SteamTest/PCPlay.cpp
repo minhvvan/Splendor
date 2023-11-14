@@ -127,7 +127,6 @@ void APCPlay::BindState()
 	}
 }
 
-
 //!------------Turn----------------
 void APCPlay::SRSetTurn_Implementation()
 {
@@ -148,6 +147,14 @@ void APCPlay::SRSetTurn_Implementation()
 void APCPlay::SetTurn(bool flag)
 {
 	IsTurn = flag;
+}
+
+void APCPlay::SREndTurn_Implementation()
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	check(IsValid(GM));
+	GM->EndCurrentTurn();
 }
 
 //!------------Token----------------
@@ -340,7 +347,6 @@ TArray<FTokenCount> APCPlay::GetOppTokens()
 	return result;
 }
 
-
 //!------------Card----------------
 void APCPlay::CardClicked(ACard* ClickedCard)
 {
@@ -376,7 +382,6 @@ void APCPlay::SRBuyCard_Implementation(FCardInfo cardInfo, const FTokenCountList
 	}
 }
 
-
 //!------------Desk----------------
 void APCPlay::PopUpOverToken_Implementation()
 {
@@ -394,14 +399,40 @@ void APCPlay::SendMessage(FString msg)
 	}
 }
 
-void APCPlay::ShowItemWidget_Implementation(EItem itemType, const FCardInfo& cardInfo)
+//!------------Item-----------
+void APCPlay::UseItemGetToken_Implementation(const FCardInfo& cardInfo)
 {
-	if (WidgetDesk)
-	{
-		WidgetDesk->PopUpItemWidget(itemType, cardInfo);
-	}
+	check(IsValid(WidgetDesk));
+
+	WidgetDesk->PopUpItemGetToken(cardInfo);
 }
 
+void APCPlay::UseItemTakeToken_Implementation()
+{
+	check(IsValid(WidgetDesk));
+
+	WidgetDesk->PopUpItemTakeToken();
+}
+
+void APCPlay::UseItemAnyColor_Implementation(const FCardInfo& cardInfo)
+{
+	check(IsValid(WidgetDesk));
+
+	WidgetDesk->PopUpItemAnyColor(cardInfo);
+}
+
+//!-----------------Crown-------------
+void APCPlay::CloseCrownWidget(bool bReplay)
+{
+	check(IsValid(WidgetDesk));
+
+	WidgetDesk->CloseCrownWidget();
+
+	if (!bReplay)
+	{
+		SREndTurn();
+	}
+}
 
 //!------------Util--------------
 bool APCPlay::IsNear(int a, int b)
@@ -465,5 +496,15 @@ void APCPlay::SRAddScore_Implementation(ETokenColor color, int score)
 	if (GM)
 	{
 		GM->AddScore(color, score, this);
+	}
+}
+
+void APCPlay::SRAddScroll_Implementation()
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (GM)
+	{
+		GM->GetScroll(this);
 	}
 }

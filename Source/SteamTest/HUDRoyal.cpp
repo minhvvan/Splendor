@@ -2,18 +2,24 @@
 
 
 #include "HUDRoyal.h"
+#include "Components/Border.h"
 #include "Components/TileView.h"
 #include "Components/TextBlock.h"
 #include "GlobalConst.h"
+#include "GlobalEnum.h"
+#include "PCPlay.h"
 #include "ItemData.h"
 
 void UHUDRoyal::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
+	BorderFrame->OnMouseButtonDownEvent.BindUFunction(this, "OnClicked");
 }
 
 void UHUDRoyal::SetScore(int score)
 {
+	Score = score;
 	TxtScore->SetText(FText::AsNumber(score));
 }
 
@@ -24,6 +30,8 @@ void UHUDRoyal::SetItem(EItem item)
 		TileItem->SetVisibility(ESlateVisibility::Hidden);
 		return;
 	}
+
+	Item = item;
 
 	check(IsValid(ItemDataClass));
 
@@ -53,3 +61,26 @@ void UHUDRoyal::SetOwner(int owner)
 	}
 }
 
+void UHUDRoyal::OnClicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent)
+{
+	auto PC = Cast<APCPlay>(GetOwningPlayer());
+	check(IsValid(PC));
+
+	//점수 추가
+	PC->SRAddScore(ETokenColor::E_End, Score);
+
+	//아이템 사용
+	switch (Item)
+	{
+	case EItem::I_GetScroll:
+		PC->SRAddScroll();
+		PC->CloseCrownWidget(false);
+		return;
+		break;
+	case EItem::I_TakeToken:
+		PC->UseItemTakeToken();
+		break;
+	}
+
+	PC->CloseCrownWidget(true);
+}

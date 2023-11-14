@@ -116,6 +116,16 @@ void UHUDDesk::CloseItemWidget(EItem itemType)
 		TakeWidget.Reset();
 		break;
 	}
+
+	Cast<APCPlay>(GetOwningPlayer())->SREndTurn();
+}
+
+void UHUDDesk::CloseCrownWidget()
+{
+	check(CrownWidget.IsValid());
+
+	CrownWidget->RemoveFromParent();
+	CrownWidget.Reset();
 }
 
 void UHUDDesk::ChangedBonus()
@@ -170,17 +180,16 @@ void UHUDDesk::CrownEvent()
 {
 	if (RoyalWidgetClass)
 	{
-		auto widget = Cast<UHUDSelectRoyal>(CreateWidget(GetWorld(), RoyalWidgetClass));
-		if (widget)
-		{
-			auto PS = GetOwningPlayer()->GetPlayerState<APSPlayerInfo>();
-			widget->SetScore(PS->GetScore());
-			widget->SetCrown(PS->GetCrown());
-			widget->SetScroll(PS->GetScroll());
+		CrownWidget = Cast<UHUDSelectRoyal>(CreateWidget(GetWorld(), RoyalWidgetClass));
+		check(CrownWidget.IsValid());
 
-			widget->SetRoyal();
-			widget->AddToViewport();
-		}
+		auto PS = GetOwningPlayer()->GetPlayerState<APSPlayerInfo>();
+		CrownWidget->SetScore(PS->GetScore());
+		CrownWidget->SetCrown(PS->GetCrown());
+		CrownWidget->SetScroll(PS->GetScroll());
+
+		CrownWidget->SetRoyal();
+		CrownWidget->AddToViewport();
 	}
 }
 
@@ -295,32 +304,25 @@ void UHUDDesk::PopUpDetailCard(ACard* card)
 	}
 }
 
-void UHUDDesk::PopUpItemWidget(EItem itemType, const FCardInfo& cardInfo)
+void UHUDDesk::PopUpItemGetToken(const FCardInfo& cardInfo)
 {
-	switch (itemType)
-	{
-	case EItem::I_GetToken:
-		{
-			GetWidget = Cast<UHUDGetToken>(CreateWidget(GetWorld(), GetTokenWidgetClass));
-			auto TileIdxs = GetWorld()->GetGameState<AGSPlay>()->GetRemainTokenIdx();
-			GetWidget->SetTiles(TileIdxs, cardInfo);
-			GetWidget->AddToViewport();
-		}
-		break;
-	case EItem::I_TakeToken:
-		{
-			TakeWidget = Cast<UHUDTakeToken>(CreateWidget(GetWorld(), TakeTokenWidgetClass));
-			auto TokenList = Cast<APCPlay>(GetOwningPlayer())->GetOppTokens();
-			TakeWidget->SetTokens(TokenList);
-			TakeWidget->AddToViewport();
-		}
-		break;
-	case EItem::I_AnyColor:
-		{
-			auto widget = Cast<UHUDAnyColor>(CreateWidget(GetWorld(), AnyColorWidgetClass));
-			widget->SetInfo(cardInfo);
-			widget->AddToViewport();
-		}
-		break;
-	}
+	GetWidget = Cast<UHUDGetToken>(CreateWidget(GetWorld(), GetTokenWidgetClass));
+	auto TileIdxs = GetWorld()->GetGameState<AGSPlay>()->GetRemainTokenIdx();
+	GetWidget->SetTiles(TileIdxs, cardInfo);
+	GetWidget->AddToViewport();
+}
+
+void UHUDDesk::PopUpItemTakeToken()
+{
+	TakeWidget = Cast<UHUDTakeToken>(CreateWidget(GetWorld(), TakeTokenWidgetClass));
+	auto TokenList = Cast<APCPlay>(GetOwningPlayer())->GetOppTokens();
+	TakeWidget->SetTokens(TokenList);
+	TakeWidget->AddToViewport();
+}
+
+void UHUDDesk::PopUpItemAnyColor(const FCardInfo& cardInfo)
+{
+	auto widget = Cast<UHUDAnyColor>(CreateWidget(GetWorld(), AnyColorWidgetClass));
+	widget->SetInfo(cardInfo);
+	widget->AddToViewport();
 }

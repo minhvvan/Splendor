@@ -37,6 +37,9 @@ public:
 	UFUNCTION()
 	bool GetTurn() { return IsTurn; };
 
+	UFUNCTION(Server, Reliable)
+	void SREndTurn();
+
 	//!--------------Token-----------
 	TArray<AToken*>& GetSelectedTokens() { return SelectedToken; };
 	
@@ -49,6 +52,7 @@ public:
 	UFUNCTION(Client, Reliable)
 	void PopUpOverToken();
 
+	UFUNCTION()
 	bool IsNear(int a, int b);
 
 	UFUNCTION(Server, Reliable)
@@ -95,16 +99,28 @@ public:
 	UFUNCTION()
 	void SendMessage(FString msg);
 
-	UFUNCTION(Client, Reliable)
-	void ShowItemWidget(EItem itemType, const FCardInfo& cardInfo);
-
 	UFUNCTION(Server, Reliable)
 	void SRAddBonus(ETokenColor color);
 
 	UFUNCTION(Server, Reliable)
-	void SRAddScore(ETokenColor color, int score);
+	void SRAddScore(ETokenColor color, int score);	
+	
+	UFUNCTION(Server, Reliable)
+	void SRAddScroll();
 
+	//!-----------------Item-------------
+	UFUNCTION(Client, Reliable)
+	void UseItemGetToken(const FCardInfo& cardInfo);
 
+	UFUNCTION(Client, Reliable)
+	void UseItemTakeToken();
+
+	UFUNCTION(Client, Reliable)
+	void UseItemAnyColor(const FCardInfo& cardInfo);
+
+	//!-----------------Crown-------------
+	UFUNCTION()
+	void CloseCrownWidget(bool bReplay);
 
 protected:
 	virtual void SetupInputComponent() override;

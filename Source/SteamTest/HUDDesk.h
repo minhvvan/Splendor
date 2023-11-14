@@ -76,9 +76,6 @@ public:
 	void ChangedScroll();
 
 	UFUNCTION()
-	void NotifyOverToken();
-
-	UFUNCTION()
 	void ChangedToken();
 
 	UFUNCTION()
@@ -94,22 +91,35 @@ public:
 	void ChangedCrown();	
 	
 	UFUNCTION()
+	void RenderMessage(FString message);
+
+	//!---------PopUp--------------
+	UFUNCTION()
 	void CrownEvent();
 
 	UFUNCTION()
-	void RenderMessage(FString message);
+	void NotifyOverToken();
 
 	UFUNCTION()
 	void PopUpDetailCard(class ACard* card);
 
 	UFUNCTION()
-	void PopUpItemWidget(EItem itemType, const FCardInfo& cardInfo);
+	void PopUpItemGetToken(const FCardInfo& cardInfo);
+
+	UFUNCTION()
+	void PopUpItemTakeToken();
+
+	UFUNCTION()
+	void PopUpItemAnyColor(const FCardInfo& cardInfo);
 
 	UFUNCTION()
 	UHUDCardHolder* GetBonusWidget(ETokenColor color);
 
 	UFUNCTION()
 	void CloseItemWidget(EItem itemType);
+
+	UFUNCTION()
+	void CloseCrownWidget();
 
 private:
 	UFUNCTION(BlueprintCallable)
@@ -147,4 +157,7 @@ private:
 
 	UPROPERTY()
 	TWeakObjectPtr<class UHUDGetToken> GetWidget;
+
+	UPROPERTY()
+	TWeakObjectPtr<class UHUDSelectRoyal> CrownWidget;
 };

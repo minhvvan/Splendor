@@ -28,6 +28,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UTextBlock* TxtOwner;
 
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UBorder* BorderFrame;
+	
 public:
 	//!-----------Setter--------------
 	UFUNCTION(BlueprintCallable)
@@ -39,7 +42,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetOwner(int owner);
 
+	UFUNCTION(BlueprintCallable)
+	void OnClicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent);
+
 private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UItemData> ItemDataClass;
+
+	UPROPERTY()
+	int Score;
+
+	UPROPERTY()
+	EItem Item;
 };
