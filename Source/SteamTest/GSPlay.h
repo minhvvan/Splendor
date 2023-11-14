@@ -43,6 +43,9 @@ public:
 	UFUNCTION()
 	void ClearPouch();
 
+	UFUNCTION()
+	TArray<FRoyalInfo>& GertRoylas() { return Royals; };
+	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
 
@@ -54,4 +57,10 @@ protected:
 
 	UPROPERTY(Replicated)
 	FTokenCountList Pouch;
+
+	UPROPERTY(Replicated)
+	TArray<FRoyalInfo> Royals;
+
+	UPROPERTY(EditAnywhere)
+	class UDataTable* RoyalData;
 };

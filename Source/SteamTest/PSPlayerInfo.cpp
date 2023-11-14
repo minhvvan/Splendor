@@ -8,7 +8,7 @@
 #include "PCPlay.h"
 #include "GlobalEnum.h"
 
-APSPlayerInfo::APSPlayerInfo(): PName(""), bFirst(false), ScrollNum(0), TotalScore(0)
+APSPlayerInfo::APSPlayerInfo(): PName(""), bFirst(false), ScrollNum(0), TotalScore(0), Crown(2)
 {
 	OwnTokens.Init();
 	OwnBonus.Init();
@@ -197,11 +197,16 @@ void APSPlayerInfo::AddCrown(int crown)
 
 	if (Crown == 3 || Crown == 6)
 	{
-		//noti
+		OnCrownEvent.Broadcast();
 	}
 }
 
 void APSPlayerInfo::OnRep_Crown()
 {
 	OnChangeCrown.Broadcast();
+
+	if (Crown == 3 || Crown == 6)
+	{
+		OnCrownEvent.Broadcast();
+	}
 }

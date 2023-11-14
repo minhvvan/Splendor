@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
 #include "GlobalEnum.h"
+#include "GlobalConst.h"
 #include "GlobalStruct.generated.h"
 
 USTRUCT(BlueprintType)
@@ -153,6 +154,26 @@ public:
 	{
 		return this->Idx < rhs.Idx;
 	}
+};
+
+USTRUCT(BlueprintType)
+struct FRoyalInfo : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	FRoyalInfo() : Score(0), Item(EItem::E_End), Owner(0) {};
+
+	FRoyalInfo(int score, EItem item, int owner) : Score(score), Item(item), Owner(owner) {};
+
+	UPROPERTY(EditAnywhere)
+	int Score;
+	
+	UPROPERTY(EditAnywhere)
+	EItem Item;
+
+	UPROPERTY(EditAnywhere)
+	int Owner;
 };
 
 

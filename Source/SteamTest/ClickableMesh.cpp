@@ -22,16 +22,7 @@ void UClickableMesh::InitializeComponent()
 
 void UClickableMesh::HighlightOn(UPrimitiveComponent* TouchComp)
 {
-	if (GetOwner()->IsA<AToken>())
-	{
-		auto AudioComp = Cast<AToken>(GetOwner())->GetAudio();
-
-		if (AudioComp)
-		{
-			AudioComp->Play();
-		}
-	}
-	else if (GetOwner()->IsA<ACard>())
+	if (GetOwner()->IsA<ACard>())
 	{
 		auto AudioComp = Cast<ACard>(GetOwner())->GetAudio();
 

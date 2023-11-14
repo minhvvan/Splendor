@@ -220,6 +220,7 @@ void APCPlay::TokenClicked(AToken* ClickedToken)
 		}
 	}
 
+	//not selected
 	if (SelectedToken.Find(ClickedToken) == INDEX_NONE)
 	{
 		//3개 over

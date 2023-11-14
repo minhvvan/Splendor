@@ -111,9 +111,6 @@ public:
 	void SelectedToken(AToken* token, bool bSelected);
 
 	UFUNCTION()
-	void FillTokens();
-
-	UFUNCTION()
 	void PossessTokens(APlayerController* PC, bool bFirst);
 	
 	UFUNCTION()
@@ -124,9 +121,6 @@ public:
 private:
 	UPROPERTY()
 	TArray<AToken*> RemainTokens;
-
-	UPROPERTY()
-	TArray<AToken*> Pouch;
 
 	UPROPERTY()
 	TArray<AToken*> SelectedTokens;

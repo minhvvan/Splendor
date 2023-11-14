@@ -91,7 +91,10 @@ public:
 	void ChangedColorScore();
 
 	UFUNCTION()
-	void ChangedCrown();
+	void ChangedCrown();	
+	
+	UFUNCTION()
+	void CrownEvent();
 
 	UFUNCTION()
 	void RenderMessage(FString message);
@@ -134,7 +137,10 @@ private:
 	TSubclassOf<UUserWidget> TakeTokenWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UUserWidget> AnyColorWidgetClass;
+	TSubclassOf<UUserWidget> AnyColorWidgetClass;	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> RoyalWidgetClass;
 
 	UPROPERTY()
 	TWeakObjectPtr<class UHUDTakeToken> TakeWidget;

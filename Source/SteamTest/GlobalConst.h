@@ -38,4 +38,8 @@ public:
 	static const FString MsgNotSelect;
 	static const FString MsgUnableBuy;
 
+	//!------------------util----------------------
+	static const int FirstPlayer;
+	static const int SecondPlayer;
+
 };

@@ -21,14 +21,13 @@ ATile::ATile()
 		Mesh->SetWorldScale3D(FVector(0.5f));
 	}
 
-	NetUpdateFrequency = 10;
+	NetUpdateFrequency = 2;
 }
 
 // Called when the game starts or when spawned
 void ATile::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

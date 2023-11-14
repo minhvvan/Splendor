@@ -139,14 +139,13 @@ void UHUDCard::SetScore(int score)
 
 void UHUDCard::SetItem(TArray<EItem> items)
 {
-	if (ItemClass && IsValid(ItemClass))
-	{
-		for (auto item : items)
-		{
-			auto ItemData = NewObject<UItemData>(this, ItemDataClass);
-			ItemData->SetItem(item);
+	check(IsValid(ItemDataClass));
 
-			TileItem->AddItem(ItemData);
-		}
+	for (auto item : items)
+	{
+		auto ItemData = NewObject<UItemData>(this, ItemDataClass);
+		ItemData->SetItem(item);
+
+		TileItem->AddItem(ItemData);
 	}
 }

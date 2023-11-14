@@ -12,6 +12,7 @@
 #include "HUDOverToken.h"
 #include "HUDDetailCard.h"
 #include "HUDGetToken.h"
+#include "HUDSelectRoyal.h"
 #include "PCPlay.h"
 #include "PSPlayerInfo.h"
 #include "GSPlay.h"
@@ -56,6 +57,7 @@ void UHUDDesk::BindState(APSPlayerInfo* ps)
 		ps->OnChangeScore.AddUObject(this, &UHUDDesk::ChangedScore);
 		ps->OnChangeColorScore.AddUObject(this, &UHUDDesk::ChangedColorScore);
 		ps->OnChangeCrown.AddUObject(this, &UHUDDesk::ChangedCrown);
+		ps->OnCrownEvent.AddUObject(this, &UHUDDesk::CrownEvent);
 	}
 }
 
@@ -161,6 +163,24 @@ void UHUDDesk::ChangedCrown()
 	if (CurrentState.IsValid())
 	{
 		TxtCrown->SetText(FText::AsNumber(CurrentState->GetCrown()));
+	}
+}
+
+void UHUDDesk::CrownEvent()
+{
+	if (RoyalWidgetClass)
+	{
+		auto widget = Cast<UHUDSelectRoyal>(CreateWidget(GetWorld(), RoyalWidgetClass));
+		if (widget)
+		{
+			auto PS = GetOwningPlayer()->GetPlayerState<APSPlayerInfo>();
+			widget->SetScore(PS->GetScore());
+			widget->SetCrown(PS->GetCrown());
+			widget->SetScroll(PS->GetScroll());
+
+			widget->SetRoyal();
+			widget->AddToViewport();
+		}
 	}
 }
 

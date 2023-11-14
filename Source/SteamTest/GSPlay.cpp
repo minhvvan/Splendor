@@ -11,6 +11,16 @@ void AGSPlay::InitState()
 {
 	GlobalScroll = 3;
 	Pouch.Init();
+
+	check(IsValid(RoyalData));
+
+	auto Names = RoyalData->GetRowNames();
+	FString ContextString;
+	for (auto name : Names)
+	{
+		auto data = RoyalData->FindRow<FRoyalInfo>(name, ContextString);
+		Royals.Add(*data);
+	}
 }
 
 void AGSPlay::RemoveTokenIdx(int idx, ETokenColor color)
@@ -38,4 +48,5 @@ void AGSPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AGSPlay, RemainTokenIdx);
 	DOREPLIFETIME(AGSPlay, Pouch);
+	DOREPLIFETIME(AGSPlay, Royals);
 }

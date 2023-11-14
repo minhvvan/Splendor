@@ -8,8 +8,6 @@
 #include "Token.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSelected);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnSelected);
 UCLASS()
 class STEAMTEST_API AToken : public AActor
 {
@@ -43,14 +41,17 @@ public:
 	ETokenColor GetTokenType() const { return TokenType; };
 
 	UFUNCTION()
-	void SetTokenType(ETokenColor color);
+	void SetTokenType(ETokenColor color);	
+	
+	UFUNCTION()
+	void OnHover(UPrimitiveComponent* Target);
 
-protected:
-
+	UFUNCTION()
+	void OnLeave(UPrimitiveComponent* Target);
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
-	class UClickableMesh* Mesh;
+	class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
 	class UAudioComponent* AudioComp;

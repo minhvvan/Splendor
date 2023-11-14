@@ -14,6 +14,7 @@ DECLARE_MULTICAST_DELEGATE(FDeleChangeBonus)
 DECLARE_MULTICAST_DELEGATE(FDeleChangeScore)
 DECLARE_MULTICAST_DELEGATE(FDeleChangeColorScore)
 DECLARE_MULTICAST_DELEGATE(FDeleChangeCrown)
+DECLARE_MULTICAST_DELEGATE(FDeleCrownEvent)
 
 UCLASS()
 class STEAMTEST_API APSPlayerInfo : public APlayerState
@@ -116,6 +117,7 @@ public:
 	FDeleChangeScore OnChangeScore;
 	FDeleChangeColorScore OnChangeColorScore;
 	FDeleChangeCrown OnChangeCrown;
+	FDeleCrownEvent OnCrownEvent;
 
 protected:
 	UFUNCTION()
@@ -142,9 +144,6 @@ private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_ColorScore)
 	FTokenCountList ColorScore;
-
-	//UPROPERTY(ReplicatedUsing = OnRep_TokenUpdated)
-	//bool bTokenUpdated;
 
 	UPROPERTY(ReplicatedUsing = OnRep_TotalScore)
 	int TotalScore;

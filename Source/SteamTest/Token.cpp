@@ -3,19 +3,20 @@
 
 #include "Token.h"
 #include "Components/AudioComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Sound/SoundCue.h"
 #include "ClickableMesh.h"
 #include "Net/UnrealNetwork.h"
+#include "STGameModePlay.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AToken::AToken()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 	bReplicates = true;
 
-	Mesh = CreateDefaultSubobject<UClickableMesh>(TEXT("Mesh"));
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
 	Mesh->SetIsReplicated(true);
 
@@ -31,6 +32,8 @@ AToken::AToken()
 void AToken::BeginPlay()
 {
 	Super::BeginPlay();
+	Mesh->OnBeginCursorOver.AddDynamic(this, &AToken::OnHover);
+	Mesh->OnEndCursorOver.AddDynamic(this, &AToken::OnLeave);
 }
 
 void AToken::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -61,4 +64,17 @@ void AToken::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AToken::OnHover(UPrimitiveComponent* Target)
+{
+	check(IsValid(Mesh) && IsValid(AudioComp));
+
+	Mesh->SetRenderCustomDepth(true);
+	AudioComp->Play();
+}
+
+void AToken::OnLeave(UPrimitiveComponent* Target)
+{
+	Mesh->SetRenderCustomDepth(false);
 }

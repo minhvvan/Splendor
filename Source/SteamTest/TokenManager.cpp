@@ -106,7 +106,6 @@ void ATokenManager::SpawnTokensByList(FTokenCountList countList)
 
 void ATokenManager::PlaceTokens(TArray<AToken*>& Tokens)
 {
-	//GM에게 Tilemanager spawnloc 받아서 위치
 	ASTGameModePlay* GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (GM)
 	{
@@ -127,11 +126,6 @@ void ATokenManager::SelectedToken(AToken* token, bool bSelected)
 	{
 		SelectedTokens.Remove(token);
 	}
-}
-
-void ATokenManager::FillTokens()
-{
-	PlaceTokens(Pouch);
 }
 
 void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
