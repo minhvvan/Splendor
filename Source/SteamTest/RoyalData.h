@@ -32,9 +32,18 @@ public:
 	int GetOwner() { return Owner; };
 
 	UFUNCTION()
-	void SetOwner(int owner) { Owner = owner; };
+	void SetOwner(int owner) { Owner = owner; };	
+	
+	UFUNCTION(BlueprintCallable)
+	int GetKey() { return Key; };
+
+	UFUNCTION()
+	void SetKey(int key) { Key = key; };
 
 private:
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	int Key;
+
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	int Score;
 

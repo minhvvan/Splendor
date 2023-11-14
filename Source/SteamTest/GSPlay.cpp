@@ -43,6 +43,27 @@ void AGSPlay::ClearPouch()
 	Pouch.Clear();
 }
 
+void AGSPlay::UpdateRoyalOwner(int key, bool bFirst)
+{
+	if (bFirst)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("First UpdateRoyalOwner: %d"), key));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Second UpdateRoyalOwner: %d"), key));
+	}
+
+	for (auto& royal : Royals)
+	{
+		if (royal.Key == key)
+		{
+			royal.Owner = bFirst ? UGlobalConst::FirstPlayer : UGlobalConst::SecondPlayer;
+			break;
+		}
+	}
+}
+
 void AGSPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

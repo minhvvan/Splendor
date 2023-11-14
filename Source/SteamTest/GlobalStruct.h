@@ -162,9 +162,12 @@ struct FRoyalInfo : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 public:
-	FRoyalInfo() : Score(0), Item(EItem::E_End), Owner(0) {};
+	FRoyalInfo() : Key(0), Score(0), Item(EItem::E_End), Owner(0) {};
 
 	FRoyalInfo(int score, EItem item, int owner) : Score(score), Item(item), Owner(owner) {};
+
+	UPROPERTY(EditAnywhere)
+	int Key;
 
 	UPROPERTY(EditAnywhere)
 	int Score;

@@ -155,7 +155,11 @@ void APSPlayerInfo::AddScore(ETokenColor color, int s)
 	TotalScore += s;
 
 	OnChangeScore.Broadcast();
-	AddColorScore(color, s);
+
+	if (color != ETokenColor::E_End)
+	{
+		AddColorScore(color, s);
+	}
 }
 
 void APSPlayerInfo::AddColorScore(ETokenColor color, int s)

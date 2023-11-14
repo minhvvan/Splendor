@@ -87,6 +87,9 @@ public:
 	UFUNCTION()
 	void AddScore(ETokenColor color, int score, APlayerController* player);
 
+	//!-----------Crown----------------------
+	void UpdateRoyal(int key, bool bFirst);
+
 
 protected:
 	virtual void HandleSeamlessTravelPlayer(AController*& C) override;

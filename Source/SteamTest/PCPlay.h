@@ -120,7 +120,10 @@ public:
 
 	//!-----------------Crown-------------
 	UFUNCTION()
-	void CloseCrownWidget(bool bReplay);
+	void CloseCrownWidget(bool bReplay);	
+	
+	UFUNCTION(Server, Reliable)
+	void SRPossessRoyal(int key);
 
 protected:
 	virtual void SetupInputComponent() override;

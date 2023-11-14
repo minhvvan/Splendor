@@ -30,14 +30,15 @@ void UHUDSelectRoyal::SetRoyal()
 
 	auto royals = GS->GertRoylas();
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("royals: %d"), royals.Num()));
-
 	for (auto royal : royals)
 	{
 		auto RoyalData = NewObject<URoyalData>(this, RoyalDataClass);
+		RoyalData->SetKey(royal.Key);
 		RoyalData->SetScore(royal.Score);
 		RoyalData->SetItem(royal.Item);
 		RoyalData->SetOwner(royal.Owner);
+
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Owner: %d"), royal.Owner));
 
 		TileRoyal->AddItem(RoyalData);
 	}

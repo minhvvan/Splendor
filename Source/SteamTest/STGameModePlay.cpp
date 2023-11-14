@@ -350,10 +350,18 @@ void ASTGameModePlay::AddScore(ETokenColor color, int score, APlayerController* 
 	auto PS = player->GetPlayerState<APSPlayerInfo>();
 	if (PS)
 	{
-		PS->AddColorScore(color, score);
+		PS->AddScore(color, score);
 	}
 }
 
+//!-----------Crown----------------------
+void ASTGameModePlay::UpdateRoyal(int key, bool bFirst)
+{
+	auto GS = GetGameState<AGSPlay>();
+	check(IsValid(GS));
+
+	GS->UpdateRoyalOwner(key, bFirst);
+}
 
 void ASTGameModePlay::PrintBonus()
 {

@@ -45,6 +45,9 @@ public:
 
 	UFUNCTION()
 	TArray<FRoyalInfo>& GertRoylas() { return Royals; };
+
+	UFUNCTION()
+	void UpdateRoyalOwner(int key, bool bFirst);
 	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;

@@ -37,7 +37,10 @@ public:
 	void SetScore(int score);
 
 	UFUNCTION(BlueprintCallable)
-	void SetItem(EItem item);
+	void SetItem(EItem item);	
+	
+	UFUNCTION(BlueprintCallable)
+	void SetKey(int key) { Key = key; };
 
 	UFUNCTION(BlueprintCallable)
 	void SetOwner(int owner);
@@ -54,4 +57,7 @@ private:
 
 	UPROPERTY()
 	EItem Item;
+
+	UPROPERTY()
+	int Key;
 };
