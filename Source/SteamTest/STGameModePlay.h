@@ -71,7 +71,7 @@ public:
 	void BuyCard(APlayerController* player, FCardInfo cardInfo, const FTokenCountList& UseTokens);
 	
 	UFUNCTION()
-	void CardClicked(class ACard* ClickedCard);
+	void ChangeCard(FCardInfo cardInfo);
 
 	//!-----------Item----------------------
 	UFUNCTION()

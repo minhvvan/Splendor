@@ -21,7 +21,7 @@ void UHUDSelectCard::NativeOnInitialized()
 	for (auto card : One)
 	{
 		auto CardData = NewObject<UCardData>(this, CardDataClass);
-		CardData->SetInfo(card);
+		CardData->SetData(card);
 
 		LVOne->AddItem(CardData);
 	}
@@ -29,7 +29,7 @@ void UHUDSelectCard::NativeOnInitialized()
 	for (auto card : Two)
 	{
 		auto CardData = NewObject<UCardData>(this, CardDataClass);
-		CardData->SetInfo(card);
+		CardData->SetData(card);
 
 		LVTwo->AddItem(CardData);
 	}
@@ -38,7 +38,7 @@ void UHUDSelectCard::NativeOnInitialized()
 	for (auto card : Three)
 	{
 		auto CardData = NewObject<UCardData>(this, CardDataClass);
-		CardData->SetInfo(card);
+		CardData->SetData(card);
 
 		LVThree->AddItem(CardData);
 	}

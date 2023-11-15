@@ -43,10 +43,11 @@ public:
 	void DestoryCard(FVector loc, ECardTier tier, ACard* card);
 
 	UFUNCTION()
-	void SetCurrentSelectedCard(ACard* Card);
+	void ChangeCard(FCardInfo cardInfo);
 
 	UFUNCTION()
-	void ChangeCard();
+	TArray<ACard*> GetCardListByTier(ECardTier tier);
+
 private:
 	//!----------------Card--------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -60,9 +61,6 @@ private:
 	
 	UPROPERTY()
 	TArray<ACard*> TierThree;
-
-	UPROPERTY()
-	TWeakObjectPtr<ACard> CurrentClickCard;
 	
 	//!------Dummy--------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

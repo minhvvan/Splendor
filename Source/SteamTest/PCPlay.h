@@ -90,7 +90,7 @@ public:
 	void SRBuyCard(FCardInfo cardInfo,const FTokenCountList& UseTokens);
 	
 	UFUNCTION(Server, Reliable)
-	void SRCardClicked(ACard* ClickedCard);
+	void SRChangeCard(FCardInfo cardInfo);
 
 	//!------------DESK-------
 	UFUNCTION()
@@ -110,6 +110,9 @@ public:
 	
 	UFUNCTION(Server, Reliable)
 	void SRAddScroll();
+
+	UFUNCTION()
+	void GetCardToHand(FCardInfo Info);
 
 	//!-----------------Item-------------
 	UFUNCTION(Client, Reliable)

@@ -121,6 +121,8 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC, bool bFirst)
 	//턴 변경
 	if (TurnManager)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("end Turn")));
+
 		TurnManager->EndCurrentTurn();
 	}
 }
@@ -202,7 +204,7 @@ void ASTGameModePlay::BuyCard(APlayerController* player, FCardInfo cardInfo, con
 	//카드 교체
 	if (CardManager)
 	{ 
-		CardManager->ChangeCard();
+		CardManager->ChangeCard(cardInfo);
 	}
 
 	if(PS->GetCrown() != 3 && PS->GetCrown() != 6 && cardInfo.item.Num() == 0)
@@ -211,12 +213,11 @@ void ASTGameModePlay::BuyCard(APlayerController* player, FCardInfo cardInfo, con
 	}
 }
 
-void ASTGameModePlay::CardClicked(ACard* ClickedCard)
+void ASTGameModePlay::ChangeCard(FCardInfo cardInfo)
 {
-	if (CardManager)
-	{
-		CardManager->SetCurrentSelectedCard(ClickedCard);
-	}
+	check(IsValid(CardManager));
+
+	CardManager->ChangeCard(cardInfo);
 }
 
 //!-------------Scroll-------------------

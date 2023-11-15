@@ -207,23 +207,38 @@ void ACardManager::DestoryCard(FVector loc, ECardTier tier, ACard* card)
 	}
 }
 
-void ACardManager::ChangeCard()
+void ACardManager::ChangeCard(FCardInfo cardInfo)
 {
 	auto GS = GetWorld()->GetGameState<AGSPlay>();
-	check(IsValid(GS) && CurrentClickCard.IsValid());
+	check(IsValid(GS));
 
-	auto CurrentCard = CurrentClickCard.Get();
-	
-	auto loc = CurrentCard->GetActorLocation();
-	auto info = CurrentCard->GetInfo();
-	
-	GS->RemoveCurrentCardInfo(info);
-	CurrentCard->Destroy();
-	
-	DestoryCard(loc, info.tier, CurrentCard);
+	//auto CardList = GetCardListByTier(cardInfo.tier);
+	for (auto card : GetCardListByTier(cardInfo.tier))
+	{
+		//key °ª ºñ±³
+		if (card->GetInfo() == cardInfo)
+		{
+			auto loc = card->GetActorLocation();
+			DestoryCard(loc, cardInfo.tier, card);
+			card->Destroy();
+			break;
+		}
+	}
+
+	GS->RemoveCurrentCardInfo(cardInfo);
 }
 
-void ACardManager::SetCurrentSelectedCard(ACard* Card)
+TArray<ACard*> ACardManager::GetCardListByTier(ECardTier tier)
 {
-	CurrentClickCard = Card;
+	switch (tier)
+	{
+	case ECardTier::C_One:
+		return TierOne;
+		break;
+	case ECardTier::C_Two:
+		return TierTwo;
+		break;
+	}
+
+	return TierThree;
 }

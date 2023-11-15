@@ -18,10 +18,10 @@ class STEAMTEST_API UCardData : public UObject
 
 public:
 	UFUNCTION(BlueprintCallable)
-	FCardInfo GetInfo() { return Info; };
+	FCardInfo GetData() { return Info; };
 
 	UFUNCTION(BlueprintCallable)
-	void SetInfo(FCardInfo info) { Info = info; };
+	void SetData(FCardInfo info) { Info = info; };
 
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))

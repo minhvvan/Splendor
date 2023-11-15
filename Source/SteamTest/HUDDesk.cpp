@@ -14,6 +14,7 @@
 #include "HUDGetToken.h"
 #include "HUDSelectRoyal.h"
 #include "HUDSelectCard.h"
+#include "HUDHand.h"
 #include "PCPlay.h"
 #include "PSPlayerInfo.h"
 #include "GSPlay.h"
@@ -129,6 +130,14 @@ void UHUDDesk::CloseCrownWidget()
 	CrownWidget.Reset();
 }
 
+void UHUDDesk::CloseCardWidget()
+{
+	check(CardWidget.IsValid());
+
+	CardWidget->RemoveFromParent();
+	CardWidget.Reset();
+}
+
 void UHUDDesk::ChangedBonus()
 {
 	if (CurrentState.IsValid())
@@ -205,6 +214,13 @@ void UHUDDesk::RenderMessage(FString message)
 	{
 		PlayAnimation(MessageAnim);
 	}
+}
+
+void UHUDDesk::AddCardToHand(FCardInfo cardInfo)
+{
+	check(IsValid(Hand));
+
+	Hand->AddCard(cardInfo);
 }
 
 void UHUDDesk::GetTokenClicked()
@@ -331,6 +347,6 @@ void UHUDDesk::PopUpItemAnyColor(const FCardInfo& cardInfo)
 void UHUDDesk::PopUpSelectCard()
 {
 	//popup
-	auto widget = Cast<UHUDSelectCard>(CreateWidget(GetWorld(), SelectCardWidgetClass));
-	widget->AddToViewport();
+	CardWidget = Cast<UHUDSelectCard>(CreateWidget(GetWorld(), SelectCardWidgetClass));
+	CardWidget->AddToViewport();
 }

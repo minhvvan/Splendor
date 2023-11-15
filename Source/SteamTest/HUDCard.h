@@ -50,7 +50,7 @@ protected:
 public:
 	//!-----------Setter--------------
 	UFUNCTION(BlueprintCallable)
-	void SetInfo(FCardInfo& info);
+	void SetInfo(FCardInfo info);
 
 	UFUNCTION(BlueprintCallable)
 	void SetBonus(ETokenColor color, int bonus);
@@ -67,12 +67,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetItem(TArray<EItem> items);
 
-	UFUNCTION(BlueprintCallable)
-	void SetKey(int key);
-
-	UFUNCTION(BlueprintCallable)
-	void SetTier(ECardTier tier);
-
 	UFUNCTION()
 	void Onclicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent);
 
@@ -87,8 +81,5 @@ private:
 	TMap<ETokenColor, UTexture2D*> TokenTexture;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	int Key;
-
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	ECardTier Tier;
+	FCardInfo Info;
 };

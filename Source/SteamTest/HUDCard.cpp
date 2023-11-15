@@ -13,6 +13,7 @@
 #include "ItemData.h"
 #include "GlobalConst.h"
 #include "GlobalEnum.h"
+#include "PCPlay.h"
 #include "Engine/Texture2D.h"
 
 
@@ -23,8 +24,10 @@ void UHUDCard::NativeOnInitialized()
 	BorderFrame->OnMouseButtonDownEvent.BindUFunction(this, "OnClicked");
 }
 
-void UHUDCard::SetInfo(FCardInfo& info)
+void UHUDCard::SetInfo(FCardInfo info)
 {
+	Info = info;
+
 	auto color = info.color;
 	auto bonus = info.bonus;
 	auto score = info.score;
@@ -39,9 +42,6 @@ void UHUDCard::SetInfo(FCardInfo& info)
 	SetCost(costs);
 	SetScore(score);
 	SetItem(item);
-
-	SetKey(info.key);
-	SetTier(info.tier);
 }
 
 void UHUDCard::SetBonus(ETokenColor color, int bonus)
@@ -154,17 +154,8 @@ void UHUDCard::SetItem(TArray<EItem> items)
 	}
 }
 
-void UHUDCard::SetKey(int key)
-{
-	Key = key;
-}
-
-void UHUDCard::SetTier(ECardTier tier)
-{
-	Tier = tier;
-}
-
 void UHUDCard::Onclicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent)
 {
 	//owner hand에 추가 + 카드 업데이트 + 창닫기
+	Cast<APCPlay>(GetOwningPlayer())->GetCardToHand(Info);
 }

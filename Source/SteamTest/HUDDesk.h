@@ -42,7 +42,10 @@ protected:
 	class UHUDCardHolder* CDHBlack;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
-	class UHUDTokenHolder* TokenHolder;
+	class UHUDTokenHolder* TokenHolder;	
+	
+	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
+	class UHUDHand* Hand;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UTextBlock* TxtScore;
@@ -93,6 +96,11 @@ public:
 	UFUNCTION()
 	void RenderMessage(FString message);
 
+	//!---------Hand--------------
+	UFUNCTION()
+	void AddCardToHand(FCardInfo cardInfo);
+
+
 	//!---------PopUp--------------
 	UFUNCTION()
 	void CrownEvent();
@@ -123,6 +131,9 @@ public:
 
 	UFUNCTION()
 	void CloseCrownWidget();
+
+	UFUNCTION()
+	void CloseCardWidget();
 
 private:
 	UFUNCTION(BlueprintCallable)
@@ -166,4 +177,7 @@ private:
 
 	UPROPERTY()
 	TWeakObjectPtr<class UHUDSelectRoyal> CrownWidget;
+
+	UPROPERTY()
+	TWeakObjectPtr<class UHUDSelectCard> CardWidget;
 };

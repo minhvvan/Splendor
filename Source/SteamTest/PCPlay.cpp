@@ -347,18 +347,6 @@ void APCPlay::CardClicked(ACard* ClickedCard)
 			auto info = ClickedCard->GetInfo();
 			WidgetDesk->PopUpDetailCard(ClickedCard);
 		}
-
-		SRCardClicked(ClickedCard);
-	}
-}
-
-void APCPlay::SRCardClicked_Implementation(ACard* ClickedCard)
-{
-	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
-
-	if (GM)
-	{
-		GM->CardClicked(ClickedCard);
 	}
 }
 
@@ -370,6 +358,14 @@ void APCPlay::SRBuyCard_Implementation(FCardInfo cardInfo, const FTokenCountList
 	{
 		GM->BuyCard(this, cardInfo, UseTokens);
 	}
+}
+
+void APCPlay::SRChangeCard_Implementation(FCardInfo cardInfo)
+{
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+	check(IsValid(GM));
+
+	GM->ChangeCard(cardInfo);
 }
 
 //!------------Desk----------------
@@ -406,6 +402,17 @@ void APCPlay::SendMessage(FString msg)
 	}
 }
 
+void APCPlay::GetCardToHand(FCardInfo Info)
+{
+	check(IsValid(WidgetDesk));
+
+	WidgetDesk->CloseCardWidget();
+	WidgetDesk->AddCardToHand(Info);
+
+	//카드 변경
+	SRChangeCard(Info);
+}
+
 //!------------Item-----------
 void APCPlay::UseItemGetToken_Implementation(const FCardInfo& cardInfo)
 {
@@ -427,6 +434,7 @@ void APCPlay::UseItemAnyColor_Implementation(const FCardInfo& cardInfo)
 
 	WidgetDesk->PopUpItemAnyColor(cardInfo);
 }
+
 
 //!-----------------Crown-------------
 void APCPlay::CloseCrownWidget(bool bReplay)
