@@ -39,6 +39,9 @@ void AToken::BeginPlay()
 void AToken::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AToken, Index);
+	DOREPLIFETIME(AToken, TokenType);
 }
 
 void AToken::PostInitializeComponents()

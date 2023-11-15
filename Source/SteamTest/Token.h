@@ -62,9 +62,9 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
 	TMap<ETokenColor, UStaticMesh*> TokenMesh;
 
-	UPROPERTY()
+	UPROPERTY(replicated)
 	int Index;
 
-	UPROPERTY()
+	UPROPERTY(replicated)
 	ETokenColor TokenType;
 };
