@@ -48,22 +48,22 @@ protected:
 	class UImage* ImgToken;
 public:
 	//!-----------Setter--------------
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetInfo(struct FCardInfo& info);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetBonus(ETokenColor color, int bonus);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetCost(TArray<FTokenCount> costs);
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetCrown(int crown);	
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetScore(int score);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetItem(TArray<EItem> items);
 
 private:

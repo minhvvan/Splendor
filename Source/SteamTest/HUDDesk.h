@@ -113,6 +113,9 @@ public:
 	void PopUpItemAnyColor(const FCardInfo& cardInfo);
 
 	UFUNCTION()
+	void PopUpSelectCard();
+
+	UFUNCTION()
 	UHUDCardHolder* GetBonusWidget(ETokenColor color);
 
 	UFUNCTION()
@@ -151,6 +154,9 @@ private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> RoyalWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> SelectCardWidgetClass;
 
 	UPROPERTY()
 	TWeakObjectPtr<class UHUDTakeToken> TakeWidget;

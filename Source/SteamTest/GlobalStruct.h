@@ -108,6 +108,9 @@ struct FCardInfo : public FTableRowBase
 
 	public:
 	UPROPERTY(EditAnywhere, Category = "Info")
+	int key;
+
+	UPROPERTY(EditAnywhere, Category = "Info")
 	ECardTier tier;
 
 	UPROPERTY(EditAnywhere, Category = "Info")
@@ -127,6 +130,11 @@ struct FCardInfo : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, Category = "Info")
 	TArray<EItem> item;
+
+	bool operator== (FCardInfo info)
+	{
+		return this->key == info.key;
+	}
 };
 
 USTRUCT(BlueprintType)

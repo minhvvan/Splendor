@@ -79,6 +79,9 @@ public:
 	UFUNCTION()
 	TArray<FTokenCount> GetOppTokens();
 
+	UFUNCTION(Client, Reliable)
+	void AddCardToHand();
+
 	//!--------------Card-----------
 	UFUNCTION()
 	void CardClicked(ACard* ClickedCard);

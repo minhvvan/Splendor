@@ -38,6 +38,12 @@ void ASTGameModePlay::StartMatch()
 {
 	Super::StartMatch();
 
+	auto GS = GetGameState<AGSPlay>();
+	if (GS && IsValid(GS))
+	{
+		GS->InitState();
+	}
+
 	TileManager = GetWorld()->SpawnActor<ATileManager>();
 	TokenManager = GetWorld()->SpawnActor<ATokenManager>();
 	TurnManager = GetWorld()->SpawnActor<ATurnManager>();
@@ -46,12 +52,6 @@ void ASTGameModePlay::StartMatch()
 	if (TokenManager)
 	{
 		TokenManager->AddScroll.AddUObject(this, &ASTGameModePlay::GiveScroll);
-	}
-
-	auto GS = GetGameState<AGSPlay>();
-	if (GS && IsValid(GS))
-	{
-		GS->InitState();
 	}
 }
 

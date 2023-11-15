@@ -2,6 +2,7 @@
 
 #include "CardManager.h"
 #include "Card.h"
+#include "GSPlay.h"
 #include "CardDummy.h"
 #include "Algo/RandomShuffle.h"
 #include "GlobalEnum.h"
@@ -13,12 +14,6 @@ ACardManager::ACardManager() : StartOneTier(FVector(-15, -670, 0)), StartTwoTier
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	static ConstructorHelpers::FObjectFinder<UDataTable> DATA(TEXT("/Script/Engine.DataTable'/Game/Data/DT_CardInfo.DT_CardInfo'"));
-	if (DATA.Succeeded())
-	{
-		CardData = DATA.Object;
-	}
 
 	ConstructorHelpers::FClassFinder<ACard> CARD(TEXT("/Script/Engine.Blueprint'/Game/Splendor/BP/BP_Card.BP_Card_C'"));
 	if (CARD.Succeeded())
@@ -38,7 +33,6 @@ void ACardManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitData();
 	InitCards();
 	InitDummy();
 }
@@ -64,34 +58,6 @@ ACard* ACardManager::GetCardByTier(ECardTier tier)
 	return nullptr;
 }
 
-void ACardManager::InitData()
-{
-	if(CardData && IsValid(CardData))
-	{
-		auto Names = CardData->GetRowNames();
-		FString ContextString;
-		for (auto name : Names)
-		{
-			auto data = CardData->FindRow<FCardInfo>(name, ContextString);
-			switch (data->tier)
-			{
-			case ECardTier::C_One:
-				TierOneInfos.Add(*data);
-				break;
-			case ECardTier::C_Two:
-				TierTwoInfos.Add(*data);
-				break;
-			case ECardTier::C_Three:
-				TierThreeInfos.Add(*data);
-				break;
-			}
-		}
-		Algo::RandomShuffle(TierOneInfos);
-		Algo::RandomShuffle(TierTwoInfos);
-		Algo::RandomShuffle(TierThreeInfos);
-	}
-}
-
 void ACardManager::InitCards()
 {
 	UWorld* world = GetWorld();
@@ -102,6 +68,9 @@ void ACardManager::InitCards()
 		SpawnParams.Owner = this;
 		FRotator rotator;
 
+		auto GS = GetWorld()->GetGameState<AGSPlay>();
+		check(IsValid(GS));
+
 		{
 			FVector SpawnLoc = StartOneTier;
 			for (int i = 0; i < 5; i++)
@@ -109,7 +78,7 @@ void ACardManager::InitCards()
 				auto Card = Cast<ACard>(world->SpawnActor<AActor>(CardClass, SpawnLoc, rotator, SpawnParams));
 
 				SpawnLoc += offset;
-				auto info = TierOneInfos.Pop();
+				auto info = GS->GetInfoByTier(ECardTier::C_One);
 				Card->SetInfo(info);
 				TierOne.Add(Card);
 			}
@@ -122,7 +91,7 @@ void ACardManager::InitCards()
 				auto Card = Cast<ACard>(world->SpawnActor<AActor>(CardClass, SpawnLoc, rotator, SpawnParams));
 
 				SpawnLoc += offset;
-				auto info = TierTwoInfos.Pop();
+				auto info = GS->GetInfoByTier(ECardTier::C_Two);
 				Card->SetInfo(info);
 				TierTwo.Add(Card);
 			}
@@ -135,7 +104,7 @@ void ACardManager::InitCards()
 				auto Card = Cast<ACard>(world->SpawnActor<AActor>(CardClass, SpawnLoc, rotator, SpawnParams));
 
 				SpawnLoc += offset;
-				auto info = TierThreeInfos.Pop();
+				auto info = GS->GetInfoByTier(ECardTier::C_Three);
 				Card->SetInfo(info);
 				TierThree.Add(Card);
 			}
@@ -152,13 +121,16 @@ void ACardManager::InitDummy()
 		SpawnParams.Owner = this;
 		FRotator rotator;
 
+		auto GS = GetWorld()->GetGameState<AGSPlay>();
+		check(IsValid(GS));
+
 		{
 			FVector SpawnLoc = DummyOneTier;
 			auto CardDumy = Cast<ACardDummy>(world->SpawnActor<AActor>(DummyClass, SpawnLoc, rotator, SpawnParams));
 			if (CardDumy)
 			{
 				CardDumy->SetTier(ECardTier::C_One);
-				CardDumy->SetNum(TierOneInfos.Num());
+				CardDumy->SetNum(GS->GetInfoNumByTier(ECardTier::C_One));
 				CardDummies.Add(CardDumy);
 			}
 		}
@@ -168,7 +140,7 @@ void ACardManager::InitDummy()
 			if (CardDumy)
 			{
 				CardDumy->SetTier(ECardTier::C_Two);
-				CardDumy->SetNum(TierTwoInfos.Num());
+				CardDumy->SetNum(GS->GetInfoNumByTier(ECardTier::C_Two));
 				CardDummies.Add(CardDumy);
 			}
 		} 
@@ -178,7 +150,7 @@ void ACardManager::InitDummy()
 			if (CardDumy)
 			{
 				CardDumy->SetTier(ECardTier::C_Three);
-				CardDumy->SetNum(TierThreeInfos.Num());
+				CardDumy->SetNum(GS->GetInfoNumByTier(ECardTier::C_Three));
 				CardDummies.Add(CardDumy);
 			}
 		}
@@ -188,26 +160,25 @@ void ACardManager::InitDummy()
 
 void ACardManager::DestoryCard(FVector loc, ECardTier tier, ACard* card)
 {
-	TArray<FCardInfo> CurrentTier;
 	TArray<ACard*> CurrentTokenList;
 
 	switch (tier)
 	{
 	case ECardTier::C_One:
-		CurrentTier = TierOneInfos;
 		CurrentTokenList = TierOne;
 		break;
 	case ECardTier::C_Two:
-		CurrentTier = TierTwoInfos;
 		CurrentTokenList = TierTwo;
 		break;
 	case ECardTier::C_Three:
-		CurrentTier = TierThreeInfos;
 		CurrentTokenList = TierThree;
 		break;
 	}
 
 	CurrentTokenList.Remove(card);
+
+	auto GS = GetWorld()->GetGameState<AGSPlay>();
+	check(IsValid(GS));
 
 	UWorld* world = GetWorld();
 	if (world)
@@ -216,17 +187,17 @@ void ACardManager::DestoryCard(FVector loc, ECardTier tier, ACard* card)
 		SpawnParams.Owner = this;
 		FRotator rotator;
 
-		if (CurrentTier.Num() > 0)
+		if (GS->GetInfoNumByTier(tier) > 0)
 		{
 			auto SpawnedCard = Cast<ACard>(world->SpawnActor<AActor>(CardClass, loc, rotator, SpawnParams));
-			auto info = CurrentTier.Pop();
+			auto info = GS->GetInfoByTier(tier);
 			SpawnedCard->SetInfo(info);
 
 			CurrentTokenList.Add(SpawnedCard);
 		}
 	}
 
-	//Udate Remain Dummy
+	//!TODO: GS로 업데이트하게 변경 필요
 	for (auto dummy : CardDummies)
 	{
 		if (dummy->GetTier() == tier)
@@ -238,16 +209,18 @@ void ACardManager::DestoryCard(FVector loc, ECardTier tier, ACard* card)
 
 void ACardManager::ChangeCard()
 {
-	if (CurrentClickCard.IsValid())
-	{
-		auto CurrentCard = CurrentClickCard.Get();
+	auto GS = GetWorld()->GetGameState<AGSPlay>();
+	check(IsValid(GS) && CurrentClickCard.IsValid());
 
-		auto loc = CurrentCard->GetActorLocation();
-		auto tier = CurrentCard->GetInfo().tier;
-
-		CurrentCard->Destroy();
-		DestoryCard(loc, tier, CurrentCard);
-	}
+	auto CurrentCard = CurrentClickCard.Get();
+	
+	auto loc = CurrentCard->GetActorLocation();
+	auto info = CurrentCard->GetInfo();
+	
+	GS->RemoveCurrentCardInfo(info);
+	CurrentCard->Destroy();
+	
+	DestoryCard(loc, info.tier, CurrentCard);
 }
 
 void ACardManager::SetCurrentSelectedCard(ACard* Card)

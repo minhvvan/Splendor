@@ -139,13 +139,15 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 	FTokenCountList selected;
 	selected.Init();
 
-	bool flag = SelectedTokens.Num() == 3 ? true : false;
+	bool bGiveScroll = SelectedTokens.Num() == 3 ? true : false;
+	bool bGold = false;
 	int pearlCnt = 0;
 	ETokenColor current = ETokenColor::E_End;
 	for (auto token : SelectedTokens)
 	{
 		auto tType = token->GetTokenType();
 		if (tType == ETokenColor::E_Pearl) pearlCnt++;
+		if (tType == ETokenColor::E_Gold) bGold = true;
 
 		if (current == ETokenColor::E_End)
 		{
@@ -153,7 +155,7 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 		}
 		else
 		{
-			if (current != tType) flag = false;
+			if (current != tType) bGiveScroll = false;
 		}
 
 		RemainTokens.Remove(token);
@@ -164,9 +166,11 @@ void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
 		token->Destroy();
 	}
 
+	if (bGold) Player->AddCardToHand();
+
 	PS->AddTokenByList(selected);
 
-	if (flag || pearlCnt >= 2)
+	if (bGiveScroll || pearlCnt >= 2)
 	{
 		AddScroll.Broadcast(Player);
 	}

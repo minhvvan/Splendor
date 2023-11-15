@@ -32,9 +32,6 @@ public:
 
 	//!------------Init-----------------
 	UFUNCTION()
-	void InitData();
-
-	UFUNCTION()
 	void InitCards();	
 	
 	UFUNCTION()
@@ -65,15 +62,6 @@ private:
 	TArray<ACard*> TierThree;
 
 	UPROPERTY()
-	TArray<FCardInfo> TierOneInfos;
-
-	UPROPERTY()
-	TArray<FCardInfo> TierTwoInfos;
-
-	UPROPERTY()
-	TArray<FCardInfo> TierThreeInfos;	
-
-	UPROPERTY()
 	TWeakObjectPtr<ACard> CurrentClickCard;
 	
 	//!------Dummy--------
@@ -82,10 +70,6 @@ private:
 
 	UPROPERTY()
 	TArray<class ACardDummy*> CardDummies;
-
-	//!-------------Data--------
-	UPROPERTY()
-	class UDataTable* CardData;
 
 	//!-----------Position--------
 	UPROPERTY()

@@ -13,6 +13,7 @@
 #include "HUDDetailCard.h"
 #include "HUDGetToken.h"
 #include "HUDSelectRoyal.h"
+#include "HUDSelectCard.h"
 #include "PCPlay.h"
 #include "PSPlayerInfo.h"
 #include "GSPlay.h"
@@ -324,5 +325,12 @@ void UHUDDesk::PopUpItemAnyColor(const FCardInfo& cardInfo)
 {
 	auto widget = Cast<UHUDAnyColor>(CreateWidget(GetWorld(), AnyColorWidgetClass));
 	widget->SetInfo(cardInfo);
+	widget->AddToViewport();
+}
+
+void UHUDDesk::PopUpSelectCard()
+{
+	//popup
+	auto widget = Cast<UHUDSelectCard>(CreateWidget(GetWorld(), SelectCardWidgetClass));
 	widget->AddToViewport();
 }

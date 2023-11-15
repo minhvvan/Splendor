@@ -51,22 +51,6 @@ void APCPlay::BeginPlay()
 	}
 }
 
-void APCPlay::ShowDesk()
-{
-	if (IsLocalController())
-	{
-		if (!WidgetDesk)
-		{
-			WidgetDesk = Cast<UHUDDesk>(CreateWidget(GetWorld(), DeskClass));
-		}
-
-		WidgetDesk->AddToViewport();
-		WidgetDesk->BindState(GetPlayerState<APSPlayerInfo>());
-
-		SetInputMode(FInputModeGameAndUI());
-		SetShowMouseCursor(true);
-	}
-}
 
 void APCPlay::Click()
 {
@@ -347,6 +331,12 @@ TArray<FTokenCount> APCPlay::GetOppTokens()
 	return result;
 }
 
+void APCPlay::AddCardToHand_Implementation()
+{
+	check(IsValid(WidgetDesk));
+	WidgetDesk->PopUpSelectCard();
+}
+
 //!------------Card----------------
 void APCPlay::CardClicked(ACard* ClickedCard)
 {
@@ -383,6 +373,23 @@ void APCPlay::SRBuyCard_Implementation(FCardInfo cardInfo, const FTokenCountList
 }
 
 //!------------Desk----------------
+void APCPlay::ShowDesk()
+{
+	if (IsLocalController())
+	{
+		if (!WidgetDesk)
+		{
+			WidgetDesk = Cast<UHUDDesk>(CreateWidget(GetWorld(), DeskClass));
+		}
+
+		WidgetDesk->AddToViewport();
+		WidgetDesk->BindState(GetPlayerState<APSPlayerInfo>());
+
+		SetInputMode(FInputModeGameAndUI());
+		SetShowMouseCursor(true);
+	}
+}
+
 void APCPlay::PopUpOverToken_Implementation()
 {
 	if (WidgetDesk)

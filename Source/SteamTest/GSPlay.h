@@ -49,6 +49,18 @@ public:
 	UFUNCTION()
 	void UpdateRoyalOwner(int key, bool bFirst);
 	
+	UFUNCTION()
+	int GetInfoNumByTier(ECardTier tier);
+
+	UFUNCTION()
+	FCardInfo GetInfoByTier(ECardTier tier);
+
+	UFUNCTION()
+	void RemoveCurrentCardInfo(FCardInfo info);
+
+	UFUNCTION()
+	const TArray<FCardInfo>& GetCurrentInfoByTier(ECardTier tier);
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
 
@@ -65,5 +77,27 @@ protected:
 	TArray<FRoyalInfo> Royals;
 
 	UPROPERTY(EditAnywhere)
-	class UDataTable* RoyalData;
+	class UDataTable* RoyalData;	
+	
+	//!----------Card-------------
+	UPROPERTY(EditAnywhere)
+	class UDataTable* CardData;
+
+	UPROPERTY(Replicated)
+	TArray<FCardInfo> TierOneCurrentInfos;
+
+	UPROPERTY(Replicated)
+	TArray<FCardInfo> TierTwoCurrentInfos;
+
+	UPROPERTY(Replicated)
+	TArray<FCardInfo> TierThreeCurrentInfos;
+
+	UPROPERTY(Replicated)
+	TArray<FCardInfo> TierOneInfos;
+
+	UPROPERTY(Replicated)
+	TArray<FCardInfo> TierTwoInfos;
+
+	UPROPERTY(Replicated)
+	TArray<FCardInfo> TierThreeInfos;
 };
