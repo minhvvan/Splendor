@@ -19,13 +19,22 @@ public:
 	void AddCard(FCardInfo cardInfo);
 	
 protected:
+	virtual void NativeOnInitialized();
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget))
 	class UOverlay* OverlayHand;
 
 	UPROPERTY()
-	TArray<class UHUDCard*> Hands;
+	TArray<class UHUDHandCard*> Hands;
+
+
+	UFUNCTION()
+	void UpdateCardPosition();
 
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> CardClass;
+
+	UPROPERTY()
+	float AnimSpeed;
 };

@@ -68,9 +68,8 @@ public:
 	void SetItem(TArray<EItem> items);
 
 	UFUNCTION()
-	void Onclicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent);
+	virtual void Onclicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent);
 
-private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UCostData> CostDataClass;
 
