@@ -9,17 +9,18 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "CardManager.h"
-#include "CardData.h"
+#include "CostData.h"
 #include "ItemData.h"
 #include "GlobalConst.h"
 #include "GlobalEnum.h"
-#include "GlobalStruct.h"
 #include "Engine/Texture2D.h"
 
 
 void UHUDCard::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
+	BorderFrame->OnMouseButtonDownEvent.BindUFunction(this, "OnClicked");
 }
 
 void UHUDCard::SetInfo(FCardInfo& info)
@@ -38,6 +39,9 @@ void UHUDCard::SetInfo(FCardInfo& info)
 	SetCost(costs);
 	SetScore(score);
 	SetItem(item);
+
+	SetKey(info.key);
+	SetTier(info.tier);
 }
 
 void UHUDCard::SetBonus(ETokenColor color, int bonus)
@@ -100,7 +104,7 @@ void UHUDCard::SetCost(TArray<FTokenCount> costs)
 	{
 		for (auto cost : costs)
 		{
-			auto CostData = NewObject<UCardData>(this, CostDataClass);
+			auto CostData = NewObject<UCostData>(this, CostDataClass);
 			CostData->SetColor(cost.Key);
 			CostData->SetNum(cost.Value);
 
@@ -148,4 +152,19 @@ void UHUDCard::SetItem(TArray<EItem> items)
 
 		TileItem->AddItem(ItemData);
 	}
+}
+
+void UHUDCard::SetKey(int key)
+{
+	Key = key;
+}
+
+void UHUDCard::SetTier(ECardTier tier)
+{
+	Tier = tier;
+}
+
+void UHUDCard::Onclicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent)
+{
+	//owner hand에 추가 + 카드 업데이트 + 창닫기
 }

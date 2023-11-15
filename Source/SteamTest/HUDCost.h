@@ -20,7 +20,7 @@ public:
 	void OnClicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent);
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
-	class UCardData* CardData;
+	class UCostData* CostData;
 protected:
 	virtual void NativeOnInitialized();
 };

@@ -4,7 +4,7 @@
 #include "HUDTakeToken.h"
 #include "GlobalStruct.h"
 #include "Components/TileView.h"
-#include "CardData.h"
+#include "CostData.h"
 
 void UHUDTakeToken::SetTokens(TArray<FTokenCount> tokens)
 {
@@ -13,7 +13,7 @@ void UHUDTakeToken::SetTokens(TArray<FTokenCount> tokens)
 		for (auto cost : tokens)
 		{
 			if (cost.Value == 0 || cost.Key == ETokenColor::E_Gold) continue;
-			auto CostData = NewObject<UCardData>(this, TokenDataClass);
+			auto CostData = NewObject<UCostData>(this, TokenDataClass);
 			CostData->SetColor(cost.Key);
 			CostData->SetNum(cost.Value);
 

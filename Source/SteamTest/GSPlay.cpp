@@ -183,5 +183,8 @@ void AGSPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 	DOREPLIFETIME(AGSPlay, Royals);
 	DOREPLIFETIME(AGSPlay, TierOneInfos);
 	DOREPLIFETIME(AGSPlay, TierTwoInfos);
-	DOREPLIFETIME(AGSPlay, TierThreeInfos);
+	DOREPLIFETIME(AGSPlay, TierThreeInfos);	
+	DOREPLIFETIME(AGSPlay, TierOneCurrentInfos);
+	DOREPLIFETIME(AGSPlay, TierTwoCurrentInfos);
+	DOREPLIFETIME(AGSPlay, TierThreeCurrentInfos);
 }

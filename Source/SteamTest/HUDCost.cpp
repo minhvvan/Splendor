@@ -4,14 +4,14 @@
 #include "HUDCost.h"
 #include "Components/Border.h"
 #include "PCPlay.h"
-#include "CardData.h"
+#include "CostData.h"
 #include "GlobalEnum.h"
 
 void UHUDCost::OnClicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent)
 {
-	if (CardData)
+	if (CostData)
 	{
-		auto color = CardData->GetColor();
+		auto color = CostData->GetColor();
 
 		auto PC = Cast<APCPlay>(GetOwningPlayer());
 		if (PC)

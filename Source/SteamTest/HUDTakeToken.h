@@ -25,7 +25,7 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class UCardData> TokenDataClass;
+	TSubclassOf<class UCostData> TokenDataClass;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	TMap<ETokenColor, UTexture2D*> TokenTexture;

@@ -106,29 +106,29 @@ struct FCardInfo : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	public:
-	UPROPERTY(EditAnywhere, Category = "Info")
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Info")
 	int key;
 
-	UPROPERTY(EditAnywhere, Category = "Info")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Info")
 	ECardTier tier;
 
-	UPROPERTY(EditAnywhere, Category = "Info")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Info")
 	int score;
 
-	UPROPERTY(EditAnywhere, Category = "Info")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Info")
 	int bonus;
 
-	UPROPERTY(EditAnywhere, Category = "Info")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Info")
 	int crown;
 
-	UPROPERTY(EditAnywhere, Category = "Info")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Info")
 	ETokenColor color;
 
-	UPROPERTY(EditAnywhere, Category = "Info")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Info")
 	TArray<FTokenCount> cost;
 
-	UPROPERTY(EditAnywhere, Category = "Info")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Info")
 	TArray<EItem> item;
 
 	bool operator== (FCardInfo info)

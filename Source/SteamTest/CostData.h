@@ -5,25 +5,33 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "GlobalEnum.h"
-#include "GlobalStruct.h"
-#include "CardData.generated.h"
+#include "CostData.generated.h"
 
 /**
  * 
  */
 UCLASS(BlueprintType)
-class STEAMTEST_API UCardData : public UObject
+class STEAMTEST_API UCostData : public UObject
 {
 	GENERATED_BODY()
 
 public:
 	UFUNCTION(BlueprintCallable)
-	FCardInfo GetInfo() { return Info; };
+	ETokenColor GetColor() { return color; };
+
+	UFUNCTION()
+	void SetColor(ETokenColor c) { color = c; };
 
 	UFUNCTION(BlueprintCallable)
-	void SetInfo(FCardInfo info) { Info = info; };
+	int GetNum() { return num; };
+
+	UFUNCTION()
+	void SetNum(int n) { num = n; };
 
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	FCardInfo Info;
+	ETokenColor color;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
+	int num;
 };

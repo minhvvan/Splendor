@@ -27,5 +27,6 @@ protected:
 	class UListView* LVThree;
 
 private:
-
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UCardData> CardDataClass;
 };
