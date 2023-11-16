@@ -27,9 +27,35 @@ protected:
 	UPROPERTY()
 	TArray<class UHUDHandCard*> Hands;
 
-
 	UFUNCTION()
 	void UpdateCardPosition();
+
+	UFUNCTION()
+	FWidgetTransform CalculatePosition(int idx);
+
+	UFUNCTION()
+	float CalculateAngle(int idx);
+
+	UFUNCTION()
+	float CalculateXpos(int idx);
+
+	UFUNCTION()
+	float CalculateYpos(int idx);
+
+	UFUNCTION()
+	int ConvertIdx(int idx);
+
+	UFUNCTION()
+	void OnHovered(UHUDHandCard* HoverdCard);
+
+	UFUNCTION()
+	void OnLeaved(UHUDHandCard* HoverdCard);
+
+	UFUNCTION()
+	float GetHoverYOffset(int idx);
+
+	UFUNCTION()
+	float GetHoverXOffset(int idx);
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -37,4 +63,30 @@ private:
 
 	UPROPERTY()
 	float AnimSpeed;
+
+	UPROPERTY()
+	float CardAngle;
+
+	UPROPERTY()
+	float CardSpacing;
+
+	UPROPERTY()
+	float ArcHeight;
+
+	UPROPERTY()
+	float DefaultYOffset;	
+	
+	UPROPERTY()
+	float DefaultXOffset;
+
+	UPROPERTY()
+	float HoverYOffset;
+
+	UPROPERTY()
+	float HoverXOffset;
+
+	UPROPERTY()
+	int HoveredCardIdx;
+
+	const int NONVALIDIDX = -100;
 };

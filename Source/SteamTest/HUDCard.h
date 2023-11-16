@@ -18,6 +18,8 @@ class STEAMTEST_API UHUDCard : public UUserWidget
 protected:
 	virtual void NativeOnInitialized();
 
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
+
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UBorder* BorderFrame;
 	
@@ -66,9 +68,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetItem(TArray<EItem> items);
-
-	UFUNCTION()
-	virtual void Onclicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent);
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UCostData> CostDataClass;

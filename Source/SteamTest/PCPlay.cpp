@@ -56,11 +56,11 @@ void APCPlay::Click()
 {
 	if (IsLocalController())
 	{
-		if (!IsTurn)
-		{
-			SendMessage(UGlobalConst::MsgNotTurn);
-			return;
-		}
+		//if (!IsTurn)
+		//{
+		//	SendMessage(UGlobalConst::MsgNotTurn);
+		//	return;
+		//}
 
 		FHitResult HitResult;
 		GetHitResultUnderCursor(ECC_Visibility, false, HitResult);

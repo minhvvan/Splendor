@@ -20,8 +20,15 @@
 void UHUDCard::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+}
 
-	BorderFrame->OnMouseButtonDownEvent.BindUFunction(this, "OnClicked");
+FReply UHUDCard::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+	Cast<APCPlay>(GetOwningPlayer())->GetCardToHand(Info);
+
+	return OnMouseButtonDown(InGeometry, InMouseEvent).NativeReply;
 }
 
 void UHUDCard::SetInfo(FCardInfo info)
@@ -152,10 +159,4 @@ void UHUDCard::SetItem(TArray<EItem> items)
 
 		TileItem->AddItem(ItemData);
 	}
-}
-
-void UHUDCard::Onclicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent)
-{
-	//owner hand에 추가 + 카드 업데이트 + 창닫기
-	Cast<APCPlay>(GetOwningPlayer())->GetCardToHand(Info);
 }

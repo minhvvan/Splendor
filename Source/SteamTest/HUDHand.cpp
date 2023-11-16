@@ -8,7 +8,18 @@
 
 void UHUDHand::NativeOnInitialized()
 {
+	//!------------Widget------------
 	AnimSpeed = 10.f;
+	CardAngle = 10.f;
+	CardSpacing = 100.f;
+	ArcHeight = 10.f;
+	DefaultYOffset = 70.f;
+	DefaultXOffset = 100.f;
+
+	//!------------Interaction------------
+	HoveredCardIdx = NONVALIDIDX;
+	HoverYOffset = 220.f;
+	HoverXOffset = 30.f;
 }
 
 void UHUDHand::AddCard(FCardInfo cardInfo)
@@ -20,6 +31,9 @@ void UHUDHand::AddCard(FCardInfo cardInfo)
 	//card info set
 	card->SetInfo(cardInfo); 
 
+	card->OnHover.AddUObject(this, &UHUDHand::OnHovered);
+	card->OnLeave.AddUObject(this, &UHUDHand::OnLeaved);
+
 	Hands.Add(card);
 	OverlayHand->AddChild(card);
 
@@ -29,16 +43,102 @@ void UHUDHand::AddCard(FCardInfo cardInfo)
 
 void UHUDHand::UpdateCardPosition()
 {
-	int iter = 0;
-
-	for (auto card : Hands)
+	for (int i = 0 ; i < Hands.Num(); i++)
 	{
-		//!TODO: widget Pos °è»ê
-		auto pos = FVector2D(iter++ * 100, 0);
+		FWidgetTransform Transform = CalculatePosition(i);
 
-		FWidgetTransform Transform;
-		Transform.Translation = pos;
+		Hands[i]->StartRePostion(Transform, AnimSpeed);
+	}
+}
 
-		card->StartRePostion(Transform, AnimSpeed);
+FWidgetTransform UHUDHand::CalculatePosition(int idx)
+{
+	FWidgetTransform NewPos;
+
+	NewPos.Angle = CalculateAngle(idx);
+	NewPos.Translation = FVector2D(CalculateXpos(idx), CalculateYpos(idx));
+
+	return NewPos;
+}
+
+float UHUDHand::CalculateAngle(int idx)
+{
+	if (idx == HoveredCardIdx) return 0;
+
+	float rot = ConvertIdx(idx);
+
+	return rot * CardAngle;
+}
+
+float UHUDHand::CalculateXpos(int idx)
+{
+	auto WidgetSize = GetCachedGeometry().GetLocalSize();
+
+	auto CenterX = WidgetSize.X / 2.f;
+	int convertedIdx = ConvertIdx(idx);
+
+	CenterX += (convertedIdx * CardSpacing) - DefaultXOffset + GetHoverXOffset(idx);
+	return CenterX;
+}
+
+float UHUDHand::CalculateYpos(int idx)
+{
+	auto WidgetSize = GetCachedGeometry().GetLocalSize();
+
+	auto CenterY = WidgetSize.Y / 2.f + DefaultYOffset - GetHoverYOffset(idx);
+	int convertedIdx = ConvertIdx(idx);
+	
+	CenterY += abs(convertedIdx) * ArcHeight;
+	return CenterY;
+}
+
+int UHUDHand::ConvertIdx(int idx)
+{
+	int total = Hands.Num();
+	auto centerIdx = float(total - 1) / 2.f;
+
+	auto temp = float(idx) - centerIdx;
+	int result = temp;
+	if (temp < 0)
+	{
+		result = FMath::RoundToPositiveInfinity(temp - .5f);
+	}
+
+	return result;
+}
+
+void UHUDHand::OnHovered(UHUDHandCard* HoverdCard)
+{
+	int idx = Hands.Find(HoverdCard);
+
+	HoveredCardIdx = idx;
+	UpdateCardPosition();
+}
+
+void UHUDHand::OnLeaved(UHUDHandCard* HoverdCard)
+{
+	HoveredCardIdx = NONVALIDIDX;
+	UpdateCardPosition();
+}
+
+
+FORCEINLINE float UHUDHand::GetHoverYOffset(int idx)
+{
+	return idx == HoveredCardIdx ? HoverYOffset : 0;
+}
+
+float UHUDHand::GetHoverXOffset(int idx)
+{
+	if (HoveredCardIdx == NONVALIDIDX) return 0;
+
+	if (idx == HoveredCardIdx) return 0;
+
+	if (idx < HoveredCardIdx)
+	{
+		return -HoverXOffset;
+	}
+	else
+	{
+		return HoverXOffset;
 	}
 }

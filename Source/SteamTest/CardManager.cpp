@@ -212,7 +212,6 @@ void ACardManager::ChangeCard(FCardInfo cardInfo)
 	auto GS = GetWorld()->GetGameState<AGSPlay>();
 	check(IsValid(GS));
 
-	//auto CardList = GetCardListByTier(cardInfo.tier);
 	for (auto card : GetCardListByTier(cardInfo.tier))
 	{
 		//key °ª ºñ±³

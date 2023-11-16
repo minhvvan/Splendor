@@ -6,9 +6,9 @@
 #include "HUDCard.h"
 #include "HUDHandCard.generated.h"
 
-/**
- * 
- */
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeleOnHover, UHUDHandCard*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeleOnLeave, UHUDHandCard*);
+
 UCLASS()
 class STEAMTEST_API UHUDHandCard : public UHUDCard
 {
@@ -18,10 +18,19 @@ public:
 	UFUNCTION()
 	void StartRePostion(FWidgetTransform Pos, float Speed);
 	
+	FDeleOnHover OnHover;
+	FDeleOnLeave OnLeave;
+
 protected:
-	virtual void Onclicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent);
+	virtual void NativeOnInitialized();
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
+
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
+
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent);
+
 
 	UFUNCTION()
 	bool IsCompletedMove();

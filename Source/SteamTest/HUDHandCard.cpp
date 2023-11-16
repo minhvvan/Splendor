@@ -2,6 +2,7 @@
 
 
 #include "HUDHandCard.h"
+#include "Components/Border.h"
 
 void UHUDHandCard::StartRePostion(FWidgetTransform Pos, float Speed)
 {
@@ -11,9 +12,9 @@ void UHUDHandCard::StartRePostion(FWidgetTransform Pos, float Speed)
 	bCompletedMove = false;
 }
 
-void UHUDHandCard::Onclicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent)
+void UHUDHandCard::NativeOnInitialized()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("hand clic")));
+	Super::NativeOnInitialized();
 }
 
 void UHUDHandCard::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -29,6 +30,29 @@ void UHUDHandCard::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		//check
 		bCompletedMove = IsCompletedMove();
 	}
+}
+
+FReply UHUDHandCard::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("NativeOnMouseButtonDown")));
+
+	return OnMouseButtonDown(InGeometry, InMouseEvent).NativeReply;
+}
+
+void UHUDHandCard::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+
+	OnHover.Broadcast(this);
+}
+
+void UHUDHandCard::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+
+	OnLeave.Broadcast(this);
 }
 
 bool UHUDHandCard::IsCompletedMove()

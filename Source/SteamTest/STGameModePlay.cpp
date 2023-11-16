@@ -121,8 +121,6 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC, bool bFirst)
 	//ÅÏ º¯°æ
 	if (TurnManager)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("end Turn")));
-
 		TurnManager->EndCurrentTurn();
 	}
 }
