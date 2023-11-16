@@ -21,7 +21,7 @@ void UHUDDetailCard::NativeOnInitialized()
 	BtnBack->OnClicked.AddDynamic(this, &UHUDDetailCard::BackClicked);
 }
 
-void UHUDDetailCard::SetCardInfo(FCardInfo& info_)
+void UHUDDetailCard::SetCardInfo(const FCardInfo& info_)
 {
 	Info = info_;
 

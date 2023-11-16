@@ -345,7 +345,7 @@ void APCPlay::CardClicked(ACard* ClickedCard)
 		if (WidgetDesk)
 		{
 			auto info = ClickedCard->GetInfo();
-			WidgetDesk->PopUpDetailCard(ClickedCard);
+			WidgetDesk->PopUpDetailCard(info);
 		}
 	}
 }

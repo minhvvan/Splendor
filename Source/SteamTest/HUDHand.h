@@ -7,9 +7,8 @@
 #include "GlobalStruct.h"
 #include "HUDHand.generated.h"
 
-/**
- * 
- */
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeleCardClicked, FCardInfo);
+
 UCLASS()
 class STEAMTEST_API UHUDHand : public UUserWidget
 {
@@ -17,7 +16,8 @@ class STEAMTEST_API UHUDHand : public UUserWidget
 	
 public:
 	void AddCard(FCardInfo cardInfo);
-	
+
+	FDeleCardClicked OnCard;
 protected:
 	virtual void NativeOnInitialized();
 
@@ -50,6 +50,9 @@ protected:
 
 	UFUNCTION()
 	void OnLeaved(UHUDHandCard* HoverdCard);
+
+	UFUNCTION()
+	void OnCardClicked(FCardInfo cardInfo);
 
 	UFUNCTION()
 	float GetHoverYOffset(int idx);

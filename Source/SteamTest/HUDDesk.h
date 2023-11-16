@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "HUDCardHolder.h"
+#include "GlobalStruct.h"
 #include "HUDDesk.generated.h"
 
 /**
@@ -98,8 +99,10 @@ public:
 
 	//!---------Hand--------------
 	UFUNCTION()
-	void AddCardToHand(FCardInfo cardInfo);
-
+	void AddCardToHand(FCardInfo cardInfo);	
+	
+	UFUNCTION()
+	void OnHandCardClicked(FCardInfo cardInfo);
 
 	//!---------PopUp--------------
 	UFUNCTION()
@@ -109,7 +112,7 @@ public:
 	void NotifyOverToken();
 
 	UFUNCTION()
-	void PopUpDetailCard(class ACard* card);
+	void PopUpDetailCard(const FCardInfo& cardInfo);
 
 	UFUNCTION()
 	void PopUpItemGetToken(const FCardInfo& cardInfo);

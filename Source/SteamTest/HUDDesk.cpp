@@ -41,6 +41,8 @@ void UHUDDesk::NativeOnInitialized()
 
 	BtnGetToken->OnClicked.AddDynamic(this, &UHUDDesk::GetTokenClicked);
 	BtnFillToken->OnClicked.AddDynamic(this, &UHUDDesk::FilTokenClicked);
+
+	Hand->OnCard.AddUObject(this, &UHUDDesk::OnHandCardClicked);
 }
 
 void UHUDDesk::SetTurnTxt(FString turn)
@@ -223,6 +225,11 @@ void UHUDDesk::AddCardToHand(FCardInfo cardInfo)
 	Hand->AddCard(cardInfo);
 }
 
+void UHUDDesk::OnHandCardClicked(FCardInfo cardInfo)
+{
+	PopUpDetailCard(cardInfo);
+}
+
 void UHUDDesk::GetTokenClicked()
 {
 	auto PC = Cast<APCPlay>(GetOwningPlayer());
@@ -307,17 +314,15 @@ void UHUDDesk::NotifyOverToken()
 	}
 }
 
-void UHUDDesk::PopUpDetailCard(ACard* card)
+void UHUDDesk::PopUpDetailCard(const FCardInfo& cardInfo)
 {
-	if (DetailCardClass)
+	check(IsValid(DetailCardClass));
+
+	auto widget = Cast<UHUDDetailCard>(CreateWidget(GetWorld(), DetailCardClass));
+	if (widget)
 	{
-		auto widget = Cast<UHUDDetailCard>(CreateWidget(GetWorld(), DetailCardClass));
-		if (widget)
-		{
-			auto info = card->GetInfo();
-			widget->SetCardInfo(info);
-			widget->AddToViewport();
-		}
+		widget->SetCardInfo(cardInfo);
+		widget->AddToViewport();
 	}
 }
 

@@ -8,6 +8,7 @@
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FDeleOnHover, UHUDHandCard*);
 DECLARE_MULTICAST_DELEGATE_OneParam(FDeleOnLeave, UHUDHandCard*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeleOnCardClick, FCardInfo);
 
 UCLASS()
 class STEAMTEST_API UHUDHandCard : public UHUDCard
@@ -20,6 +21,7 @@ public:
 	
 	FDeleOnHover OnHover;
 	FDeleOnLeave OnLeave;
+	FDeleOnCardClick OnCardClicked;
 
 protected:
 	virtual void NativeOnInitialized();
@@ -30,7 +32,6 @@ protected:
 
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
 	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent);
-
 
 	UFUNCTION()
 	bool IsCompletedMove();

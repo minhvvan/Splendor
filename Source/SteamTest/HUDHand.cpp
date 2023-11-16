@@ -33,6 +33,7 @@ void UHUDHand::AddCard(FCardInfo cardInfo)
 
 	card->OnHover.AddUObject(this, &UHUDHand::OnHovered);
 	card->OnLeave.AddUObject(this, &UHUDHand::OnLeaved);
+	card->OnCardClicked.AddUObject(this, &UHUDHand::OnCardClicked);
 
 	Hands.Add(card);
 	OverlayHand->AddChild(card);
@@ -119,6 +120,11 @@ void UHUDHand::OnLeaved(UHUDHandCard* HoverdCard)
 {
 	HoveredCardIdx = NONVALIDIDX;
 	UpdateCardPosition();
+}
+
+void UHUDHand::OnCardClicked(FCardInfo cardInfo)
+{
+	OnCard.Broadcast(cardInfo);
 }
 
 

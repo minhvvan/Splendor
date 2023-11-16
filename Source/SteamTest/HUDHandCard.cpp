@@ -34,9 +34,10 @@ void UHUDHandCard::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 FReply UHUDHandCard::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	UUserWidget::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("NativeOnMouseButtonDown")));
+	//card detail pop up 
+	OnCardClicked.Broadcast(Info);
 
 	return OnMouseButtonDown(InGeometry, InMouseEvent).NativeReply;
 }

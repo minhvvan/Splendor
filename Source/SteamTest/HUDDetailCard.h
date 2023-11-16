@@ -72,7 +72,7 @@ private:
 
 public:
 	UFUNCTION()
-	void SetCardInfo(struct FCardInfo& info_);
+	void SetCardInfo(const FCardInfo& info_);
 
 	UFUNCTION()
 	void BuyClicked();
