@@ -336,8 +336,21 @@ void UHUDDesk::PopUpItemGetToken(const FCardInfo& cardInfo)
 
 void UHUDDesk::PopUpItemTakeToken()
 {
-	TakeWidget = Cast<UHUDTakeToken>(CreateWidget(GetWorld(), TakeTokenWidgetClass));
 	auto TokenList = Cast<APCPlay>(GetOwningPlayer())->GetOppTokens();
+
+	int total = 0;
+	for (auto token : TokenList)
+	{
+		total += token.Value;
+	}
+
+	if (total == 0)
+	{
+		RenderMessage(UGlobalConst::MsgCanNotTake);
+		return;
+	}
+
+	TakeWidget = Cast<UHUDTakeToken>(CreateWidget(GetWorld(), TakeTokenWidgetClass));
 	TakeWidget->SetTokens(TokenList);
 	TakeWidget->AddToViewport();
 }

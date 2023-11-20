@@ -37,6 +37,7 @@ public:
 	static const FString MsgNotContiue;
 	static const FString MsgNotSelect;
 	static const FString MsgUnableBuy;
+	static const FString MsgCanNotTake;
 
 	//!------------------util----------------------
 	static const int FirstPlayer;

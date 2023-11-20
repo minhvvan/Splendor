@@ -25,6 +25,7 @@ const FString UGlobalConst::MsgOneGold = FString::Printf(TEXT("이미 황금 토
 const FString UGlobalConst::MsgNotContiue = FString::Printf(TEXT("연속하지 않은 토큰입니다."));
 const FString UGlobalConst::MsgNotSelect = FString::Printf(TEXT("토큰을 선택해 주세요."));
 const FString UGlobalConst::MsgUnableBuy = FString::Printf(TEXT("카드를 구매할 수 없습니다."));
+const FString UGlobalConst::MsgCanNotTake = FString::Printf(TEXT("가져올 토큰이 없습니다."));
 
 //!----------------Util-------------------
 const int UGlobalConst::FirstPlayer = 100;
