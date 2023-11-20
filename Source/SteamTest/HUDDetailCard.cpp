@@ -54,7 +54,7 @@ void UHUDDetailCard::SetCardInfo(const FCardInfo& info_)
 		auto PS = GetOwningPlayer()->GetPlayerState<APSPlayerInfo>();
 		if (PS)
 		{
-			auto costs = Info.cost;
+			auto& costs = Info.cost;
 			for (auto& cost : costs)
 			{
 				int ownBonus = PS->GetBonusNum(cost.Key);

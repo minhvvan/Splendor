@@ -36,7 +36,7 @@ public:
 	void SetInfo(struct FCardInfo& info);	
 
 	UFUNCTION()
-	FCardInfo GetInfo(){ return CardInfo; };
+	FCardInfo& GetInfo(){ return CardInfo; };
 	
 	UFUNCTION()
 	void UpdateWidget();

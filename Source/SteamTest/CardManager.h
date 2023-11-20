@@ -46,7 +46,7 @@ public:
 	void ChangeCard(FCardInfo cardInfo);
 
 	UFUNCTION()
-	TArray<ACard*> GetCardListByTier(ECardTier tier);
+	TArray<ACard*>& GetCardListByTier(ECardTier tier);
 
 private:
 	//!----------------Card--------------

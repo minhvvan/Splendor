@@ -160,22 +160,7 @@ void ACardManager::InitDummy()
 
 void ACardManager::DestoryCard(FVector loc, ECardTier tier, ACard* card)
 {
-	TArray<ACard*> CurrentTokenList;
-
-	switch (tier)
-	{
-	case ECardTier::C_One:
-		CurrentTokenList = TierOne;
-		break;
-	case ECardTier::C_Two:
-		CurrentTokenList = TierTwo;
-		break;
-	case ECardTier::C_Three:
-		CurrentTokenList = TierThree;
-		break;
-	}
-
-	CurrentTokenList.Remove(card);
+	auto& CurrentTokenList = GetCardListByTier(tier);
 
 	auto GS = GetWorld()->GetGameState<AGSPlay>();
 	check(IsValid(GS));
@@ -212,12 +197,20 @@ void ACardManager::ChangeCard(FCardInfo cardInfo)
 	auto GS = GetWorld()->GetGameState<AGSPlay>();
 	check(IsValid(GS));
 
-	for (auto card : GetCardListByTier(cardInfo.tier))
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangeCard")));
+
+	auto& CardList = GetCardListByTier(cardInfo.tier);
+
+	for (auto card : CardList)
 	{
 		//key °ª ºñ±³
-		if (card->GetInfo() == cardInfo)
+		auto info = card->GetInfo();
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("selected: %d"), cardInfo.key));
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("card: %d"), info.key));
+		if (info == cardInfo)
 		{
 			auto loc = card->GetActorLocation();
+			CardList.Remove(card);
 			DestoryCard(loc, cardInfo.tier, card);
 			card->Destroy();
 			break;
@@ -227,7 +220,7 @@ void ACardManager::ChangeCard(FCardInfo cardInfo)
 	GS->RemoveCurrentCardInfo(cardInfo);
 }
 
-TArray<ACard*> ACardManager::GetCardListByTier(ECardTier tier)
+TArray<ACard*>& ACardManager::GetCardListByTier(ECardTier tier)
 {
 	switch (tier)
 	{
