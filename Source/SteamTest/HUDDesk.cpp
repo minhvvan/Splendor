@@ -341,6 +341,7 @@ void UHUDDesk::PopUpItemTakeToken()
 	int total = 0;
 	for (auto token : TokenList)
 	{
+		if (token.Key == ETokenColor::E_Gold) continue;
 		total += token.Value;
 	}
 
