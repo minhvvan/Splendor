@@ -5,47 +5,30 @@
 #include "TileData.h"
 #include "Components/TileView.h"
 
-void UHUDGetToken::SetTiles(TArray<FTokenIdxColor> tokens, const FCardInfo& cardInfo)
+void UHUDGetToken::SetTiles(const TArray<ETokenColor>& tokens, const FCardInfo& cardInfo)
 {
 	check(IsValid(TileDataClass));
 
-	TArray<bool> checked;
-	checked.Init(false, 25);
-
-	for (auto token : tokens)
-	{
-		checked[token.Idx] = true;
-	}
-
-	for (int i = 0; i < 25; i++)
-	{
-		if (!checked[i])
-		{
-			tokens.Add({ i, ETokenColor::E_End });
-		}
-	}
-
-	tokens.Sort();
-	for (auto token : tokens)
+	for (int i = 0 ; i < 25; i ++)
 	{
 		auto TileData = NewObject<UTileData>(this, TileDataClass);
-		TileData->SetColor(token.Color);
-		TileData->SetIdx(token.Idx);
-		TileData->SetEnable(token.Color == cardInfo.color);
+		TileData->SetColor(tokens[i]);
+		TileData->SetIdx(i);
+		TileData->SetEnable(tokens[i] == cardInfo.color);
 
-		if (token.Idx < 5)
+		if (i < 5)
 		{
 			TileRowOne->AddItem(TileData);
 		}
-		else if (token.Idx < 10)
+		else if (i < 10)
 		{
 			TileRowTwo->AddItem(TileData);
 		}
-		else if (token.Idx < 15)
+		else if (i < 15)
 		{
 			TileRowThree->AddItem(TileData);
 		}
-		else if (token.Idx < 20)
+		else if (i < 20)
 		{
 			TileRowFour->AddItem(TileData);
 		}

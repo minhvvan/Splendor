@@ -44,15 +44,15 @@ void ASTGameModePlay::StartMatch()
 		GS->InitState();
 	}
 
-	TileManager = GetWorld()->SpawnActor<ATileManager>();
-	TokenManager = GetWorld()->SpawnActor<ATokenManager>();
+	//TileManager = GetWorld()->SpawnActor<ATileManager>();
+	//TokenManager = GetWorld()->SpawnActor<ATokenManager>();
 	TurnManager = GetWorld()->SpawnActor<ATurnManager>();
 	CardManager = GetWorld()->SpawnActor<ACardManager>();
 
-	if (TokenManager)
-	{
-		TokenManager->AddScroll.AddUObject(this, &ASTGameModePlay::GiveScroll);
-	}
+	//if (TokenManager)
+	//{
+	//	TokenManager->AddScroll.AddUObject(this, &ASTGameModePlay::GiveScroll);
+	//}
 }
 
 //!-------------Turn-------------------
@@ -90,32 +90,49 @@ void ASTGameModePlay::SetTokenSpawnLoc(TArray<class AToken*>& Tokens)
 
 void ASTGameModePlay::TokenClicked(AToken* ClickedToken, int cnt, bool bAble)
 {
-	if (ClickedToken)
-	{
-		int boardIdx = ClickedToken->GetIndex();
+	//if (ClickedToken)
+	//{
+	//	int boardIdx = ClickedToken->GetIndex();
 
-		if (TileManager)
-		{
-			TileManager->Clicked(boardIdx, cnt, bAble);
-		}
+	//	if (TileManager)
+	//	{
+	//		TileManager->Clicked(boardIdx, cnt, bAble);
+	//	}
 
-		if (TokenManager)
-		{
-			TokenManager->SelectedToken(ClickedToken, bAble);
-		}
-	}
+	//	if (TokenManager)
+	//	{
+	//		TokenManager->SelectedToken(ClickedToken, bAble);
+	//	}
+	//}
 }
 
-void ASTGameModePlay::PossessTokens(APlayerController* PC, bool bFirst)
+void ASTGameModePlay::PossessTokens(APlayerController* PC, const TArray<FTokenIdxColor>& SelectedTokens)
 {
-	if (TokenManager)
+	//PS Update
+	auto PS = PC->GetPlayerState<APSPlayerInfo>();
+	auto GS = GetGameState<AGSPlay>();
+	bool bFrist = PS->GetBFirst();
+
+	check(IsValid(PS) && IsValid(GS));
+	
+	bool bGiveScroll = CheckGiveScroll(SelectedTokens);
+	if (bGiveScroll) GiveScroll(PC);
+
+	for (auto token : SelectedTokens)
 	{
-		TokenManager->PossessTokens(PC, bFirst);
+		PS->AddToken(token.Color, 1);
 	}
 
-	if (TileManager)
+	//GS Update
+	for (auto token : SelectedTokens)
 	{
-		TileManager->ClearSeletedTiles();
+		GS->RemoveTokenIdx(token.Idx);
+	}
+
+	for (auto ps : GS->PlayerArray)
+	{
+		auto PC = Cast<APCPlay>(ps->GetPlayerController());
+		PC->RemoveTokens(SelectedTokens);
 	}
 
 	//턴 변경
@@ -162,9 +179,24 @@ void ASTGameModePlay::TakeToken(APlayerController* PC, ETokenColor color)
 
 void ASTGameModePlay::GetTokenByIdx(APlayerController* PC, int idx)
 {
-	check(IsValid(TokenManager));
+	auto GS = GetGameState<AGSPlay>();
+	auto PS = PC->GetPlayerState<APSPlayerInfo>();
+	check(IsValid(GS) && IsValid(PS));
 
-	TokenManager->GetTokenByIdx(PC, idx);
+	auto CurrentState = GS->GetCurrentTileState();
+	auto color = CurrentState[idx];
+
+	TArray<FTokenIdxColor> temp;
+	temp.Add({ idx, color });
+
+	for (auto ps : GS->PlayerArray)
+	{
+		auto PC = Cast<APCPlay>(ps->GetPlayerController());
+		PC->RemoveTokens(temp);
+	}
+
+	//ps update
+	PS->AddToken(color, 1);
 }
 
 void ASTGameModePlay::FillToken(APlayerController* PC)
@@ -179,6 +211,34 @@ void ASTGameModePlay::FillToken(APlayerController* PC)
 
 	//상대에게 특권하나
 	GiveScroll(PC);
+}
+
+bool ASTGameModePlay::CheckGiveScroll(const TArray<FTokenIdxColor>& SelectedTokens)
+{
+	bool bGiveScroll = SelectedTokens.Num() == 3 ? true : false;
+	int pearlCnt = 0;
+	ETokenColor current = ETokenColor::E_End;
+	for (auto selected : SelectedTokens)
+	{
+		auto tType = selected.Color;
+		if (tType == ETokenColor::E_Pearl) pearlCnt++;
+
+		if (current == ETokenColor::E_End)
+		{
+			current = tType;
+		}
+		else
+		{
+			if (current != tType) bGiveScroll = false;
+		}
+	}
+
+	if (bGiveScroll || pearlCnt >= 2)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 

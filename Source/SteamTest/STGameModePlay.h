@@ -31,9 +31,9 @@ public:
 	void PrintBonus();
 
 	UFUNCTION()
-	void PrintToken();
+	void PrintToken();	
 
-	//!-----------Token-----------------------
+	//!-----------Turn-----------------------
 	UFUNCTION()
 	void EndCurrentTurn();
 
@@ -45,7 +45,7 @@ public:
 	void TokenClicked(class AToken* ClickedToken, int cnt, bool bAble);
 
 	UFUNCTION()
-	void PossessTokens(APlayerController* PC, bool bFirst);
+	void PossessTokens(APlayerController* PC, const TArray<FTokenIdxColor>& SelectedTokens);
 
 	UFUNCTION()
 	void RestoreTokens(const FTokenCountList& Restore, APlayerController* PC);
@@ -58,6 +58,9 @@ public:
 	
 	UFUNCTION()
 	void FillToken(APlayerController* PC);
+
+	UFUNCTION()
+	bool CheckGiveScroll(const TArray<FTokenIdxColor>& SelectedTokens);
 
 	//!-----------------Scroll---------------------
 	UFUNCTION()

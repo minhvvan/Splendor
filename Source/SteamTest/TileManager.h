@@ -24,17 +24,20 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
 	void SpawnTiles();
-	void SetTokenLocs(TArray<class AToken*>& Tokens);
+	
+	UFUNCTION()
+	void SetTokenLocs(const TArray<class AToken*>& Tokens);
 
 	UFUNCTION()
-	void Clicked(int selectedIdx, int dist, bool bAble);
+	void Clicked(int selectedIdx, bool bAble);
 
 	UFUNCTION()
 	void UpdateBoardState();
 
 	UFUNCTION()
-	void ClearSeletedTiles();
+	void ClearSeletedTiles(const TArray<FTokenIdxColor>& SelectedTokens);
 
 private:
 	TArray<ATile*> Tiles;

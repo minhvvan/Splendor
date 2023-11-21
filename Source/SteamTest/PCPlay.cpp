@@ -14,6 +14,8 @@
 #include "Token.h"
 #include "Card.h"
 #include "GlobalConst.h"
+#include "TileManager.h"
+#include "TokenManager.h"
 
 APCPlay::APCPlay()
 {
@@ -49,6 +51,16 @@ void APCPlay::BeginPlay()
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
+
+	TileManager = GetWorld()->SpawnActor<ATileManager>();
+	TokenManager = GetWorld()->SpawnActor<ATokenManager>();
+
+	if (TokenManager)
+	{
+		TokenManager->OnGoldPossessed.AddUObject(this, &APCPlay::AddCardToHand);
+	}
+
+	InitGameBase();
 }
 
 
@@ -98,6 +110,8 @@ void APCPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APCPlay, IsTurn);
+	DOREPLIFETIME(APCPlay, GoldCnt);
+	DOREPLIFETIME(APCPlay, SelectedTokenIdx);
 }
 
 void APCPlay::BindState()
@@ -142,23 +156,51 @@ void APCPlay::SREndTurn_Implementation()
 }
 
 //!------------Token----------------
-void APCPlay::SRClickToken_Implementation(AToken* ClickedToken, int cnt, bool bAble)
+void APCPlay::InitGameBase()
 {
-	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GM)
+	check(IsValid(TokenManager) && IsValid(TileManager));
+
+	auto& Tokens = TokenManager->GetRemainTokens();
+	TileManager->SetTokenLocs(Tokens);
+}
+
+void APCPlay::PossessTokens()
+{
+	SRPossessTokens(SelectedTokenIdx);
+}
+
+void APCPlay::RemoveTokens_Implementation(const TArray<FTokenIdxColor>& SelectedTokens)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("RemoveTokens")));
+
+	if (TileManager)
 	{
-		GM->TokenClicked(ClickedToken, cnt, bAble);
+		TileManager->ClearSeletedTiles(SelectedTokens);
+	}
+
+	if (TokenManager)
+	{
+		TokenManager->DestroyTokens(SelectedTokens);
 	}
 }
 
-void APCPlay::SRPossessTokens_Implementation(bool bFirst)
+//void APCPlay::SRClickToken_Implementation(AToken* ClickedToken, int cnt, bool bAble)
+//{
+//	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+//	if (GM)
+//	{
+//		GM->TokenClicked(ClickedToken, cnt, bAble);
+//	}
+//}
+
+void APCPlay::SRPossessTokens_Implementation(const TArray<FTokenIdxColor>& selcted)
 {
 	GoldCnt = 0;
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	if (GM)
 	{
-		GM->PossessTokens(this, bFirst);
+		GM->PossessTokens(this, selcted);
 
 		//Client PC Reset
 		ClearSelectedTokens();
@@ -167,7 +209,7 @@ void APCPlay::SRPossessTokens_Implementation(bool bFirst)
 
 void APCPlay::ClearSelectedTokens_Implementation()
 {
-	SelectedToken.Reset();
+	SelectedTokenIdx.Reset();
 }
 
 void APCPlay::SRRestoreToken_Implementation(const FTokenCountList& Restore)
@@ -184,20 +226,22 @@ void APCPlay::SRRestoreToken_Implementation(const FTokenCountList& Restore)
 
 void APCPlay::TokenClicked(AToken* ClickedToken)
 {
+	int tokenIdx = ClickedToken->GetIndex();
+	auto tokenColor = ClickedToken->GetTokenType();
+
 	//연속 여부 판단
-	if (SelectedToken.Num() != 0)
+	if (SelectedTokenIdx.Num() != 0)
 	{
-		int tokenIdx = ClickedToken->GetIndex();
 		bool flag = false;
-		for (auto selectedToken : SelectedToken)
+		for (auto selectedToken : SelectedTokenIdx)
 		{
-			if (tokenIdx == selectedToken->GetIndex())
+			if (tokenIdx == selectedToken.Idx)
 			{
 				flag = true;
 				break;
 			}
 
-			if (IsNear(tokenIdx, selectedToken->GetIndex()))
+			if (IsNear(tokenIdx, selectedToken.Idx))
 			{
 				flag = true;
 				break;
@@ -212,10 +256,10 @@ void APCPlay::TokenClicked(AToken* ClickedToken)
 	}
 
 	//not selected
-	if (SelectedToken.Find(ClickedToken) == INDEX_NONE)
+	if (SelectedTokenIdx.Find({ tokenIdx, tokenColor }) == INDEX_NONE)
 	{
 		//3개 over
-		if (SelectedToken.Num() >= 3)
+		if (SelectedTokenIdx.Num() >= 3)
 		{
 			SendMessage(UGlobalConst::MsgThreeToken);
 			return;
@@ -230,7 +274,7 @@ void APCPlay::TokenClicked(AToken* ClickedToken)
 				return;
 			}
 
-			if (SelectedToken.Num() != 0)
+			if (SelectedTokenIdx.Num() != 0)
 			{
 				SendMessage(UGlobalConst::MsgUnableGold);
 				return;
@@ -247,16 +291,28 @@ void APCPlay::TokenClicked(AToken* ClickedToken)
 			}
 		}
 
-		SelectedToken.AddUnique(ClickedToken);
-		SRClickToken(ClickedToken, SelectedToken.Num(), true);
+		SelectedTokenIdx.Add({tokenIdx, tokenColor});
+
+		check(IsValid(TokenManager));
+		TokenManager->SelectedToken(ClickedToken, true);
+
+		check(IsValid(TileManager));
+		TileManager->Clicked(tokenIdx, true);
+
+		//!TODO: 다른 PC Update
+		//SRClickToken();
 	}
 	else
 	{
 		if (ClickedToken->GetTokenType() == ETokenColor::E_Gold) GoldCnt--;
 
 		//해제
-		SRClickToken(ClickedToken, SelectedToken.Num(), false);
-		SelectedToken.Remove(ClickedToken);
+		check(IsValid(TokenManager));
+		TokenManager->SelectedToken(ClickedToken, false);
+
+		check(IsValid(TileManager));
+		TileManager->Clicked(tokenIdx, false);
+		SelectedTokenIdx.Remove({ tokenIdx, tokenColor });
 	}
 }
 

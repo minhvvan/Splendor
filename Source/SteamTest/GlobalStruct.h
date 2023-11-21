@@ -158,6 +158,11 @@ public:
 		return this->Idx == rhs.Idx && this->Color == rhs.Color;
 	}
 
+	bool operator== (const FTokenIdxColor& rhs) const
+	{
+		return this->Idx == rhs.Idx && this->Color == rhs.Color;
+	}
+
 	bool operator< (const FTokenIdxColor& rhs) const
 	{
 		return this->Idx < rhs.Idx;

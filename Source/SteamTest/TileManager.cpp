@@ -169,30 +169,21 @@ void ATileManager::SpawnTiles()
 	}
 }
 
-void ATileManager::SetTokenLocs(TArray<AToken*>& Tokens)
+void ATileManager::SetTokenLocs(const TArray<AToken*>& Tokens)
 {
 	auto GS = GetWorld()->GetGameState<AGSPlay>();
 	check(GS);
 
-	for (auto token : Tokens)
+
+	for (auto& token : Tokens)
 	{
-		for (int i = 0; i < Tiles.Num(); i++)
-		{
-			auto tile = Tiles[FillIdx[i]];
-			//이미 있음
-			if (tile->GetOnToken()) continue;
-
-			token->SetIndex(FillIdx[i]);
-			GS->AddTokenIdx(FillIdx[i], token->GetTokenType());
-			token->SetActorLocation(tile->GetTokenLoc());
-			tile->SetOnToken(token);
-
-			break;  
-		}
+		auto tile = Tiles[token->GetIndex()];
+		token->SetActorLocation(tile->GetTokenLoc());
+		tile->SetOnToken(token);
 	}
 }
 
-void ATileManager::Clicked(int selectedIdx, int dist, bool bAble)
+void ATileManager::Clicked(int selectedIdx, bool bAble)
 {
 	if (bAble)
 	{
@@ -290,11 +281,11 @@ void ATileManager::UpdateBoardState()
 	}
 }
 
-void ATileManager::ClearSeletedTiles()
+void ATileManager::ClearSeletedTiles(const TArray<FTokenIdxColor>& SelectedTokens)
 {
-	for (auto seleted : SelectedTiles)
+	for (auto seleted : SelectedTokens)
 	{
-		Tiles[seleted]->SetOnToken(nullptr);
+		Tiles[seleted.Idx]->SetOnToken(nullptr);
 	}
 
 	SelectedTiles.Reset();

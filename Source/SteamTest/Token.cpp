@@ -14,7 +14,7 @@
 AToken::AToken()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	bReplicates = true;
+	bReplicates = false;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;

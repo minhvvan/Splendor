@@ -49,16 +49,35 @@ void AGSPlay::InitState()
 		Algo::RandomShuffle(TierTwoInfos);
 		Algo::RandomShuffle(TierThreeInfos);
 	}
+
+	//!------------Tile State Init-----------
+	for (auto color : TEnumRange<ETokenColor>())
+	{
+		if (color == ETokenColor::E_End) break;
+
+		int count = 4;
+		if (color == ETokenColor::E_Pearl) count = 2;
+		if (color == ETokenColor::E_Gold) count = 3;
+
+		for (int i = 0; i < count; i++)
+		{
+			TileState.Add(color);
+		}
+	}
+
+	Algo::RandomShuffle(TileState);
 }
 
-void AGSPlay::RemoveTokenIdx(int idx, ETokenColor color)
+void AGSPlay::RemoveTokenIdx(int idx)
 {
-	RemainTokenIdx.Remove({ idx, color });
+	//RemainTokenIdx.Remove({ idx, color });
+	TileState[idx] = ETokenColor::E_End;
 }
 
 void AGSPlay::AddTokenIdx(int idx, ETokenColor color)
 {
-	RemainTokenIdx.Add({ idx, color });
+	//RemainTokenIdx.Add({ idx, color });
+	
 }
 
 void AGSPlay::AddPouch(ETokenColor color, int cnt)
@@ -178,7 +197,6 @@ const TArray<FCardInfo>& AGSPlay::GetCurrentInfoByTier(ECardTier tier)
 void AGSPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AGSPlay, RemainTokenIdx);
 	DOREPLIFETIME(AGSPlay, Pouch);
 	DOREPLIFETIME(AGSPlay, Royals);
 	DOREPLIFETIME(AGSPlay, TierOneInfos);
@@ -187,4 +205,5 @@ void AGSPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 	DOREPLIFETIME(AGSPlay, TierOneCurrentInfos);
 	DOREPLIFETIME(AGSPlay, TierTwoCurrentInfos);
 	DOREPLIFETIME(AGSPlay, TierThreeCurrentInfos);
+	DOREPLIFETIME(AGSPlay, TileState);
 }

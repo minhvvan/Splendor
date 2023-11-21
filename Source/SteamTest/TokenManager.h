@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Token.h"
 #include "GlobalEnum.h"
+#include "GlobalStruct.h"
 #include "TokenManager.generated.h"
 
 USTRUCT(BlueprintType)
@@ -79,7 +80,7 @@ struct FTokenList
 	}
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FDeleAddScroll, APlayerController*);
+DECLARE_MULTICAST_DELEGATE(FGoldPosess);
 
 UCLASS()
 class STEAMTEST_API ATokenManager : public AActor
@@ -111,19 +112,19 @@ public:
 	void SelectedToken(AToken* token, bool bSelected);
 
 	UFUNCTION()
-	void PossessTokens(APlayerController* PC, bool bFirst);
+	void DestroyTokens(const TArray<FTokenIdxColor>& SelectedTokens);
 	
 	UFUNCTION()
 	void GetTokenByIdx(APlayerController* PC, int idx);
 
-	FDeleAddScroll AddScroll;
+	UFUNCTION()
+	const TArray<AToken*>& GetRemainTokens(){ return RemainTokens; };
+
+	FGoldPosess	OnGoldPossessed;
 
 private:
 	UPROPERTY()
 	TArray<AToken*> RemainTokens;
-
-	UPROPERTY()
-	TArray<AToken*> SelectedTokens;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AToken> TokenClass;

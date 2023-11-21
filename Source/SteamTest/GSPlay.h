@@ -7,9 +7,7 @@
 #include "GlobalStruct.h"
 #include "GSPlay.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class STEAMTEST_API AGSPlay : public AGameState
 {
@@ -25,11 +23,11 @@ public:
 	UFUNCTION()
 	void AddGlobalScroll(int num) { GlobalScroll += num; };
 
-	UFUNCTION()
-	TArray<FTokenIdxColor>& GetRemainTokenIdx() { return RemainTokenIdx; };
+	//UFUNCTION()
+	//TArray<FTokenIdxColor>& GetRemainTokenIdx() { return RemainTokenIdx; };
 
 	UFUNCTION()
-	void RemoveTokenIdx(int idx, ETokenColor color);
+	void RemoveTokenIdx(int idx);
 
 	UFUNCTION()
 	void AddTokenIdx(int idx, ETokenColor color);
@@ -61,14 +59,17 @@ public:
 	UFUNCTION()
 	const TArray<FCardInfo>& GetCurrentInfoByTier(ECardTier tier);
 
+	UFUNCTION()
+	const TArray<ETokenColor>& GetCurrentTileState() { return TileState; };
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
 
 	UPROPERTY()
 	int GlobalScroll;
 
-	UPROPERTY(Replicated)
-	TArray<FTokenIdxColor> RemainTokenIdx;
+	//UPROPERTY(Replicated)
+	//TArray<FTokenIdxColor> RemainTokenIdx;
 
 	UPROPERTY(Replicated)
 	FTokenCountList Pouch;
@@ -100,4 +101,10 @@ protected:
 
 	UPROPERTY(Replicated)
 	TArray<FCardInfo> TierThreeInfos;
+
+
+	//!----------Card-------------
+	UPROPERTY(Replicated)
+	TArray<ETokenColor> TileState;
+
 };
