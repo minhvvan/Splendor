@@ -28,6 +28,7 @@ ATokenManager::ATokenManager()
 void ATokenManager::BeginPlay()
 {
 	Super::BeginPlay();
+	//RemainTokens.Init(nullptr, 25);
 	
 	SpawnTokens();
 }
@@ -41,6 +42,9 @@ void ATokenManager::Tick(float DeltaTime)
 void ATokenManager::SpawnTokens()
 {
 	UWorld* world = GetWorld();
+	auto GS = GetWorld()->GetGameState<AGSPlay>();
+
+	check(IsValid(GS));
 
 	if (world)
 	{
@@ -49,28 +53,22 @@ void ATokenManager::SpawnTokens()
 		FRotator rotator;
 		FVector loc = FVector(-210, -200, 0);
 
-		for (auto color : TEnumRange<ETokenColor>())
+		auto CurrentTileState = GS->GetCurrentTileState();
+
+		for (int i = 0; i < CurrentTileState.Num(); i++)
 		{
-			if (color == ETokenColor::E_End) break;
+			auto token = Cast<AToken>(world->SpawnActor<AActor>(TokenClass, loc, rotator, SpawnParams));
 
-			int count = 4;
-			if (color == ETokenColor::E_Pearl) count = 2;
-			if (color == ETokenColor::E_Gold) count = 3;
-
-			for (int i = 0; i < count; i++)
+			if (token)
 			{
-				auto token = Cast<AToken>(world->SpawnActor<AActor>(TokenClass, loc, rotator, SpawnParams));
-
-				if (token)
-				{
-					token->SetActorScale3D(FVector(0.35f));
-					RemainTokens.Add(token);
-					token->SetTokenType(color);
-				}
+				token->SetActorScale3D(FVector(0.35f));
+				RemainTokens.Add(token);
+				token->SetTokenType(CurrentTileState[i]);
+				token->SetIndex(i);
 			}
 		}
 
-		PlaceTokens(RemainTokens);
+		//PlaceTokens(RemainTokens);
 	}
 }
 
@@ -118,64 +116,41 @@ void ATokenManager::PlaceTokens(TArray<AToken*>& Tokens)
 
 void ATokenManager::SelectedToken(AToken* token, bool bSelected)
 {
-	if (bSelected)
-	{
-		SelectedTokens.Add(token);
-	}
-	else
-	{
-		SelectedTokens.Remove(token);
-	}
+	//if (bSelected)
+	//{
+	//	SelectedTokens.Add(token);
+	//}
+	//else
+	//{
+	//	SelectedTokens.Remove(token);
+	//}
 }
 
-void ATokenManager::PossessTokens(APlayerController* PC, bool bFirst)
+void ATokenManager::DestroyTokens(const TArray<FTokenIdxColor>& SelectedTokens)
 {
-	auto Player = Cast<APCPlay>(PC);
-	auto PS = Player->GetPlayerState<APSPlayerInfo>();
-	auto GS = GetWorld()->GetGameState<AGSPlay>();
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("DestroyTokens")));
 
-	check(PS && GS && Player);
-
-	FTokenCountList selected;
-	selected.Init();
-
-	bool bGiveScroll = SelectedTokens.Num() == 3 ? true : false;
 	bool bGold = false;
-	int pearlCnt = 0;
-	ETokenColor current = ETokenColor::E_End;
-	for (auto token : SelectedTokens)
+	for (auto selected : SelectedTokens)
 	{
-		auto tType = token->GetTokenType();
-		if (tType == ETokenColor::E_Pearl) pearlCnt++;
-		if (tType == ETokenColor::E_Gold) bGold = true;
+		if (selected.Color == ETokenColor::E_Gold) bGold = true;
 
-		if (current == ETokenColor::E_End)
+		for (auto token : RemainTokens)
 		{
-			current = tType;
+			if (token->GetIndex() == selected.Idx)
+			{
+				RemainTokens.Remove(token);
+				token->Destroy();
+				break;
+			}
 		}
-		else
-		{
-			if (current != tType) bGiveScroll = false;
-		}
-
-		RemainTokens.Remove(token);
-		GS->RemoveTokenIdx(token->GetIndex(), token->GetTokenType());
-
-		selected[tType]++;
-
-		token->Destroy();
 	}
 
-	if (bGold) Player->AddCardToHand();
-
-	PS->AddTokenByList(selected);
-
-	if (bGiveScroll || pearlCnt >= 2)
+	//Delegate
+	if (bGold) 
 	{
-		AddScroll.Broadcast(Player);
+		OnGoldPossessed.Broadcast();
 	}
-
-	SelectedTokens.Reset();
 }
 
 void ATokenManager::GetTokenByIdx(APlayerController* PC, int idx)
@@ -195,4 +170,3 @@ void ATokenManager::GetTokenByIdx(APlayerController* PC, int idx)
 		}
 	}
 }
-

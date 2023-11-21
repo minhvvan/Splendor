@@ -41,10 +41,20 @@ public:
 	void SREndTurn();
 
 	//!--------------Token-----------
-	TArray<AToken*>& GetSelectedTokens() { return SelectedToken; };
+	UFUNCTION()
+	void InitGameBase();
 	
+	UFUNCTION()
+	const TArray<FTokenIdxColor>& GetSelectedTokens() { return SelectedTokenIdx; };
+	
+	UFUNCTION()
+	void PossessTokens();
+
 	UFUNCTION(Server, Reliable)
-	void SRPossessTokens(bool bFirst);
+	void SRPossessTokens(const TArray<FTokenIdxColor>& selcted);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void RemoveTokens(const TArray<FTokenIdxColor>& SelectedTokens);
 
 	UFUNCTION(Client, Reliable)
 	void ClearSelectedTokens();
@@ -55,8 +65,8 @@ public:
 	UFUNCTION()
 	bool IsNear(int a, int b);
 
-	UFUNCTION(Server, Reliable)
-	void SRClickToken(AToken* ClickedToken, int cnt, bool bAble);
+	//UFUNCTION(Server, Reliable)
+	//void SRClickToken(int idx, ETokenColor color, bool bInsert);
 
 	UFUNCTION()
 	void TokenClicked(AToken* ClickedToken);
@@ -80,8 +90,8 @@ public:
 	TArray<FTokenCount> GetOppTokens();
 
 	UFUNCTION(Client, Reliable)
-	void AddCardToHand();
-
+	void AddCardToHand();	
+	
 	//!--------------Card-----------
 	UFUNCTION()
 	void CardClicked(ACard* ClickedCard);
@@ -156,12 +166,19 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* ClickAction;
 
-	UPROPERTY()
-	TArray<AToken*> SelectedToken;
+	UPROPERTY(replicated)
+	TArray<FTokenIdxColor> SelectedTokenIdx;
 
 	UPROPERTY(replicated)
 	bool IsTurn = false;
 
 	UPROPERTY(replicated)
 	int GoldCnt = 0;
+
+	//!-----------------Manager-------------
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class ATileManager* TileManager;
+
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class ATokenManager* TokenManager;
 };

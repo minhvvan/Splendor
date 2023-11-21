@@ -255,45 +255,7 @@ void UHUDDesk::GetTokenClicked()
 			return;
 		}
 
-		Tokens.Sort([](const AToken& A, const AToken& B) {
-			return A.GetIndex() < B.GetIndex();
-		});
-
-		bool flag = true;
-
-		int diff = -1;
-		int prev = -1;
-		for (auto token : Tokens)
-		{
-			if (prev == -1)
-			{
-				prev = token->GetIndex(); 
-				continue;
-			}
-
-			if (diff == -1)
-			{
-				diff = token->GetIndex() - prev;
-			}
-			else
-			{
-				if (diff != token->GetIndex() - prev)
-				{
-					flag = false;
-					break;
-				}
-			}
-
-			prev = token->GetIndex();
-		}
-		
-		if (flag)
-		{
-			auto PS = Cast<APSPlayerInfo>(PC->PlayerState);
-			PC->SRPossessTokens(PS->GetBFirst());
-
-			return;
-		}
+		PC->PossessTokens();
 	}
 }
 
@@ -329,7 +291,7 @@ void UHUDDesk::PopUpDetailCard(const FCardInfo& cardInfo)
 void UHUDDesk::PopUpItemGetToken(const FCardInfo& cardInfo)
 {
 	GetWidget = Cast<UHUDGetToken>(CreateWidget(GetWorld(), GetTokenWidgetClass));
-	auto TileIdxs = GetWorld()->GetGameState<AGSPlay>()->GetRemainTokenIdx();
+	auto& TileIdxs = GetWorld()->GetGameState<AGSPlay>()->GetCurrentTileState();
 	GetWidget->SetTiles(TileIdxs, cardInfo);
 	GetWidget->AddToViewport();
 }
