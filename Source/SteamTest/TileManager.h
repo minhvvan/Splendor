@@ -37,7 +37,7 @@ public:
 	void UpdateBoardState();
 
 	UFUNCTION()
-	void ClearSeletedTiles(const TArray<FTokenIdxColor>& SelectedTokens);
+	void ClearSeletedTiles(const TArray<int>& DestroyTokenIdx);
 
 private:
 	TArray<ATile*> Tiles;

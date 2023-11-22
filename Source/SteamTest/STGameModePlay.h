@@ -27,6 +27,8 @@ public:
 
 	virtual void StartMatch() override;
 
+	virtual void InitGameState() override;
+
 	UFUNCTION()
 	void PrintBonus();
 
@@ -40,9 +42,6 @@ public:
 	//!-----------Token-----------------------
 	UFUNCTION()
 	void SetTokenSpawnLoc(TArray<class AToken*>& Tokens);
-
-	UFUNCTION()
-	void TokenClicked(class AToken* ClickedToken, int cnt, bool bAble);
 
 	UFUNCTION()
 	void PossessTokens(APlayerController* PC, const TArray<FTokenIdxColor>& SelectedTokens);

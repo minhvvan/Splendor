@@ -52,15 +52,13 @@ void APCPlay::BeginPlay()
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
 
-	TileManager = GetWorld()->SpawnActor<ATileManager>();
-	TokenManager = GetWorld()->SpawnActor<ATokenManager>();
-
-	if (TokenManager)
+	if (IsLocalController())
 	{
-		TokenManager->OnGoldPossessed.AddUObject(this, &APCPlay::AddCardToHand);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("BeginPlay")));
+		TileManager = GetWorld()->SpawnActor<ATileManager>();
+		TokenManager = GetWorld()->SpawnActor<ATokenManager>();
+		InitGameBase();
 	}
-
-	InitGameBase();
 }
 
 
@@ -100,7 +98,6 @@ void APCPlay::SetupInputComponent()
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
-		// Setup mouse input events
 		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &APCPlay::Click);
 	}
 }
@@ -169,29 +166,20 @@ void APCPlay::PossessTokens()
 	SRPossessTokens(SelectedTokenIdx);
 }
 
-void APCPlay::RemoveTokens_Implementation(const TArray<FTokenIdxColor>& SelectedTokens)
+void APCPlay::RemoveTokens_Implementation(const TArray<int>& DestroyTokenIdx)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("RemoveTokens")));
 
 	if (TileManager)
 	{
-		TileManager->ClearSeletedTiles(SelectedTokens);
+		TileManager->ClearSeletedTiles(DestroyTokenIdx);
 	}
 
 	if (TokenManager)
 	{
-		TokenManager->DestroyTokens(SelectedTokens);
+		TokenManager->DestroyTokens(DestroyTokenIdx);
 	}
 }
-
-//void APCPlay::SRClickToken_Implementation(AToken* ClickedToken, int cnt, bool bAble)
-//{
-//	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
-//	if (GM)
-//	{
-//		GM->TokenClicked(ClickedToken, cnt, bAble);
-//	}
-//}
 
 void APCPlay::SRPossessTokens_Implementation(const TArray<FTokenIdxColor>& selcted)
 {
@@ -293,9 +281,6 @@ void APCPlay::TokenClicked(AToken* ClickedToken)
 
 		SelectedTokenIdx.Add({tokenIdx, tokenColor});
 
-		check(IsValid(TokenManager));
-		TokenManager->SelectedToken(ClickedToken, true);
-
 		check(IsValid(TileManager));
 		TileManager->Clicked(tokenIdx, true);
 
@@ -305,10 +290,6 @@ void APCPlay::TokenClicked(AToken* ClickedToken)
 	else
 	{
 		if (ClickedToken->GetTokenType() == ETokenColor::E_Gold) GoldCnt--;
-
-		//해제
-		check(IsValid(TokenManager));
-		TokenManager->SelectedToken(ClickedToken, false);
 
 		check(IsValid(TileManager));
 		TileManager->Clicked(tokenIdx, false);

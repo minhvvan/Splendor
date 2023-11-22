@@ -23,9 +23,6 @@ public:
 	UFUNCTION()
 	void AddGlobalScroll(int num) { GlobalScroll += num; };
 
-	//UFUNCTION()
-	//TArray<FTokenIdxColor>& GetRemainTokenIdx() { return RemainTokenIdx; };
-
 	UFUNCTION()
 	void RemoveTokenIdx(int idx);
 

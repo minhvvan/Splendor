@@ -76,8 +76,7 @@ void AGSPlay::RemoveTokenIdx(int idx)
 
 void AGSPlay::AddTokenIdx(int idx, ETokenColor color)
 {
-	//RemainTokenIdx.Add({ idx, color });
-	
+	TileState[idx] = color;
 }
 
 void AGSPlay::AddPouch(ETokenColor color, int cnt)

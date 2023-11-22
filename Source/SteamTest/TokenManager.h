@@ -80,7 +80,6 @@ struct FTokenList
 	}
 };
 
-DECLARE_MULTICAST_DELEGATE(FGoldPosess);
 
 UCLASS()
 class STEAMTEST_API ATokenManager : public AActor
@@ -109,18 +108,13 @@ public:
 	void PlaceTokens(TArray<AToken*>& Tokens);
 
 	UFUNCTION()
-	void SelectedToken(AToken* token, bool bSelected);
-
-	UFUNCTION()
-	void DestroyTokens(const TArray<FTokenIdxColor>& SelectedTokens);
+	void DestroyTokens(const TArray<int>& DestroyTokenIdx);
 	
 	UFUNCTION()
 	void GetTokenByIdx(APlayerController* PC, int idx);
 
 	UFUNCTION()
 	const TArray<AToken*>& GetRemainTokens(){ return RemainTokens; };
-
-	FGoldPosess	OnGoldPossessed;
 
 private:
 	UPROPERTY()

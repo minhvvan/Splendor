@@ -25,8 +25,8 @@ public:
 	void Click();
 
 	UFUNCTION()
-	void BindState();
-
+	void BindState();	
+	
 	//!----------Turn--------
 	UFUNCTION(Server, Reliable)
 	void SRSetTurn();
@@ -53,8 +53,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SRPossessTokens(const TArray<FTokenIdxColor>& selcted);
 
-	UFUNCTION(NetMulticast, Reliable)
-	void RemoveTokens(const TArray<FTokenIdxColor>& SelectedTokens);
+	UFUNCTION(Client, Reliable)
+	void RemoveTokens(const TArray<int>& DestroyTokenIdx);
 
 	UFUNCTION(Client, Reliable)
 	void ClearSelectedTokens();
@@ -64,9 +64,6 @@ public:
 
 	UFUNCTION()
 	bool IsNear(int a, int b);
-
-	//UFUNCTION(Server, Reliable)
-	//void SRClickToken(int idx, ETokenColor color, bool bInsert);
 
 	UFUNCTION()
 	void TokenClicked(AToken* ClickedToken);

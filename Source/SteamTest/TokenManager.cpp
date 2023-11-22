@@ -37,6 +37,8 @@ void ATokenManager::BeginPlay()
 void ATokenManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
 }
 
 void ATokenManager::SpawnTokens()
@@ -67,8 +69,6 @@ void ATokenManager::SpawnTokens()
 				token->SetIndex(i);
 			}
 		}
-
-		//PlaceTokens(RemainTokens);
 	}
 }
 
@@ -114,42 +114,21 @@ void ATokenManager::PlaceTokens(TArray<AToken*>& Tokens)
 	}
 }
 
-void ATokenManager::SelectedToken(AToken* token, bool bSelected)
-{
-	//if (bSelected)
-	//{
-	//	SelectedTokens.Add(token);
-	//}
-	//else
-	//{
-	//	SelectedTokens.Remove(token);
-	//}
-}
-
-void ATokenManager::DestroyTokens(const TArray<FTokenIdxColor>& SelectedTokens)
+void ATokenManager::DestroyTokens(const TArray<int>& DestroyTokenIdx)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("DestroyTokens")));
 
-	bool bGold = false;
-	for (auto selected : SelectedTokens)
+	for (auto idx : DestroyTokenIdx)
 	{
-		if (selected.Color == ETokenColor::E_Gold) bGold = true;
-
 		for (auto token : RemainTokens)
 		{
-			if (token->GetIndex() == selected.Idx)
+			if (token->GetIndex() == idx)
 			{
 				RemainTokens.Remove(token);
 				token->Destroy();
 				break;
 			}
 		}
-	}
-
-	//Delegate
-	if (bGold) 
-	{
-		OnGoldPossessed.Broadcast();
 	}
 }
 

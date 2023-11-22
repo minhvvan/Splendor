@@ -174,7 +174,6 @@ void ATileManager::SetTokenLocs(const TArray<AToken*>& Tokens)
 	auto GS = GetWorld()->GetGameState<AGSPlay>();
 	check(GS);
 
-
 	for (auto& token : Tokens)
 	{
 		auto tile = Tiles[token->GetIndex()];
@@ -281,11 +280,11 @@ void ATileManager::UpdateBoardState()
 	}
 }
 
-void ATileManager::ClearSeletedTiles(const TArray<FTokenIdxColor>& SelectedTokens)
+void ATileManager::ClearSeletedTiles(const TArray<int>& DestroyTokenIdx)
 {
-	for (auto seleted : SelectedTokens)
+	for (auto idx : DestroyTokenIdx)
 	{
-		Tiles[seleted.Idx]->SetOnToken(nullptr);
+		Tiles[idx]->SetOnToken(nullptr);
 	}
 
 	SelectedTiles.Reset();
