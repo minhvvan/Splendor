@@ -27,7 +27,7 @@ public:
 	void RemoveTokenIdx(int idx);
 
 	UFUNCTION()
-	void AddTokenIdx(int idx, ETokenColor color);
+	int AddToken(ETokenColor color);
 
 	UFUNCTION()
 	void AddPouch(ETokenColor color, int cnt);
@@ -100,8 +100,10 @@ protected:
 	TArray<FCardInfo> TierThreeInfos;
 
 
-	//!----------Card-------------
+	//!----------Tile-------------
 	UPROPERTY(Replicated)
-	TArray<ETokenColor> TileState;
-
+	TArray<ETokenColor> TileState;	
+	
+	UPROPERTY(Replicated)
+	TArray<int> FillIdx;
 };

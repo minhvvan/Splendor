@@ -99,10 +99,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	void SpawnTokens();	
+	void InitTokens();	
 	
 	UFUNCTION()
-	void SpawnTokensByList(FTokenCountList countList);
+	const TArray<AToken*>& SpawnTokens(const TArray<FTokenIdxColor>& Tokens);
 	
 	UFUNCTION()
 	void PlaceTokens(TArray<AToken*>& Tokens);
@@ -119,6 +119,9 @@ public:
 private:
 	UPROPERTY()
 	TArray<AToken*> RemainTokens;
+
+	UPROPERTY()
+	TArray<AToken*> SpawnedTokens;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AToken> TokenClass;

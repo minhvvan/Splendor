@@ -28,31 +28,31 @@ ATileManager::ATileManager()
 	}
 
 	{
-		FillIdx.Emplace(12);
-		FillIdx.Emplace(17);
-		FillIdx.Emplace(16);
-		FillIdx.Emplace(11);
-		FillIdx.Emplace(6);
-		FillIdx.Emplace(7);
-		FillIdx.Emplace(8);
-		FillIdx.Emplace(13);
-		FillIdx.Emplace(18);
-		FillIdx.Emplace(23);
-		FillIdx.Emplace(22);
-		FillIdx.Emplace(21);
-		FillIdx.Emplace(20);
-		FillIdx.Emplace(15);
-		FillIdx.Emplace(10);
-		FillIdx.Emplace(5);
-		FillIdx.Emplace(0);
-		FillIdx.Emplace(1);
-		FillIdx.Emplace(2);
-		FillIdx.Emplace(3);
-		FillIdx.Emplace(4);
-		FillIdx.Emplace(9);
-		FillIdx.Emplace(14);
-		FillIdx.Emplace(19);
-		FillIdx.Emplace(24);
+		FillIdx.Add(12);
+		FillIdx.Add(17);
+		FillIdx.Add(16);
+		FillIdx.Add(11);
+		FillIdx.Add(6);
+		FillIdx.Add(7);
+		FillIdx.Add(8);
+		FillIdx.Add(13);
+		FillIdx.Add(18);
+		FillIdx.Add(23);
+		FillIdx.Add(22);
+		FillIdx.Add(21);
+		FillIdx.Add(20);
+		FillIdx.Add(15);
+		FillIdx.Add(10);
+		FillIdx.Add(5);
+		FillIdx.Add(0);
+		FillIdx.Add(1);
+		FillIdx.Add(2);
+		FillIdx.Add(3);
+		FillIdx.Add(4);
+		FillIdx.Add(9);
+		FillIdx.Add(14);
+		FillIdx.Add(19);
+		FillIdx.Add(24);
 	}
 
 	{

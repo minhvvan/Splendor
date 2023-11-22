@@ -261,6 +261,29 @@ void UHUDDesk::GetTokenClicked()
 
 void UHUDDesk::FilTokenClicked()
 {
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+	auto GS = GM->GetGameState<AGSPlay>();
+
+	if (GS)
+	{
+		if (GS->GetPouch().Num() == 0)
+		{
+			if (FailedFillAnim)
+			{
+				PlayAnimation(FailedFillAnim);
+
+				RenderMessage(UGlobalConst::MsgNoPouch);
+
+				if (FailSound)
+				{
+					PlaySound(FailSound);
+				}
+			}
+
+			return;
+		}
+	}
+
 	Cast<APCPlay>(GetOwningPlayer())->SRFillToken();
 }
 

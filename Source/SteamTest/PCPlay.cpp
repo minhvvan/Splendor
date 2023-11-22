@@ -161,6 +161,14 @@ void APCPlay::InitGameBase()
 	TileManager->SetTokenLocs(Tokens);
 }
 
+void APCPlay::SpawnToken_Implementation(const TArray<FTokenIdxColor>& Tokens)
+{
+	check(IsValid(TokenManager) && IsValid(TileManager));
+
+	auto Spawned = TokenManager->SpawnTokens(Tokens);
+	TileManager->SetTokenLocs(Spawned);
+}
+
 void APCPlay::PossessTokens()
 {
 	SRPossessTokens(SelectedTokenIdx);
@@ -168,8 +176,6 @@ void APCPlay::PossessTokens()
 
 void APCPlay::RemoveTokens_Implementation(const TArray<int>& DestroyTokenIdx)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("RemoveTokens")));
-
 	if (TileManager)
 	{
 		TileManager->ClearSeletedTiles(DestroyTokenIdx);
@@ -431,7 +437,7 @@ void APCPlay::PopUpOverToken_Implementation()
 	}
 }
 
-void APCPlay::SendMessage(FString msg)
+void APCPlay::SendMessage_Implementation(const FString& msg)
 {
 	if (WidgetDesk)
 	{

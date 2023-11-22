@@ -47,6 +47,9 @@ public:
 	UFUNCTION()
 	const TArray<FTokenIdxColor>& GetSelectedTokens() { return SelectedTokenIdx; };
 	
+	UFUNCTION(Client, Reliable)
+	void SpawnToken(const TArray<FTokenIdxColor>& Tokens);
+	
 	UFUNCTION()
 	void PossessTokens();
 
@@ -106,8 +109,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SRRestoreToken(const FTokenCountList& Restore);
 
-	UFUNCTION()
-	void SendMessage(FString msg);
+	UFUNCTION(Client, Reliable)
+	void SendMessage(const FString& msg);
 
 	UFUNCTION(Server, Reliable)
 	void SRAddBonus(ETokenColor color);

@@ -38,6 +38,7 @@ public:
 	static const FString MsgNotSelect;
 	static const FString MsgUnableBuy;
 	static const FString MsgCanNotTake;
+	static const FString MsgNoPouch;
 
 	//!------------------util----------------------
 	static const int FirstPlayer;

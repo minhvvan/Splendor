@@ -30,7 +30,7 @@ void ATokenManager::BeginPlay()
 	Super::BeginPlay();
 	//RemainTokens.Init(nullptr, 25);
 	
-	SpawnTokens();
+	InitTokens();
 }
 
 // Called every frame
@@ -41,7 +41,7 @@ void ATokenManager::Tick(float DeltaTime)
 
 }
 
-void ATokenManager::SpawnTokens()
+void ATokenManager::InitTokens()
 {
 	UWorld* world = GetWorld();
 	auto GS = GetWorld()->GetGameState<AGSPlay>();
@@ -72,34 +72,33 @@ void ATokenManager::SpawnTokens()
 	}
 }
 
-void ATokenManager::SpawnTokensByList(FTokenCountList countList)
+const TArray<AToken*>& ATokenManager::SpawnTokens(const TArray<FTokenIdxColor>& Tokens)
 {
 	UWorld* world = GetWorld();
 
 	check(IsValid(world));
+	SpawnedTokens.Empty();
+
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	FRotator rotator;
 	FVector loc = FVector(-210, -200, 0);
 
-	TArray<AToken*> Temp;
-	for (auto count : countList)
+	for (auto info : Tokens)
 	{
-		for (int i = 0; i < count.Value; i++)
-		{
-			auto token = Cast<AToken>(world->SpawnActor<AActor>(TokenClass, loc, rotator, SpawnParams));
+		auto token = Cast<AToken>(world->SpawnActor<AActor>(TokenClass, loc, rotator, SpawnParams));
 
-			if (token)
-			{
-				token->SetActorScale3D(FVector(0.35f));
-				RemainTokens.Add(token);
-				Temp.Add(token);
-				token->SetTokenType(count.Key);
-			}
+		if (token)
+		{
+			token->SetActorScale3D(FVector(0.35f));
+			RemainTokens.Add(token);
+			SpawnedTokens.Add(token);
+			token->SetTokenType(info.Color);
+			token->SetIndex(info.Idx);
 		}
 	}
 
-	PlaceTokens(Temp);
+	return SpawnedTokens;
 }
 
 void ATokenManager::PlaceTokens(TArray<AToken*>& Tokens)

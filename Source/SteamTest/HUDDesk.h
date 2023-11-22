@@ -64,7 +64,10 @@ protected:
 	class UTextBlock* TxtMessage;
 
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
-	class UWidgetAnimation* FailedGetAnim;
+	class UWidgetAnimation* FailedGetAnim;	
+	
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* FailedFillAnim;
 
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* MessageAnim;

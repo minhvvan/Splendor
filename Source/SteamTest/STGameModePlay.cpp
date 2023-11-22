@@ -199,13 +199,31 @@ void ASTGameModePlay::FillToken(APlayerController* PC)
 {
 	//GS에서 pouch받아서 다시 스폰
 	auto GS = GetGameState<AGSPlay>();
-	check(IsValid(TokenManager) && IsValid(GS));
-	auto pouch = GS->GetPouch();
+	check(IsValid(GS));
 
-	TokenManager->SpawnTokensByList(pouch);
+	auto pouch = GS->GetPouch();
+	if (pouch.Num() == 0) return;
+
 	GS->ClearPouch();
 
+	TArray<FTokenIdxColor> Tokens;
+
 	//GS에 Add
+	for (auto token : pouch)
+	{
+		for (int i = 0; i < token.Value; i++)
+		{
+			int idx = GS->AddToken(token.Key);
+			Tokens.Add({ idx, token.Key });
+		}
+	}
+
+	//All PC Spawn
+	for (auto ps : GS->PlayerArray)
+	{
+		auto PC = Cast<APCPlay>(ps->GetPlayerController());
+		PC->SpawnToken(Tokens);
+	}
 
 	//상대에게 특권하나
 	GiveScroll(PC);
