@@ -174,7 +174,7 @@ void APCPlay::PossessTokens()
 	SRPossessTokens(SelectedTokenIdx);
 }
 
-void APCPlay::RemoveTokens_Implementation(const TArray<int>& DestroyTokenIdx)
+void APCPlay::RemoveTokens_Implementation(const TArray<int>& DestroyTokenIdx, bool bOwn)
 {
 	if (TileManager)
 	{
@@ -183,7 +183,7 @@ void APCPlay::RemoveTokens_Implementation(const TArray<int>& DestroyTokenIdx)
 
 	if (TokenManager)
 	{
-		TokenManager->DestroyTokens(DestroyTokenIdx);
+		TokenManager->DestroyTokens(DestroyTokenIdx, bOwn);
 	}
 }
 

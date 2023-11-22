@@ -44,4 +44,7 @@ public:
 	static const int FirstPlayer;
 	static const int SecondPlayer;
 
+	//!------------------Position----------------------
+	static const FVector RivalTokenPos;
+	static const FVector OwnTokenPos;
 };

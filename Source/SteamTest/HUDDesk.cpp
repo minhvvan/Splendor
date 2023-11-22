@@ -25,7 +25,6 @@
 #include "GlobalConst.h"
 #include "HUDTakeToken.h"
 #include "HUDAnyColor.h"
-
 #include "STGameModePlay.h"
 
 

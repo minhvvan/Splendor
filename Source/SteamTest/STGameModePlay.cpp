@@ -127,8 +127,8 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC, const TArray<FTokenId
 
 	for (auto ps : GS->PlayerArray)
 	{
-		auto PC = Cast<APCPlay>(ps->GetPlayerController());
-		PC->RemoveTokens(DestroyTokenIdx);
+		auto Controller = Cast<APCPlay>(ps->GetPlayerController());
+		Controller->RemoveTokens(DestroyTokenIdx, PC == Controller);
 	}
 
 	//ÅÏ º¯°æ
@@ -187,8 +187,8 @@ void ASTGameModePlay::GetTokenByIdx(APlayerController* PC, int idx)
 
 	for (auto ps : GS->PlayerArray)
 	{
-		auto PC = Cast<APCPlay>(ps->GetPlayerController());
-		PC->RemoveTokens(temp);
+		auto Controller = Cast<APCPlay>(ps->GetPlayerController());
+		Controller->RemoveTokens(temp, PC == Controller);
 	}
 
 	//ps update

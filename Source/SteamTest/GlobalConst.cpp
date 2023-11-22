@@ -31,3 +31,7 @@ const FString UGlobalConst::MsgNoPouch = FString::Printf(TEXT("채울 토큰이 
 //!----------------Util-------------------
 const int UGlobalConst::FirstPlayer = 100;
 const int UGlobalConst::SecondPlayer = 200;
+
+//!----------------Position-------------------
+const FVector UGlobalConst::RivalTokenPos = FVector(800.f, 0.f, 0.f);
+const FVector UGlobalConst::OwnTokenPos = FVector(-300.f, 0.f, 0.f);

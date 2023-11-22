@@ -57,7 +57,7 @@ public:
 	void SRPossessTokens(const TArray<FTokenIdxColor>& selcted);
 
 	UFUNCTION(Client, Reliable)
-	void RemoveTokens(const TArray<int>& DestroyTokenIdx);
+	void RemoveTokens(const TArray<int>& DestroyTokenIdx, bool bOwn);
 
 	UFUNCTION(Client, Reliable)
 	void ClearSelectedTokens();

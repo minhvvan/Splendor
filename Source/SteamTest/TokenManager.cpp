@@ -4,12 +4,15 @@
 #include "TokenManager.h"
 #include "PCPlay.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
 #include "STGameModePlay.h"
 #include "Algo/RandomShuffle.h"
 #include "PSPlayerInfo.h"
 #include "GSPlay.h"
 #include "GlobalStruct.h"
 #include "GlobalEnum.h"
+#include "Sound/SoundCue.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ATokenManager::ATokenManager()
@@ -21,6 +24,12 @@ ATokenManager::ATokenManager()
 	if (TOKEN.Succeeded())
 	{
 		TokenClass = TOKEN.Class;
+	}	
+	
+	ConstructorHelpers::FObjectFinder<USoundBase> SFX(TEXT("/Script/Engine.SoundWave'/Game/Resources/Sound/GetTokenSound.GetTokenSound'"));
+	if (SFX.Succeeded())
+	{
+		GetSound = SFX.Object;
 	}
 }
 
@@ -113,9 +122,14 @@ void ATokenManager::PlaceTokens(TArray<AToken*>& Tokens)
 	}
 }
 
-void ATokenManager::DestroyTokens(const TArray<int>& DestroyTokenIdx)
+void ATokenManager::DestroyTokens(const TArray<int>& DestroyTokenIdx, bool bOwn)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("DestroyTokens")));
+	FVector TokenPos = bOwn ? UGlobalConst::OwnTokenPos : UGlobalConst::RivalTokenPos;
+
+	if (GetSound && bOwn)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), GetSound, FVector::ZeroVector);
+	}
 
 	for (auto idx : DestroyTokenIdx)
 	{
@@ -124,7 +138,7 @@ void ATokenManager::DestroyTokens(const TArray<int>& DestroyTokenIdx)
 			if (token->GetIndex() == idx)
 			{
 				RemainTokens.Remove(token);
-				token->Destroy();
+				token->MoveAndDestory(TokenPos);
 				break;
 			}
 		}

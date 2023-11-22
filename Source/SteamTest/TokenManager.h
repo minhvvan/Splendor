@@ -108,7 +108,7 @@ public:
 	void PlaceTokens(TArray<AToken*>& Tokens);
 
 	UFUNCTION()
-	void DestroyTokens(const TArray<int>& DestroyTokenIdx);
+	void DestroyTokens(const TArray<int>& DestroyTokenIdx, bool bOwn);
 	
 	UFUNCTION()
 	void GetTokenByIdx(APlayerController* PC, int idx);
@@ -117,6 +117,9 @@ public:
 	const TArray<AToken*>& GetRemainTokens(){ return RemainTokens; };
 
 private:
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	USoundBase* GetSound;
+
 	UPROPERTY()
 	TArray<AToken*> RemainTokens;
 
