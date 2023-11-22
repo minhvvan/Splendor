@@ -31,6 +31,7 @@ const FString UGlobalConst::MsgNoPouch = FString::Printf(TEXT("채울 토큰이 
 //!----------------Util-------------------
 const int UGlobalConst::FirstPlayer = 100;
 const int UGlobalConst::SecondPlayer = 200;
+const FString UGlobalConst::SuffixTurnText = FString::Printf(TEXT(" 차례"));
 
 //!----------------Position-------------------
 const FVector UGlobalConst::RivalTokenPos = FVector(800.f, 0.f, 0.f);

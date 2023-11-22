@@ -25,22 +25,31 @@ void ASTGameModePlay::SwapPlayerControllers(APlayerController* OldPC, APlayerCon
 void ASTGameModePlay::HandleSeamlessTravelPlayer(AController*& C)
 {
 	Super::HandleSeamlessTravelPlayer(C);
+}
 
-	//client
-	Cast<APCPlay>(C)->SRSetTurn();
+void ASTGameModePlay::PostSeamlessTravel()
+{
+	Super::PostSeamlessTravel();
+
+	TurnManager = GetWorld()->SpawnActor<ATurnManager>();
+	CardManager = GetWorld()->SpawnActor<ACardManager>();
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("PostSeamlessTravel")));
 }
 
 void ASTGameModePlay::StartPlay()
 {
 	Super::StartPlay();
-}
+
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("StartPlay")));
+}	
 
 void ASTGameModePlay::StartMatch()
 {
 	Super::StartMatch();
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("StartMatch")));
 
-	TurnManager = GetWorld()->SpawnActor<ATurnManager>();
-	CardManager = GetWorld()->SpawnActor<ACardManager>();
+	//TurnManager = GetWorld()->SpawnActor<ATurnManager>();
+	//CardManager = GetWorld()->SpawnActor<ACardManager>();
 }
 
 void ASTGameModePlay::InitGameState()
@@ -56,7 +65,7 @@ void ASTGameModePlay::InitGameState()
 
 
 //!-------------Turn-------------------
-void ASTGameModePlay::InitPlayerTurn(APlayerController* Player, bool bFirst)
+void ASTGameModePlay::InitPlayerTurn(APlayerController* Player)
 {
 	if (TurnManager)
 	{
@@ -64,9 +73,17 @@ void ASTGameModePlay::InitPlayerTurn(APlayerController* Player, bool bFirst)
 		
 		if (GS)
 		{
+			FString firstPlayerName;
+
 			for (auto PS : GS->PlayerArray)
 			{
-				TurnManager->InitPlayerTurn(PS->GetPlayerController(), Cast<APSPlayerInfo>(PS)->GetBFirst());
+				auto castedPS = Cast<APSPlayerInfo>(PS);
+				if (castedPS->GetBFirst()) firstPlayerName = castedPS->GetPName();
+			}
+
+			for (auto PS : GS->PlayerArray)
+			{
+				TurnManager->InitPlayerTurn(PS->GetPlayerController(), Cast<APSPlayerInfo>(PS)->GetBFirst(), firstPlayerName);
 			}
 		}
 	}

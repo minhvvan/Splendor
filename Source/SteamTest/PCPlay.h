@@ -124,6 +124,9 @@ public:
 	UFUNCTION()
 	void GetCardToHand(FCardInfo Info);
 
+	UFUNCTION(Client, Reliable)
+	void SetTurnText(const FString& playerName);
+
 	//!-----------------Item-------------
 	UFUNCTION(Client, Reliable)
 	void UseItemGetToken(const FCardInfo& cardInfo);

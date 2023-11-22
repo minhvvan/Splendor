@@ -44,8 +44,14 @@ void UHUDDesk::NativeOnInitialized()
 	Hand->OnCard.AddUObject(this, &UHUDDesk::OnHandCardClicked);
 }
 
-void UHUDDesk::SetTurnTxt(FString turn)
+void UHUDDesk::SetTurnTxt(const FString& turn)
 {
+	FString newText = turn;
+	newText.Append(UGlobalConst::SuffixTurnText);
+
+	TxtTurn->SetText(FText::FromString(newText));
+
+	//anim도 있으면 좋을듯
 }
 
 void UHUDDesk::BindState(APSPlayerInfo* ps)

@@ -23,9 +23,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void InitPlayerTurn(APlayerController* Player, bool bFirst);
+	UFUNCTION()
+	void InitPlayerTurn(APlayerController* Player, bool bFirst, const FString& playerName);
+	
+	UFUNCTION()
 	void EndCurrentTurn();
 
+	UFUNCTION()
 	bool IsFirstPlayer(APlayerController* PC);
 
 	UFUNCTION()

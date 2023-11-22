@@ -54,11 +54,16 @@ void APCPlay::BeginPlay()
 
 	if (IsLocalController())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("BeginPlay")));
 		TileManager = GetWorld()->SpawnActor<ATileManager>();
 		TokenManager = GetWorld()->SpawnActor<ATokenManager>();
 		InitGameBase();
 	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("BeginPlay")));
+
+
+	//role check 해서 client만 실행하게 하면 될거 같기도 
+	SRSetTurn();
 }
 
 
@@ -66,11 +71,11 @@ void APCPlay::Click()
 {
 	if (IsLocalController())
 	{
-		//if (!IsTurn)
-		//{
-		//	SendMessage(UGlobalConst::MsgNotTurn);
-		//	return;
-		//}
+		if (!IsTurn)
+		{
+			SendMessage(UGlobalConst::MsgNotTurn);
+			return;
+		}
 
 		FHitResult HitResult;
 		GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
@@ -125,17 +130,11 @@ void APCPlay::BindState()
 //!------------Turn----------------
 void APCPlay::SRSetTurn_Implementation()
 {
-	auto PS = GetPlayerState<APSPlayerInfo>();
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 
-	if (PS)
+	if (GM)
 	{
-		auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
-
-		//GS Update
-		if (GM)
-		{
-			GM->InitPlayerTurn(this, PS->GetBFirst());
-		}
+		GM->InitPlayerTurn(this);
 	}
 }
 
@@ -454,6 +453,15 @@ void APCPlay::GetCardToHand(FCardInfo Info)
 
 	//카드 변경
 	SRChangeCard(Info);
+}
+
+void APCPlay::SetTurnText_Implementation(const FString& playerName)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("SetTurnText")));
+	if (WidgetDesk)
+	{
+		WidgetDesk->SetTurnTxt(playerName);
+	}
 }
 
 //!------------Item-----------

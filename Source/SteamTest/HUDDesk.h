@@ -74,7 +74,7 @@ protected:
 
 	virtual void NativeOnInitialized();
 public:
-	void SetTurnTxt(FString turn);
+	void SetTurnTxt(const FString& turn);
 
 	UFUNCTION()
 	void BindState(class APSPlayerInfo* ps);

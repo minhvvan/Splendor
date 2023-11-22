@@ -20,8 +20,7 @@ public:
 	UFUNCTION()
 	void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC) override;
 
-	UFUNCTION()
-	void InitPlayerTurn(APlayerController* Player, bool bFirst);
+	virtual void PostSeamlessTravel() override;
 
 	virtual void StartPlay() override;
 
@@ -36,6 +35,9 @@ public:
 	void PrintToken();	
 
 	//!-----------Turn-----------------------
+	UFUNCTION()
+	void InitPlayerTurn(APlayerController* Player);
+
 	UFUNCTION()
 	void EndCurrentTurn();
 
