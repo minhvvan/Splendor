@@ -21,12 +21,19 @@ public:
 	UFUNCTION()
 	void BeginPlay() override;
 
+	//!----------Base--------
 	UFUNCTION()
-	void Click();
-
+	void Click();	
+	
 	UFUNCTION()
 	void BindState();	
 	
+	UFUNCTION()
+	void PopupRivalInfo();	
+
+	UFUNCTION()
+	void CloseRivalInfo();
+
 	//!----------Turn--------
 	UFUNCTION(Server, Reliable)
 	void SRSetTurn();
@@ -174,6 +181,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* ClickAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* TabAction;
 
 	UPROPERTY(replicated)
 	TArray<FTokenIdxColor> SelectedTokenIdx;

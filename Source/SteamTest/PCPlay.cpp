@@ -59,9 +59,6 @@ void APCPlay::BeginPlay()
 		InitGameBase();
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("BeginPlay")));
-
-
 	//role check 해서 client만 실행하게 하면 될거 같기도 
 	SRSetTurn();
 }
@@ -104,6 +101,8 @@ void APCPlay::SetupInputComponent()
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
 		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &APCPlay::Click);
+		EnhancedInputComponent->BindAction(TabAction, ETriggerEvent::Started, this, &APCPlay::PopupRivalInfo);
+		EnhancedInputComponent->BindAction(TabAction, ETriggerEvent::Completed, this, &APCPlay::CloseRivalInfo);
 	}
 }
 
@@ -123,6 +122,28 @@ void APCPlay::BindState()
 		if (WidgetDesk && IsValid(WidgetDesk))
 		{
 			WidgetDesk->BindState(GetPlayerState<APSPlayerInfo>());
+		}
+	}
+}
+
+void APCPlay::PopupRivalInfo()
+{
+	if (IsLocalController())
+	{
+		if (WidgetDesk)
+		{
+			WidgetDesk->PopUpRivalInfo();
+		}
+	}
+}
+
+void APCPlay::CloseRivalInfo()
+{
+	if (IsLocalController())
+	{
+		if (WidgetDesk)
+		{
+			WidgetDesk->CloseRivalInfo();
 		}
 	}
 }

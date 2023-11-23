@@ -15,6 +15,7 @@
 #include "HUDSelectRoyal.h"
 #include "HUDSelectCard.h"
 #include "HUDHand.h"
+#include "HudRivalInfo.h"
 #include "PCPlay.h"
 #include "PSPlayerInfo.h"
 #include "GSPlay.h"
@@ -148,6 +149,14 @@ void UHUDDesk::CloseCardWidget()
 
 	CardWidget->RemoveFromParent();
 	CardWidget.Reset();
+}
+
+void UHUDDesk::CloseRivalInfo()
+{
+	if (!RivalInfoWidget.Get()) return;
+
+	RivalInfoWidget->RemoveFromParent();
+	RivalInfoWidget.Reset();
 }
 
 void UHUDDesk::ChangedBonus()
@@ -398,7 +407,12 @@ void UHUDDesk::PopUpItemAnyColor(const FCardInfo& cardInfo)
 
 void UHUDDesk::PopUpSelectCard()
 {
-	//popup
 	CardWidget = Cast<UHUDSelectCard>(CreateWidget(GetWorld(), SelectCardWidgetClass));
 	CardWidget->AddToViewport();
+}
+
+void UHUDDesk::PopUpRivalInfo()
+{
+	RivalInfoWidget = Cast<UHudRivalInfo>(CreateWidget(GetWorld(), RivalInfoClass));
+	RivalInfoWidget->AddToViewport();
 }

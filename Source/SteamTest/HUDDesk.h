@@ -145,6 +145,9 @@ public:
 	void PopUpSelectCard();
 
 	UFUNCTION()
+	void PopUpRivalInfo();
+
+	UFUNCTION()
 	UHUDCardHolder* GetBonusWidget(ETokenColor color);
 
 	UFUNCTION()
@@ -155,6 +158,9 @@ public:
 
 	UFUNCTION()
 	void CloseCardWidget();
+
+	UFUNCTION()
+	void CloseRivalInfo();
 
 	//!---------Util--------------
 	UFUNCTION()
@@ -169,7 +175,6 @@ private:
 	
 	UFUNCTION(BlueprintCallable)
 	void UseScrollClicked();
-
 
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
@@ -199,6 +204,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> SelectCardWidgetClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> RivalInfoClass;
+
 	UPROPERTY()
 	TWeakObjectPtr<class UHUDTakeToken> TakeWidget;
 
@@ -210,6 +218,9 @@ private:
 
 	UPROPERTY()
 	TWeakObjectPtr<class UHUDSelectCard> CardWidget;
+
+	UPROPERTY()
+	TWeakObjectPtr<class UHudRivalInfo> RivalInfoWidget;
 
 	//!---------Hand--------------
 	UPROPERTY()
