@@ -121,11 +121,17 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SRAddScroll();
 
+	UFUNCTION(Server, Reliable)
+	void SRUseScroll();
+
 	UFUNCTION()
 	void GetCardToHand(FCardInfo Info);
 
 	UFUNCTION(Client, Reliable)
 	void SetTurnText(const FString& playerName);
+
+	UFUNCTION(Client, Reliable)
+	void FailFillToken();
 
 	//!-----------------Item-------------
 	UFUNCTION(Client, Reliable)

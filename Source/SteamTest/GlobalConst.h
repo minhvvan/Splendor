@@ -39,6 +39,8 @@ public:
 	static const FString MsgUnableBuy;
 	static const FString MsgCanNotTake;
 	static const FString MsgNoPouch;
+	static const FString MsgCanNotUseScroll;
+	static const FString MsgUsedScroll;
 
 	//!------------------util----------------------
 	static const int FirstPlayer;

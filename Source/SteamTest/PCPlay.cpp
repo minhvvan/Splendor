@@ -348,6 +348,13 @@ void APCPlay::SRFillToken_Implementation()
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 	check(IsValid(GM));
 
+	auto GS = GM->GetGameState<AGSPlay>();
+	if (GS->GetPouch().Num() == 0)
+	{
+		FailFillToken();
+		return;
+	}
+
 	GM->FillToken(this);
 }
 
@@ -457,19 +464,30 @@ void APCPlay::GetCardToHand(FCardInfo Info)
 
 void APCPlay::SetTurnText_Implementation(const FString& playerName)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("SetTurnText")));
 	if (WidgetDesk)
 	{
-		WidgetDesk->SetTurnTxt(playerName);
+		WidgetDesk->IntSetTurnBegin(playerName);
 	}
 }
+
+void APCPlay::FailFillToken_Implementation()
+{
+	if (WidgetDesk)
+	{
+		WidgetDesk->FailAnimPlay(EFailWidget::E_FillToken);
+	}
+}
+
 
 //!------------Item-----------
 void APCPlay::UseItemGetToken_Implementation(const FCardInfo& cardInfo)
 {
 	check(IsValid(WidgetDesk));
 
-	WidgetDesk->PopUpItemGetToken(cardInfo);
+	TArray<ETokenColor> colors;
+	colors.Add(cardInfo.color);
+
+	WidgetDesk->PopUpItemGetToken(colors, true);
 }
 
 void APCPlay::UseItemTakeToken_Implementation()
@@ -581,5 +599,14 @@ void APCPlay::SRAddScroll_Implementation()
 	if (GM)
 	{
 		GM->GetScroll(this);
+	}
+}
+
+void APCPlay::SRUseScroll_Implementation()
+{
+	auto PS = GetPlayerState<APSPlayerInfo>();
+	if (PS)
+	{
+		PS->AddScroll(-1);
 	}
 }

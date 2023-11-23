@@ -17,7 +17,13 @@ class STEAMTEST_API UHUDGetToken : public UUserWidget
 	
 public:
 	UFUNCTION()
-	void SetTiles(const TArray<ETokenColor>& tokens, const FCardInfo& cardInfo);
+	void SetTiles(const TArray<ETokenColor>& tokens, const TArray<ETokenColor>& colors);
+
+	UFUNCTION()
+	void SetBEndTurn(bool flag) { bEndTurn = flag; };	
+	
+	UFUNCTION()
+	bool GetBEndTurn() { return bEndTurn; };
 
 protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
@@ -38,4 +44,7 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UTileData> TileDataClass;
+
+	UPROPERTY()
+	bool bEndTurn = false;
 };

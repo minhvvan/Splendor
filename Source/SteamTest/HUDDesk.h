@@ -8,9 +8,18 @@
 #include "GlobalStruct.h"
 #include "HUDDesk.generated.h"
 
-/**
- * 
- */
+UENUM(BlueprintType)
+enum class EFailWidget : uint8
+{
+	E_GetToken = 0		UMETA(DisplayName = "GetToken"),
+	E_FillToken			UMETA(DisplayName = "FillToken"),
+	E_UseScroll			UMETA(DisplayName = "UseScroll"),
+	E_TwiceUseScroll	UMETA(DisplayName = "TwiceUseScroll"),
+
+	E_End,
+};
+
+
 UCLASS()
 class STEAMTEST_API UHUDDesk : public UUserWidget
 {
@@ -22,7 +31,10 @@ protected:
 	class UButton* BtnGetToken;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnFillToken;
+	class UButton* BtnFillToken;	
+	
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UButton* BtnUseScroll;
 	
 	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
 	class UHUDPopUpPannel* PUPannel;
@@ -70,11 +82,14 @@ protected:
 	class UWidgetAnimation* FailedFillAnim;
 
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* FailedUseScrollAnim;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* MessageAnim;
 
 	virtual void NativeOnInitialized();
 public:
-	void SetTurnTxt(const FString& turn);
+	void IntSetTurnBegin(const FString& turn);
 
 	UFUNCTION()
 	void BindState(class APSPlayerInfo* ps);
@@ -118,7 +133,7 @@ public:
 	void PopUpDetailCard(const FCardInfo& cardInfo);
 
 	UFUNCTION()
-	void PopUpItemGetToken(const FCardInfo& cardInfo);
+	void PopUpItemGetToken(const TArray<ETokenColor>& colors, bool bEndturn);
 
 	UFUNCTION()
 	void PopUpItemTakeToken();
@@ -141,12 +156,21 @@ public:
 	UFUNCTION()
 	void CloseCardWidget();
 
+	//!---------Util--------------
+	UFUNCTION()
+	void FailAnimPlay(EFailWidget failWidget);
+
 private:
 	UFUNCTION(BlueprintCallable)
 	void GetTokenClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void FilTokenClicked();	
+	void FilTokenClicked();		
+	
+	UFUNCTION(BlueprintCallable)
+	void UseScrollClicked();
+
+
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	USoundBase* FailSound;
@@ -186,4 +210,8 @@ private:
 
 	UPROPERTY()
 	TWeakObjectPtr<class UHUDSelectCard> CardWidget;
+
+	//!---------Hand--------------
+	UPROPERTY()
+	bool bUsedScroll = false;
 };

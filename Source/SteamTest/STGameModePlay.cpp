@@ -210,6 +210,9 @@ void ASTGameModePlay::GetTokenByIdx(APlayerController* PC, int idx)
 
 	//ps update
 	PS->AddToken(color, 1);
+
+	//GS update
+	GS->RemoveTokenIdx(idx);
 }
 
 void ASTGameModePlay::FillToken(APlayerController* PC)

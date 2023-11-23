@@ -27,6 +27,8 @@ const FString UGlobalConst::MsgNotSelect = FString::Printf(TEXT("토큰을 선�
 const FString UGlobalConst::MsgUnableBuy = FString::Printf(TEXT("카드를 구매할 수 없습니다."));
 const FString UGlobalConst::MsgCanNotTake = FString::Printf(TEXT("가져올 토큰이 없습니다."));
 const FString UGlobalConst::MsgNoPouch = FString::Printf(TEXT("채울 토큰이 존재하지 않습니다."));
+const FString UGlobalConst::MsgCanNotUseScroll = FString::Printf(TEXT("보유한 특권이 없습니다."));
+const FString UGlobalConst::MsgUsedScroll = FString::Printf(TEXT("해당 턴에 이미 특권을 사용하였습니다."));
 
 //!----------------Util-------------------
 const int UGlobalConst::FirstPlayer = 100;

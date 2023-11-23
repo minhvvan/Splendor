@@ -40,16 +40,18 @@ void UHUDDesk::NativeOnInitialized()
 
 	BtnGetToken->OnClicked.AddDynamic(this, &UHUDDesk::GetTokenClicked);
 	BtnFillToken->OnClicked.AddDynamic(this, &UHUDDesk::FilTokenClicked);
+	BtnUseScroll->OnClicked.AddDynamic(this, &UHUDDesk::UseScrollClicked);
 
 	Hand->OnCard.AddUObject(this, &UHUDDesk::OnHandCardClicked);
 }
 
-void UHUDDesk::SetTurnTxt(const FString& turn)
+void UHUDDesk::IntSetTurnBegin(const FString& turn)
 {
 	FString newText = turn;
 	newText.Append(UGlobalConst::SuffixTurnText);
 
 	TxtTurn->SetText(FText::FromString(newText));
+	bUsedScroll = false;
 
 	//anim도 있으면 좋을듯
 }
@@ -112,10 +114,13 @@ UHUDCardHolder* UHUDDesk::GetBonusWidget(ETokenColor color)
 
 void UHUDDesk::CloseItemWidget(EItem itemType)
 {
+	bool bEndTurn = true;
+
 	switch (itemType)
 	{
 	case EItem::I_GetToken:
 		check(GetWidget.IsValid());
+		bEndTurn = GetWidget->GetBEndTurn();
 		GetWidget->RemoveFromParent();
 		GetWidget.Reset();
 		break;
@@ -126,7 +131,7 @@ void UHUDDesk::CloseItemWidget(EItem itemType)
 		break;
 	}
 
-	Cast<APCPlay>(GetOwningPlayer())->SREndTurn();
+	if(bEndTurn) Cast<APCPlay>(GetOwningPlayer())->SREndTurn();
 }
 
 void UHUDDesk::CloseCrownWidget()
@@ -245,18 +250,7 @@ void UHUDDesk::GetTokenClicked()
 
 		if (Tokens.Num() == 0)
 		{
-			if (FailedGetAnim)
-			{
-				PlayAnimation(FailedGetAnim);
-				
-				RenderMessage(UGlobalConst::MsgNotSelect);
-
-				if (FailSound)
-				{
-					PlaySound(FailSound);
-				}
-			}
-
+			FailAnimPlay(EFailWidget::E_GetToken);
 			return;
 		}
 
@@ -266,30 +260,78 @@ void UHUDDesk::GetTokenClicked()
 
 void UHUDDesk::FilTokenClicked()
 {
-	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
-	auto GS = GM->GetGameState<AGSPlay>();
+	Cast<APCPlay>(GetOwningPlayer())->SRFillToken();
+}
 
-	if (GS)
+void UHUDDesk::UseScrollClicked()
+{
+	if (bUsedScroll)
 	{
-		if (GS->GetPouch().Num() == 0)
+		FailAnimPlay(EFailWidget::E_TwiceUseScroll);
+		return;
+	}
+
+	auto PS = GetOwningPlayer()->GetPlayerState<APSPlayerInfo>();
+	if (PS)
+	{
+		auto ScrollNum = PS->GetScroll();
+		
+		if (ScrollNum == 0)
 		{
-			if (FailedFillAnim)
-			{
-				PlayAnimation(FailedFillAnim);
-
-				RenderMessage(UGlobalConst::MsgNoPouch);
-
-				if (FailSound)
-				{
-					PlaySound(FailSound);
-				}
-			}
-
+			FailAnimPlay(EFailWidget::E_UseScroll);
 			return;
 		}
 	}
 
-	Cast<APCPlay>(GetOwningPlayer())->SRFillToken();
+	TArray<ETokenColor> colors;
+	for (ETokenColor color : TEnumRange<ETokenColor>())
+	{
+		if (color == ETokenColor::E_End || color == ETokenColor::E_Gold) continue;
+		colors.Add(color);
+	}
+
+	PopUpItemGetToken(colors, false);
+	Cast<APCPlay>(GetOwningPlayer())->SRUseScroll();
+	bUsedScroll = true;
+}
+
+void UHUDDesk::FailAnimPlay(EFailWidget failWidget)
+{
+	switch (failWidget)
+	{
+	case EFailWidget::E_GetToken:
+		if (FailedGetAnim)
+		{
+			PlayAnimation(FailedGetAnim);
+			RenderMessage(UGlobalConst::MsgNotSelect);
+		}
+		break;
+	case EFailWidget::E_FillToken:
+		if (FailedFillAnim)
+		{
+			PlayAnimation(FailedFillAnim);
+			RenderMessage(UGlobalConst::MsgNoPouch);
+		}
+		break;
+	case EFailWidget::E_UseScroll:
+		if (FailedUseScrollAnim)
+		{
+			PlayAnimation(FailedUseScrollAnim);
+			RenderMessage(UGlobalConst::MsgCanNotUseScroll);
+		}	
+	case EFailWidget::E_TwiceUseScroll:
+		if (FailedUseScrollAnim)
+		{
+			PlayAnimation(FailedUseScrollAnim);
+			RenderMessage(UGlobalConst::MsgUsedScroll);
+		}
+		break;
+	}
+
+	if (FailSound)
+	{
+		PlaySound(FailSound);
+	}
 }
 
 void UHUDDesk::NotifyOverToken()
@@ -316,11 +358,12 @@ void UHUDDesk::PopUpDetailCard(const FCardInfo& cardInfo)
 	}
 }
 
-void UHUDDesk::PopUpItemGetToken(const FCardInfo& cardInfo)
+void UHUDDesk::PopUpItemGetToken(const TArray<ETokenColor>& colors, bool bEndturn)
 {
 	GetWidget = Cast<UHUDGetToken>(CreateWidget(GetWorld(), GetTokenWidgetClass));
 	auto& TileIdxs = GetWorld()->GetGameState<AGSPlay>()->GetCurrentTileState();
-	GetWidget->SetTiles(TileIdxs, cardInfo);
+	GetWidget->SetTiles(TileIdxs, colors);
+	GetWidget->SetBEndTurn(bEndturn);
 	GetWidget->AddToViewport();
 }
 
