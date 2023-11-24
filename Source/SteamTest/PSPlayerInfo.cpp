@@ -8,7 +8,7 @@
 #include "PCPlay.h"
 #include "GlobalEnum.h"
 
-APSPlayerInfo::APSPlayerInfo(): PName(""), bFirst(false), ScrollNum(0), TotalScore(0), Crown(0)
+APSPlayerInfo::APSPlayerInfo(): PName(""), bFirst(false), ScrollNum(0), TotalScore(19), Crown(0)
 {
 	OwnTokens.Init();
 	OwnBonus.Init();
@@ -65,6 +65,7 @@ void APSPlayerInfo::ClientInitialize(AController* C)
 {
 	Super::ClientInitialize(C);
 
+	//Called Client PS Replicated
 	Cast<APCPlay>(GetOwningController())->BindState();
 }
 
@@ -155,6 +156,11 @@ void APSPlayerInfo::AddScore(ETokenColor color, int s)
 	TotalScore += s;
 
 	OnChangeScore.Broadcast();
+	if (20 <= TotalScore)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("PS: Over20")));
+		OnWinGame.Broadcast(this);
+	}
 
 	if (color != ETokenColor::E_End)
 	{
@@ -166,6 +172,8 @@ void APSPlayerInfo::AddColorScore(ETokenColor color, int s)
 {
 	ColorScore[color] += s;
 	OnChangeColorScore.Broadcast();
+
+	if(10 <= ColorScore[color]) OnWinGame.Broadcast(this);
 }
 
 void APSPlayerInfo::OnRep_TotalScore()
@@ -198,6 +206,7 @@ void APSPlayerInfo::AddCrown(int crown)
 {
 	Crown += crown;
 	OnChangeCrown.Broadcast();
+	if (10 <= Crown) OnWinGame.Broadcast(this);
 
 	if (Crown == 3 || Crown == 6)
 	{

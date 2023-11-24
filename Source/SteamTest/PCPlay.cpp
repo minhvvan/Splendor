@@ -68,11 +68,11 @@ void APCPlay::Click()
 {
 	if (IsLocalController())
 	{
-		if (!IsTurn)
-		{
-			SendMessage(UGlobalConst::MsgNotTurn);
-			return;
-		}
+		//if (!IsTurn)
+		//{
+		//	SendMessage(UGlobalConst::MsgNotTurn);
+		//	return;
+		//}
 
 		FHitResult HitResult;
 		GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
@@ -146,6 +146,11 @@ void APCPlay::CloseRivalInfo()
 			WidgetDesk->CloseRivalInfo();
 		}
 	}
+}
+
+void APCPlay::EndGame_Implementation(const FString& winnerName, bool bWin)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("PC: EndGame")));
 }
 
 //!------------Turn----------------
@@ -328,6 +333,7 @@ void APCPlay::TakeTokenFromOpp(ETokenColor color)
 	//창닫기
 	if (WidgetDesk)
 	{
+		SetInputMode(FInputModeGameAndUI());
 		WidgetDesk->CloseItemWidget(EItem::I_TakeToken);
 	}
 
@@ -339,6 +345,7 @@ void APCPlay::GetTokenByIdx(int idx)
 {
 	check(IsValid(WidgetDesk));
 
+	SetInputMode(FInputModeGameAndUI());
 	WidgetDesk->CloseItemWidget(EItem::I_GetToken);
 
 	SRGetToken(idx);
@@ -404,6 +411,7 @@ TArray<FTokenCount> APCPlay::GetOppTokens()
 void APCPlay::AddCardToHand_Implementation()
 {
 	check(IsValid(WidgetDesk));
+	SetInputMode(FInputModeUIOnly());
 	WidgetDesk->PopUpSelectCard();
 }
 
@@ -415,6 +423,7 @@ void APCPlay::CardClicked(ACard* ClickedCard)
 		if (WidgetDesk)
 		{
 			auto info = ClickedCard->GetInfo();
+			SetInputMode(FInputModeUIOnly());
 			WidgetDesk->PopUpDetailCard(info);
 		}
 	}
@@ -460,6 +469,7 @@ void APCPlay::PopUpOverToken_Implementation()
 {
 	if (WidgetDesk)
 	{
+		SetInputMode(FInputModeUIOnly());
 		WidgetDesk->NotifyOverToken();
 	}
 }
@@ -476,6 +486,7 @@ void APCPlay::GetCardToHand(FCardInfo Info)
 {
 	check(IsValid(WidgetDesk));
 
+	SetInputMode(FInputModeGameAndUI());
 	WidgetDesk->CloseCardWidget();
 	WidgetDesk->AddCardToHand(Info);
 
@@ -508,6 +519,7 @@ void APCPlay::UseItemGetToken_Implementation(const FCardInfo& cardInfo)
 	TArray<ETokenColor> colors;
 	colors.Add(cardInfo.color);
 
+	SetInputMode(FInputModeUIOnly());
 	WidgetDesk->PopUpItemGetToken(colors, true);
 }
 
@@ -515,6 +527,7 @@ void APCPlay::UseItemTakeToken_Implementation()
 {
 	check(IsValid(WidgetDesk));
 
+	SetInputMode(FInputModeUIOnly());
 	WidgetDesk->PopUpItemTakeToken();
 }
 
@@ -522,6 +535,7 @@ void APCPlay::UseItemAnyColor_Implementation(const FCardInfo& cardInfo)
 {
 	check(IsValid(WidgetDesk));
 
+	SetInputMode(FInputModeUIOnly());
 	WidgetDesk->PopUpItemAnyColor(cardInfo);
 }
 
@@ -531,6 +545,7 @@ void APCPlay::CloseCrownWidget(bool bReplay)
 {
 	check(IsValid(WidgetDesk));
 
+	SetInputMode(FInputModeGameAndUI());
 	WidgetDesk->CloseCrownWidget();
 
 	if (!bReplay)

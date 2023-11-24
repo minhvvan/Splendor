@@ -32,7 +32,7 @@ void UHudRivalInfo::NativeOnInitialized()
 				if (bonus != 0) AddBonusList(color, bonus);
 
 				int token = castedPS->GetTokenNum(color);
-				if (token != 0) AddTokenLst(color, token);
+				if (token != 0) AddTokenList(color, token);
 			}
 
 			break;

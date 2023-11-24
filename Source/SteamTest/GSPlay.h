@@ -65,9 +65,6 @@ protected:
 	UPROPERTY()
 	int GlobalScroll;
 
-	//UPROPERTY(Replicated)
-	//TArray<FTokenIdxColor> RemainTokenIdx;
-
 	UPROPERTY(Replicated)
 	FTokenCountList Pouch;
 
@@ -98,7 +95,6 @@ protected:
 
 	UPROPERTY(Replicated)
 	TArray<FCardInfo> TierThreeInfos;
-
 
 	//!----------Tile-------------
 	UPROPERTY(Replicated)

@@ -34,6 +34,9 @@ public:
 	UFUNCTION()
 	void CloseRivalInfo();
 
+	UFUNCTION(Client, Reliable)
+	void EndGame(const FString& winnerName, bool bWin);
+
 	//!----------Turn--------
 	UFUNCTION(Server, Reliable)
 	void SRSetTurn();

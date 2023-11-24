@@ -58,6 +58,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* MessageAnim;
 
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* HoverBacKBtnAnim;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* HoverBuyBtnAnim;
+
 public:
 	//!-----Dele----------
 	//FBuyCard OnBuyCard;
@@ -74,11 +80,26 @@ public:
 	UFUNCTION()
 	void SetCardInfo(const FCardInfo& info_);
 
+	//!--------Buy-------
 	UFUNCTION()
 	void BuyClicked();
 
 	UFUNCTION()
+	void BuyHovered();
+
+	UFUNCTION()
+	void BuyLeaved();
+
+	//!--------Back-------
+	UFUNCTION()
 	void BackClicked();
+
+	UFUNCTION()
+	void BackHovered();
+
+	UFUNCTION()
+	void BackLeaved();	
+
 
 	UFUNCTION()
 	bool CheckCanBuy();

@@ -22,9 +22,17 @@ void ASTGameModePlay::SwapPlayerControllers(APlayerController* OldPC, APlayerCon
 	Super::SwapPlayerControllers(OldPC, NewPC);
 }
 
+void ASTGameModePlay::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+}
+
 void ASTGameModePlay::HandleSeamlessTravelPlayer(AController*& C)
 {
 	Super::HandleSeamlessTravelPlayer(C);
+
+	auto PS = C->GetPlayerState<APSPlayerInfo>();
+	PS->OnWinGame.AddUObject(this, &ASTGameModePlay::EndGame);
 }
 
 void ASTGameModePlay::PostSeamlessTravel()
@@ -63,6 +71,10 @@ void ASTGameModePlay::InitGameState()
 	}
 }
 
+void ASTGameModePlay::HandleMatchHasEnded()
+{
+	//매치 종료
+}
 
 //!-------------Turn-------------------
 void ASTGameModePlay::InitPlayerTurn(APlayerController* Player)
@@ -96,6 +108,25 @@ void ASTGameModePlay::EndCurrentTurn()
 	TurnManager->EndCurrentTurn();
 }
 
+void ASTGameModePlay::EndGame(APSPlayerInfo* winner)
+{
+	//Noti End Match to All
+	FString WinnerName = winner->GetPName();
+	auto GS = GetGameState<AGSPlay>();
+
+	for (auto PS : GS->PlayerArray)
+	{
+		auto casted = Cast<APSPlayerInfo>(PS);
+		auto PC = Cast<APCPlay>(PS->GetPlayerController());
+		if (PC)
+		{
+			PC->EndGame(WinnerName, WinnerName.Equals(casted->GetPName()));
+		}
+	}
+
+	EndMatch();
+}
+
 //!-------------Token-------------------
 void ASTGameModePlay::SetTokenSpawnLoc(TArray<class AToken*>& Tokens)
 {
@@ -110,13 +141,12 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC, const TArray<FTokenId
 	//PS Update
 	auto PS = PC->GetPlayerState<APSPlayerInfo>();
 	auto GS = GetGameState<AGSPlay>();
-	bool bFrist = PS->GetBFirst();
-
 	check(IsValid(PS) && IsValid(GS));
-	
+
 	bool bGiveScroll = CheckGiveScroll(SelectedTokens);
-	bool bGold = false;
 	if (bGiveScroll) GiveScroll(PC);
+
+	bool bGold = false;
 
 	TArray<int> DestroyTokenIdx;
 	for (auto token : SelectedTokens)

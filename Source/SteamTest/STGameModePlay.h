@@ -9,6 +9,8 @@
 /**
  * 
  */
+class APSPlayerInfo;
+
 UCLASS()
 class STEAMTEST_API ASTGameModePlay : public AGameMode
 {
@@ -19,6 +21,8 @@ public:
 
 	UFUNCTION()
 	void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC) override;
+	
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	virtual void PostSeamlessTravel() override;
 
@@ -27,6 +31,8 @@ public:
 	virtual void StartMatch() override;
 
 	virtual void InitGameState() override;
+
+	virtual void HandleMatchHasEnded() override;
 
 	UFUNCTION()
 	void PrintBonus();
@@ -40,6 +46,9 @@ public:
 
 	UFUNCTION()
 	void EndCurrentTurn();
+
+	UFUNCTION()
+	void EndGame(APSPlayerInfo* winner);
 
 	//!-----------Token-----------------------
 	UFUNCTION()

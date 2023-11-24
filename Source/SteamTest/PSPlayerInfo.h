@@ -15,6 +15,7 @@ DECLARE_MULTICAST_DELEGATE(FDeleChangeScore)
 DECLARE_MULTICAST_DELEGATE(FDeleChangeColorScore)
 DECLARE_MULTICAST_DELEGATE(FDeleChangeCrown)
 DECLARE_MULTICAST_DELEGATE(FDeleCrownEvent)
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeleWinGame, APSPlayerInfo*)
 
 UCLASS()
 class STEAMTEST_API APSPlayerInfo : public APlayerState
@@ -118,6 +119,7 @@ public:
 	FDeleChangeColorScore OnChangeColorScore;
 	FDeleChangeCrown OnChangeCrown;
 	FDeleCrownEvent OnCrownEvent;
+	FDeleWinGame OnWinGame;
 
 protected:
 	UFUNCTION()

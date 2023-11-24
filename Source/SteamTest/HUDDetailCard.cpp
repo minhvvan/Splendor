@@ -18,6 +18,11 @@ void UHUDDetailCard::NativeOnInitialized()
 	UseTokens.Init();
 
 	BtnBuy->OnClicked.AddDynamic(this, &UHUDDetailCard::BuyClicked);
+	BtnBuy->OnHovered.AddDynamic(this, &UHUDDetailCard::BuyHovered);
+	BtnBuy->OnUnhovered.AddDynamic(this, &UHUDDetailCard::BuyLeaved);
+
+	BtnBack->OnHovered.AddDynamic(this, &UHUDDetailCard::BackHovered);
+	BtnBack->OnUnhovered.AddDynamic(this, &UHUDDetailCard::BackLeaved);
 	BtnBack->OnClicked.AddDynamic(this, &UHUDDetailCard::BackClicked);
 }
 
@@ -81,12 +86,46 @@ void UHUDDetailCard::BuyClicked()
 		PC->SRBuyCard(Info, UseTokens);
 	}
 
+	GetOwningPlayer()->SetInputMode(FInputModeGameAndUI());
 	RemoveFromParent();
 }
 
 void UHUDDetailCard::BackClicked()
 {
+	GetOwningPlayer()->SetInputMode(FInputModeGameAndUI());
 	RemoveFromParent();
+}
+
+void UHUDDetailCard::BackHovered()
+{
+	if (HoverBacKBtnAnim)
+	{
+		PlayAnimation(HoverBacKBtnAnim);
+	}
+}
+
+void UHUDDetailCard::BackLeaved()
+{
+	if (HoverBacKBtnAnim)
+	{
+		PlayAnimationReverse(HoverBacKBtnAnim);
+	}
+}
+
+void UHUDDetailCard::BuyHovered()
+{
+	if (HoverBuyBtnAnim)
+	{
+		PlayAnimation(HoverBuyBtnAnim);
+	}
+}
+
+void UHUDDetailCard::BuyLeaved()
+{
+	if (HoverBuyBtnAnim)
+	{
+		PlayAnimationReverse(HoverBuyBtnAnim);
+	}
 }
 
 bool UHUDDetailCard::CheckCanBuy()

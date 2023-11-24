@@ -83,7 +83,6 @@ void AToken::Tick(float DeltaTime)
 
 		if (NewPos.Equals(Destination))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Destroy")));
 			this->Destroy();
 		}
 	}
