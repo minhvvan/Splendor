@@ -197,8 +197,6 @@ void ACardManager::ChangeCard(FCardInfo cardInfo)
 	auto GS = GetWorld()->GetGameState<AGSPlay>();
 	check(IsValid(GS));
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangeCard")));
-
 	auto& CardList = GetCardListByTier(cardInfo.tier);
 
 	for (auto card : CardList)

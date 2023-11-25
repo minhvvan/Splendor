@@ -66,9 +66,20 @@ void APSPlayerInfo::ClientInitialize(AController* C)
 	Super::ClientInitialize(C);
 
 	//Called Client PS Replicated
-	Cast<APCPlay>(GetOwningController())->BindState();
+	auto PC = Cast<APCPlay>(GetOwningController());
+	if(PC) PC->BindState();
 }
 
+void APSPlayerInfo::CheckWin()
+{
+	if (20 <= TotalScore) OnWinGame.Broadcast(this);
+	if (10 <= Crown) OnWinGame.Broadcast(this);
+
+	for (auto color : TEnumRange<ETokenColor>())
+	{
+		if (10 <= ColorScore[color]) OnWinGame.Broadcast(this);
+	}
+}
 
 //!-----------------Token---------------------
 //Single Uipdate
@@ -156,11 +167,6 @@ void APSPlayerInfo::AddScore(ETokenColor color, int s)
 	TotalScore += s;
 
 	OnChangeScore.Broadcast();
-	if (20 <= TotalScore)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("PS: Over20")));
-		OnWinGame.Broadcast(this);
-	}
 
 	if (color != ETokenColor::E_End)
 	{
@@ -173,7 +179,6 @@ void APSPlayerInfo::AddColorScore(ETokenColor color, int s)
 	ColorScore[color] += s;
 	OnChangeColorScore.Broadcast();
 
-	if(10 <= ColorScore[color]) OnWinGame.Broadcast(this);
 }
 
 void APSPlayerInfo::OnRep_TotalScore()
@@ -206,7 +211,6 @@ void APSPlayerInfo::AddCrown(int crown)
 {
 	Crown += crown;
 	OnChangeCrown.Broadcast();
-	if (10 <= Crown) OnWinGame.Broadcast(this);
 
 	if (Crown == 3 || Crown == 6)
 	{

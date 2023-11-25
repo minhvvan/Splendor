@@ -39,6 +39,9 @@ public:
 	UFUNCTION()
 	bool GetBFirst() { return bFirst; };
 
+	UFUNCTION()
+	void CheckWin();
+
 	//!------------------------token--------------------------------
 	UFUNCTION()
 	void AddToken(enum ETokenColor type, int cnt);

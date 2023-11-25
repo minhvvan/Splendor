@@ -175,9 +175,23 @@ void USteamTestGameInstance::JoinSession(int32 idx)
 			OnlineSessionInterface->AddOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
 
 			const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-			auto SessionName = FName(SessionSearch->SearchResults[idx].Session.OwningUserName);
+			JoinedSessionName = FName(SessionSearch->SearchResults[idx].Session.OwningUserName);
 			auto Result = SessionSearch->SearchResults[idx];
-			OnlineSessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), SessionName, Result);
+			OnlineSessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, Result);
+		}
+	}
+}
+
+void USteamTestGameInstance::LeaveSession()
+{
+	if (OnlineSessionInterface)
+	{
+		OnlineSessionInterface->UnregisterLocalPlayer(*GetWorld()->GetFirstLocalPlayerFromController()->GetPreferredUniqueNetId(), NAME_GameSession, nullptr);
+
+		//NOT WORK
+		if (!OnlineSessionInterface->DestroySession(NAME_GameSession))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Fail Destory: %s"), *(JoinedSessionName.ToString())));
 		}
 	}
 }
@@ -192,6 +206,8 @@ void USteamTestGameInstance::OnCreateSessionComplete(FName SessionName, bool bWa
 		{
 			Controller->WidgetMultMenu->RemoveFromParent();
 		}
+
+		JoinedSessionName = SessionName;
 
 		EnableListenServer(true, 7777);
 		auto World = GetWorld();

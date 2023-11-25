@@ -49,6 +49,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UImage* ImgToken;
+
 public:
 	//!-----------Setter--------------
 	UFUNCTION(BlueprintCallable)

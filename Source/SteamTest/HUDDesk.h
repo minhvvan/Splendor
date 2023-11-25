@@ -148,6 +148,9 @@ public:
 	void PopUpRivalInfo();
 
 	UFUNCTION()
+	void PopUpEndPage(const FString& winnerName, bool bWin);
+
+	UFUNCTION()
 	UHUDCardHolder* GetBonusWidget(ETokenColor color);
 
 	UFUNCTION()
@@ -205,7 +208,10 @@ private:
 	TSubclassOf<UUserWidget> SelectCardWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UUserWidget> RivalInfoClass;
+	TSubclassOf<UUserWidget> RivalInfoClass;	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> EndGameClass;
 
 	UPROPERTY()
 	TWeakObjectPtr<class UHUDTakeToken> TakeWidget;
@@ -220,8 +226,8 @@ private:
 	TWeakObjectPtr<class UHUDSelectCard> CardWidget;
 
 	UPROPERTY()
-	TWeakObjectPtr<class UHudRivalInfo> RivalInfoWidget;
-
+	TWeakObjectPtr<class UHudRivalInfo> RivalInfoWidget;	
+	
 	//!---------Hand--------------
 	UPROPERTY()
 	bool bUsedScroll = false;

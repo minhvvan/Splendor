@@ -60,7 +60,10 @@ void APCPlay::BeginPlay()
 	}
 
 	//role check 해서 client만 실행하게 하면 될거 같기도 
-	SRSetTurn();
+	if (IsLocalController())
+	{
+		SRSetTurn();
+	}
 }
 
 
@@ -150,7 +153,11 @@ void APCPlay::CloseRivalInfo()
 
 void APCPlay::EndGame_Implementation(const FString& winnerName, bool bWin)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("PC: EndGame")));
+	if (WidgetDesk)
+	{
+		SetInputMode(FInputModeGameAndUI());
+		WidgetDesk->PopUpEndPage(winnerName, bWin);
+	}
 }
 
 //!------------Turn----------------

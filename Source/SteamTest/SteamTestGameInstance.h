@@ -58,10 +58,18 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	class UHUDLobby* WidgetLobby;
-
+	
+	UFUNCTION()
 	void CreateSession();
+
+	UFUNCTION()
 	void FindSession();
+
+	UFUNCTION()
 	void JoinSession(int32 idx);
+
+	UFUNCTION()
+	void LeaveSession();
 
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
 
@@ -70,9 +78,13 @@ public:
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 
 private:
+	UPROPERTY()
 	FString PlayerProfileSlot = "PlayerProfileSlot";
 
 	IOnlineSessionPtr OnlineSessionInterface;
+
+	UPROPERTY()
+	FName JoinedSessionName;
 
 	FOnCreateSessionCompleteDelegate OnCreateSessionCompleteDelegate;
 	FOnFindSessionsCompleteDelegate OnFindSessionCompleteDelegate;

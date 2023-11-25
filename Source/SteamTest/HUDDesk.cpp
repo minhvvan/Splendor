@@ -16,6 +16,7 @@
 #include "HUDSelectCard.h"
 #include "HUDHand.h"
 #include "HudRivalInfo.h"
+#include "HUDEndGame.h"
 #include "PCPlay.h"
 #include "PSPlayerInfo.h"
 #include "GSPlay.h"
@@ -415,4 +416,14 @@ void UHUDDesk::PopUpRivalInfo()
 {
 	RivalInfoWidget = Cast<UHudRivalInfo>(CreateWidget(GetWorld(), RivalInfoClass));
 	RivalInfoWidget->AddToViewport();
+}
+
+void UHUDDesk::PopUpEndPage(const FString& winnerName, bool bWin)
+{
+	auto Widget = Cast<UHUDEndGame>(CreateWidget(GetWorld(), EndGameClass));
+	
+	if (Widget)
+	{
+		Widget->AddToViewport();
+	}
 }

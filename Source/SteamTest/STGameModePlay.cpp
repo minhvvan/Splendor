@@ -74,6 +74,8 @@ void ASTGameModePlay::InitGameState()
 void ASTGameModePlay::HandleMatchHasEnded()
 {
 	//매치 종료
+
+
 }
 
 //!-------------Turn-------------------
@@ -91,6 +93,7 @@ void ASTGameModePlay::InitPlayerTurn(APlayerController* Player)
 			{
 				auto castedPS = Cast<APSPlayerInfo>(PS);
 				if (castedPS->GetBFirst()) firstPlayerName = castedPS->GetPName();
+				if (!castedPS->GetBFirst()) castedPS->AddScroll(1);
 			}
 
 			for (auto PS : GS->PlayerArray)
@@ -314,12 +317,12 @@ void ASTGameModePlay::BuyCard(APlayerController* player, FCardInfo cardInfo, con
 	auto PS = player->GetPlayerState<APSPlayerInfo>();
 	if (PS)
 	{
+		//토큰 소비
+		RestoreTokens(UseTokens, player);
+
 		PS->AddBonus(cardInfo.color);
 		PS->AddScore(cardInfo.color, cardInfo.score);
 		PS->AddCrown(cardInfo.crown);
-		
-		//토큰 소비
-		RestoreTokens(UseTokens, player);
 	}
 
 	//아이템, crown 처리
@@ -335,6 +338,8 @@ void ASTGameModePlay::BuyCard(APlayerController* player, FCardInfo cardInfo, con
 	{
 		EndCurrentTurn();
 	}
+
+	PS->CheckWin();
 }
 
 void ASTGameModePlay::ChangeCard(FCardInfo cardInfo)
