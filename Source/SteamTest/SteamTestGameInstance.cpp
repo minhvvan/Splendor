@@ -186,13 +186,15 @@ void USteamTestGameInstance::LeaveSession()
 {
 	if (OnlineSessionInterface)
 	{
-		OnlineSessionInterface->UnregisterLocalPlayer(*GetWorld()->GetFirstLocalPlayerFromController()->GetPreferredUniqueNetId(), NAME_GameSession, nullptr);
-
 		//NOT WORK
 		if (!OnlineSessionInterface->DestroySession(NAME_GameSession))
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Fail Destory: %s"), *(JoinedSessionName.ToString())));
 		}
+
+
+		APlayerController* const PlayerController = GetFirstLocalPlayerController();
+		PlayerController->ClientTravel("/Game/Splendor/Maps/Menu/MainMenu", ETravelType::TRAVEL_Absolute);
 	}
 }
 
