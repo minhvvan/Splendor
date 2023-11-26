@@ -165,9 +165,8 @@ bool UHUDDetailCard::CheckCanBuy()
 		for (auto cost : costs)
 		{
 			int ownToken = OwnTokens[cost.Key];
-			int ownBonus = PS->GetBonusNum(cost.Key);
 
-			int diff = cost.Value - (ownToken + ownBonus);
+			int diff = cost.Value - ownToken;
 			if (diff > 0)
 			{
 				//gold »ç¿ë
@@ -183,7 +182,7 @@ bool UHUDDetailCard::CheckCanBuy()
 			}
 			else
 			{
-				UseTokens[cost.Key] += (cost.Value - ownBonus);
+				UseTokens[cost.Key] += cost.Value;
 			}
 		}
 
