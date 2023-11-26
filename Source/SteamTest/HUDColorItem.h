@@ -31,20 +31,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UButton* BtnColor;
 
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UImage* ImgColor;
-
 	UFUNCTION()
-	void OnHoverd();
-		
-	UFUNCTION()
-	void OnLeaved();
-
-	UFUNCTION()
-	void OnClicked();
-
+	void OnClicked();	
+	
 private:
-	UPROPERTY(EditAnywhere  )
+	UPROPERTY(EditAnywhere)
 	TMap<ETokenColor, UTexture2D*> TokenImg;
 
 	UPROPERTY()
