@@ -136,6 +136,21 @@ bool UHUDDetailCard::CheckCanBuy()
 		bool flag = true;
 		auto costs = Info.cost;
 
+		//AnyColor Check
+		auto item = Info.item;
+		if (item.Find(EItem::I_AnyColor) != INDEX_NONE)
+		{
+			int totalBonus = 0;
+
+			for (auto color : TEnumRange<ETokenColor>())
+			{
+				totalBonus += PS->GetBonusNum(color);
+			}
+
+			if (totalBonus == 0) flag = false;
+		}
+
+		//Cost Check
 		FTokenCountList OwnTokens;
 		OwnTokens.Init();
 

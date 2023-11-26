@@ -8,7 +8,7 @@
 #include "PCPlay.h"
 #include "GlobalEnum.h"
 
-APSPlayerInfo::APSPlayerInfo(): PName(""), bFirst(false), ScrollNum(0), TotalScore(19), Crown(0)
+APSPlayerInfo::APSPlayerInfo(): PName(""), bFirst(false), ScrollNum(0), TotalScore(0), Crown(0)
 {
 	OwnTokens.Init();
 	OwnBonus.Init();

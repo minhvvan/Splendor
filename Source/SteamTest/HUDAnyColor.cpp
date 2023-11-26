@@ -3,47 +3,32 @@
 
 #include "HUDAnyColor.h"
 #include "Components/Button.h"
+#include "Components/TileView.h"
 #include "PCPlay.h"
 #include "PSPlayerInfo.h"
 #include "GlobalStruct.h"
+#include "CostData.h"
+
 
 void UHUDAnyColor::NativeOnInitialized()
 {
-	BtnRed->OnClicked.AddDynamic(this,   &UHUDAnyColor::RedClicked);
-	BtnGreen->OnClicked.AddDynamic(this, &UHUDAnyColor::GreenClicked);
-	BtnBlue->OnClicked.AddDynamic(this,  &UHUDAnyColor::BlueClicked);
-	BtnWhite->OnClicked.AddDynamic(this, &UHUDAnyColor::WhiteClicked);
-	BtnBlack->OnClicked.AddDynamic(this, &UHUDAnyColor::BlackClicked);
-}
+	//PS에서 Bonus 받아서 data create
+	auto PS = GetOwningPlayer()->GetPlayerState<APSPlayerInfo>();
 
-void UHUDAnyColor::RedClicked()
-{
-	CallUpdate(ETokenColor::E_Red);
-	RemoveFromParent();
-}
+	if (PS)
+	{
+		for (auto color : TEnumRange<ETokenColor>())
+		{
+			if (PS->GetBonusNum(color) > 0)
+			{
+				auto Data = NewObject<UCostData>(this, DataClass);
+				Data->SetColor(color);
 
-void UHUDAnyColor::GreenClicked()
-{
-	CallUpdate(ETokenColor::E_Green);
-	RemoveFromParent();
-}
+				TVColor->AddItem(Data);
+			}
+		}
+	}
 
-void UHUDAnyColor::BlueClicked()
-{
-	CallUpdate(ETokenColor::E_Blue);
-	RemoveFromParent();
-}
-
-void UHUDAnyColor::WhiteClicked()
-{
-	CallUpdate(ETokenColor::E_White);
-	RemoveFromParent();
-}
-
-void UHUDAnyColor::BlackClicked()
-{
-	CallUpdate(ETokenColor::E_Black);
-	RemoveFromParent();
 }
 
 void UHUDAnyColor::SetInfo(const FCardInfo& cardInfo)
@@ -59,4 +44,6 @@ void UHUDAnyColor::CallUpdate(ETokenColor color)
 		PC->SRAddBonus(color);
 		PC->SRAddScore(color, score);
 	}
+
+	RemoveFromParent();
 }
