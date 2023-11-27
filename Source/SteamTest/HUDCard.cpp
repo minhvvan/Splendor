@@ -33,7 +33,6 @@ FReply UHUDCard::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPoi
 
 void UHUDCard::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-
 	if (HoverSound) PlaySound(HoverSound);
 	if (HoverCardAnim) PlayAnimation(HoverCardAnim);
 

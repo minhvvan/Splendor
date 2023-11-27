@@ -55,10 +55,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UImage* ImgToken;
 
-	//!-----------Anim--------------
-	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
-	class UWidgetAnimation* HoverCardAnim;
-
 public:
 	//!-----------Setter--------------
 	UFUNCTION(BlueprintCallable)
@@ -97,4 +93,8 @@ public:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	USoundBase* HoverSound;
 
+private:
+	//!-----------Anim--------------
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim, AllowPrivateAccess = "true"))
+	class UWidgetAnimation* HoverCardAnim;
 };
