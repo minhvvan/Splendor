@@ -215,13 +215,17 @@ void UHUDDesk::CrownEvent()
 		CrownWidget = Cast<UHUDSelectRoyal>(CreateWidget(GetWorld(), RoyalWidgetClass));
 		check(CrownWidget.IsValid());
 
-		auto PS = GetOwningPlayer()->GetPlayerState<APSPlayerInfo>();
-		CrownWidget->SetScore(PS->GetScore());
+		auto PC = GetOwningPlayer();
+		auto PS = PC->GetPlayerState<APSPlayerInfo>();
+		CrownWidget->SetScore(PS->GetTotalScore());
 		CrownWidget->SetCrown(PS->GetCrown());
 		CrownWidget->SetScroll(PS->GetScroll());
 
 		CrownWidget->SetRoyal();
 		CrownWidget->AddToViewport();
+
+
+		PC->SetInputMode(FInputModeUIOnly());
 	}
 }
 

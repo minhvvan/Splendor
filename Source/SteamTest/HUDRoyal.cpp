@@ -17,6 +17,21 @@ void UHUDRoyal::NativeOnInitialized()
 	BorderFrame->OnMouseButtonDownEvent.BindUFunction(this, "OnClicked");
 }
 
+void UHUDRoyal::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	if (HoverSound) PlaySound(HoverSound);
+	if (HoverCardAnim) PlayAnimation(HoverCardAnim);
+
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+}
+
+void UHUDRoyal::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	if (HoverCardAnim) PlayAnimationReverse(HoverCardAnim);
+
+	Super::NativeOnMouseLeave(InMouseEvent);
+}
+
 void UHUDRoyal::SetScore(int score)
 {
 	Score = score;
@@ -76,6 +91,7 @@ void UHUDRoyal::OnClicked(const FGeometry& Geometry, const FPointerEvent& MouseE
 	//소유 설정
 	PC->SRPossessRoyal(Key);
 
+	PC->SetInputMode(FInputModeGameAndUI());
 	switch (Item)
 	{
 	case EItem::I_RePlay:
