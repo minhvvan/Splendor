@@ -64,6 +64,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* HoverBuyBtnAnim;
 
+	//!---------SFX-------------------
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	USoundBase* BuySound;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	USoundBase* FailSound;
 public:
 	//!-----Dele----------
 	//FBuyCard OnBuyCard;

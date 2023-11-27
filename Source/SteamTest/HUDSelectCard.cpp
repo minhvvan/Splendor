@@ -3,7 +3,7 @@
 
 #include "HUDSelectCard.h"
 #include "GSPlay.h"
-#include "Components/ListView.h"
+#include "Components/TileView.h"
 #include "CardData.h"
 #include "GlobalEnum.h"
 
@@ -23,7 +23,7 @@ void UHUDSelectCard::NativeOnInitialized()
 		auto CardData = NewObject<UCardData>(this, CardDataClass);
 		CardData->SetData(card);
 
-		LVOne->AddItem(CardData);
+		TVOne->AddItem(CardData);
 	}
 
 	for (auto card : Two)
@@ -31,7 +31,7 @@ void UHUDSelectCard::NativeOnInitialized()
 		auto CardData = NewObject<UCardData>(this, CardDataClass);
 		CardData->SetData(card);
 
-		LVTwo->AddItem(CardData);
+		TVTwo->AddItem(CardData);
 	}
 
 
@@ -40,6 +40,6 @@ void UHUDSelectCard::NativeOnInitialized()
 		auto CardData = NewObject<UCardData>(this, CardDataClass);
 		CardData->SetData(card);
 
-		LVThree->AddItem(CardData);
+		TVThree->AddItem(CardData);
 	}
 }

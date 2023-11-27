@@ -10,6 +10,7 @@
 #include "Components/TextBlock.h"
 #include "GlobalEnum.h"
 #include "GlobalConst.h"
+#include "Sound/SoundCue.h"
 
 void UHUDDetailCard::NativeOnInitialized()
 {
@@ -73,11 +74,18 @@ void UHUDDetailCard::SetCardInfo(const FCardInfo& info_)
 
 void UHUDDetailCard::BuyClicked()
 {
-	if (!CheckCanBuy() && FailedBuy)
+	if (!CheckCanBuy())
 	{
-		PlayAnimation(FailedBuy);
+		if(FailedBuy) PlayAnimation(FailedBuy);
+		if (FailSound) PlaySound(FailSound);
 		RenderMessage(UGlobalConst::MsgUnableBuy);
 		return;
+	}
+
+	//sfx
+	if (BuySound)
+	{
+		PlaySound(BuySound);
 	}
 
 	auto PC = Cast<APCPlay>(GetOwningPlayer());

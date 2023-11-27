@@ -14,8 +14,6 @@ void UHUDCost::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	//BorderColor->OnMouseButtonDownEvent.BindUFunction(this, "OnClicked");
-
 	BtnColor->OnClicked.AddDynamic(this, &UHUDCost::OnClicked);
 }
 

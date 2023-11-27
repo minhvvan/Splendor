@@ -10,6 +10,7 @@
 #include "Components/Image.h"
 #include "CardManager.h"
 #include "CostData.h"
+#include "CardData.h"
 #include "ItemData.h"
 #include "GlobalConst.h"
 #include "GlobalEnum.h"
@@ -24,12 +25,39 @@ void UHUDCard::NativeOnInitialized()
 
 FReply UHUDCard::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
-
 	Cast<APCPlay>(GetOwningPlayer())->GetCardToHand(Info);
 
+	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 	return OnMouseButtonDown(InGeometry, InMouseEvent).NativeReply;
 }
+
+void UHUDCard::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+
+	if (HoverSound) PlaySound(HoverSound);
+	if (HoverCardAnim) PlayAnimation(HoverCardAnim);
+
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+}
+
+void UHUDCard::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	if (HoverCardAnim) PlayAnimationReverse(HoverCardAnim);
+
+	Super::NativeOnMouseLeave(InMouseEvent);
+}
+
+void UHUDCard::NativeOnListItemObjectSet(UObject* ListItemObject)
+{
+	auto Data = Cast<UCardData>(ListItemObject);
+
+	if (Data)
+	{
+		Info = Data->GetData();
+		SetInfo(Info);
+	}
+}
+
 
 void UHUDCard::SetInfo(FCardInfo info)
 {

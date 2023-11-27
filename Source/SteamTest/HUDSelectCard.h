@@ -18,13 +18,13 @@ protected:
 	virtual void NativeOnInitialized();
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget))
-	class UListView* LVOne;
+	class UTileView* TVOne;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget))
-	class UListView* LVTwo;
+	class UTileView* TVTwo;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget))
-	class UListView* LVThree;
+	class UTileView* TVThree;
 
 private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))

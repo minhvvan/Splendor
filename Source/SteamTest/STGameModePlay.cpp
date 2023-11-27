@@ -204,21 +204,18 @@ void ASTGameModePlay::RestoreTokens(const FTokenCountList& Restore, APlayerContr
 
 void ASTGameModePlay::TakeToken(APlayerController* PC, ETokenColor color)
 {
-	if (TokenManager)
+	//PS update
+	bool bFirst = PC->GetPlayerState<APSPlayerInfo>()->GetBFirst();
+	for (auto ps : GetGameState<AGSPlay>()->PlayerArray)
 	{
-		//PS update
-		bool bFirst = PC->GetPlayerState<APSPlayerInfo>()->GetBFirst();
-		for (auto ps : GetGameState<AGSPlay>()->PlayerArray)
+		auto casted = Cast<APSPlayerInfo>(ps);
+		if (casted->GetBFirst() == bFirst)
 		{
-			auto casted = Cast<APSPlayerInfo>(ps);
-			if (casted->GetBFirst() == bFirst)
-			{
-				casted->AddToken(color, 1);
-			}
-			else
-			{
-				casted->AddToken(color, -1);
-			}
+			casted->AddToken(color, 1);
+		}
+		else
+		{
+			casted->AddToken(color, -1);
 		}
 	}
 }
