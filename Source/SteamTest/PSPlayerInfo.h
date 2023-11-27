@@ -64,6 +64,9 @@ public:
 	UFUNCTION()
 	const TArray<FTokenCount>& GetOwnTokens();
 
+	UFUNCTION()
+	void checkOverToken();
+
 	//!---------------Scroll---------------
 	UFUNCTION()
 	void AddScroll(int num);

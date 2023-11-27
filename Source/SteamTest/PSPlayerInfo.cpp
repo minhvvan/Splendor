@@ -98,11 +98,6 @@ void APSPlayerInfo::AddTokenByList(FTokenCountList& tokens)
 	}
 
 	OnChangeToken.Broadcast();
-
-	if (OwnTokens.Num() > 10)
-	{
-		OnOverToken.Broadcast();
-	}
 }
 
 void APSPlayerInfo::SetToken(ETokenColor type, int num)
@@ -130,17 +125,22 @@ int APSPlayerInfo::GetTokenNum(ETokenColor color)
 void APSPlayerInfo::OnRep_Tokens()
 {
 	OnChangeToken.Broadcast();
-
-	if (OwnTokens.Num() > 10)
-	{
-		OnOverToken.Broadcast();
-	}
+	checkOverToken();
 }
 
 const TArray<FTokenCount>& APSPlayerInfo::GetOwnTokens()
 {
 	return OwnTokens.Get();
 }
+
+void APSPlayerInfo::checkOverToken()
+{
+	if (OwnTokens.Num() > 10)
+	{
+		OnOverToken.Broadcast();
+	}
+}
+
 
 //!-----------------Bonus---------------------
 void APSPlayerInfo::AddBonus(ETokenColor color)

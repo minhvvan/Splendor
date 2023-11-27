@@ -158,6 +158,8 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC, const TArray<FTokenId
 		PS->AddToken(token.Color, 1);
 	}
 
+	PS->checkOverToken();
+
 	//gold check
 	if (bGold)
 	{
