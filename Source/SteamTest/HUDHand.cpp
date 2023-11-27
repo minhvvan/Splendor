@@ -148,3 +148,18 @@ float UHUDHand::GetHoverXOffset(int idx)
 		return HoverXOffset;
 	}
 }
+
+void UHUDHand::RemoveFromHands(int key)
+{
+	for (auto card : Hands)
+	{
+		if (card->GetInfo().key == key)
+		{
+			Hands.Remove(card);
+			OverlayHand->RemoveChild(card);
+
+			UpdateCardPosition();
+			break;
+		}
+	}
+}

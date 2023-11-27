@@ -101,7 +101,7 @@ public:
 	void AddScore(ETokenColor color, int score, APlayerController* player);
 
 	//!-----------Crown----------------------
-	void UpdateRoyal(int key, bool bFirst);
+	void UpdateRoyal(int key, APlayerController* player);
 
 
 protected:

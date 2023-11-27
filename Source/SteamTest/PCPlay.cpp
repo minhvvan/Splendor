@@ -564,10 +564,9 @@ void APCPlay::CloseCrownWidget(bool bReplay)
 void APCPlay::SRPossessRoyal_Implementation(int key)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
-	auto PS = GetPlayerState<APSPlayerInfo>();
 
-	check(IsValid(GM) && IsValid(PS));
-	GM->UpdateRoyal(key, PS->GetBFirst());
+	check(IsValid(GM));
+	GM->UpdateRoyal(key, this);
 }
 
 //!------------Util--------------

@@ -7,7 +7,7 @@
 #include "GlobalStruct.h"
 #include "HUDDetailCard.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FBuyCard);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBuyCard, int);
 
 UCLASS()
 class STEAMTEST_API UHUDDetailCard : public UUserWidget
@@ -70,9 +70,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	USoundBase* FailSound;
+
 public:
 	//!-----Dele----------
-	//FBuyCard OnBuyCard;
+	FBuyCard OnBuyCard;
 
 private:
 	UPROPERTY()

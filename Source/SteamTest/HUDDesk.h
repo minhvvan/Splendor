@@ -88,6 +88,7 @@ protected:
 	class UWidgetAnimation* MessageAnim;
 
 	virtual void NativeOnInitialized();
+
 public:
 	void IntSetTurnBegin(const FString& turn);
 
@@ -121,6 +122,9 @@ public:
 	
 	UFUNCTION()
 	void OnHandCardClicked(FCardInfo cardInfo);
+
+	UFUNCTION()
+	void OnBuyCard(int key);
 
 	//!---------PopUp--------------
 	UFUNCTION()
@@ -227,8 +231,11 @@ private:
 
 	UPROPERTY()
 	TWeakObjectPtr<class UHudRivalInfo> RivalInfoWidget;	
+
+	UPROPERTY()
+	TWeakObjectPtr<class UHUDDetailCard> DetailCardWidget;
 	
-	//!---------Hand--------------
+	//!---------Data--------------
 	UPROPERTY()
 	bool bUsedScroll = false;
 };

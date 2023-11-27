@@ -15,9 +15,14 @@ class STEAMTEST_API UHUDHand : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	UFUNCTION()
 	void AddCard(FCardInfo cardInfo);
 
+	UFUNCTION()
+	void RemoveFromHands(int key);
+
 	FDeleCardClicked OnCard;
+
 protected:
 	virtual void NativeOnInitialized();
 

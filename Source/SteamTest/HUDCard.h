@@ -79,6 +79,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetItem(TArray<EItem> items);
 
+	UFUNCTION(BlueprintCallable)
+	const FCardInfo& GetInfo() { return Info; };
+
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UCostData> CostDataClass;
 

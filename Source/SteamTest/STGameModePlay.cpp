@@ -350,6 +350,7 @@ void ASTGameModePlay::ChangeCard(FCardInfo cardInfo)
 void ASTGameModePlay::GiveScroll(APlayerController* player)
 {
 	int minus = 0;
+	int ScrollNum = player->GetPlayerState<APSPlayerInfo>()->GetScroll();
 
 	auto GS = GetGameState<AGSPlay>();
 	if (GS && IsValid(GS))
@@ -358,6 +359,7 @@ void ASTGameModePlay::GiveScroll(APlayerController* player)
 
 		if (scroll == 0)
 		{
+			if (ScrollNum == 0) return;
 			minus = -1;
 		}
 		else
@@ -482,12 +484,15 @@ void ASTGameModePlay::AddScore(ETokenColor color, int score, APlayerController* 
 }
 
 //!-----------Crown----------------------
-void ASTGameModePlay::UpdateRoyal(int key, bool bFirst)
+void ASTGameModePlay::UpdateRoyal(int key, APlayerController* player)
 {
 	auto GS = GetGameState<AGSPlay>();
+	auto PS = player->GetPlayerState<APSPlayerInfo>();
 	check(IsValid(GS));
 
-	GS->UpdateRoyalOwner(key, bFirst);
+	GS->UpdateRoyalOwner(key, PS->GetBFirst());
+
+	PS->CheckWin();
 }
 
 void ASTGameModePlay::PrintBonus()

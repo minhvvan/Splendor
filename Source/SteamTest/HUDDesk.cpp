@@ -250,6 +250,11 @@ void UHUDDesk::OnHandCardClicked(FCardInfo cardInfo)
 	PopUpDetailCard(cardInfo);
 }
 
+void UHUDDesk::OnBuyCard(int key)
+{
+	Hand->RemoveFromHands(key);
+}
+
 void UHUDDesk::GetTokenClicked()
 {
 	auto PC = Cast<APCPlay>(GetOwningPlayer());
@@ -360,11 +365,13 @@ void UHUDDesk::PopUpDetailCard(const FCardInfo& cardInfo)
 {
 	check(IsValid(DetailCardClass));
 
-	auto widget = Cast<UHUDDetailCard>(CreateWidget(GetWorld(), DetailCardClass));
-	if (widget)
+	DetailCardWidget = Cast<UHUDDetailCard>(CreateWidget(GetWorld(), DetailCardClass));
+	if (DetailCardWidget.IsValid())
 	{
-		widget->SetCardInfo(cardInfo);
-		widget->AddToViewport();
+		DetailCardWidget->SetCardInfo(cardInfo);
+		DetailCardWidget->AddToViewport();
+
+		DetailCardWidget->OnBuyCard.AddUObject(this, &UHUDDesk::OnBuyCard);
 	}
 }
 

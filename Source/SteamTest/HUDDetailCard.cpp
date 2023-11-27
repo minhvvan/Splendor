@@ -96,6 +96,8 @@ void UHUDDetailCard::BuyClicked()
 
 	GetOwningPlayer()->SetInputMode(FInputModeGameAndUI());
 	RemoveFromParent();
+
+	OnBuyCard.Broadcast(Info.key);
 }
 
 void UHUDDetailCard::BackClicked()

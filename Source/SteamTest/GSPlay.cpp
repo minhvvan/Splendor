@@ -130,15 +130,6 @@ void AGSPlay::ClearPouch()
 
 void AGSPlay::UpdateRoyalOwner(int key, bool bFirst)
 {
-	if (bFirst)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("First UpdateRoyalOwner: %d"), key));
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Second UpdateRoyalOwner: %d"), key));
-	}
-
 	for (auto& royal : Royals)
 	{
 		if (royal.Key == key)
