@@ -32,20 +32,12 @@ void APCMenu::ShowMultMenu()
 	SetShowMouseCursor(true);
 }
 
-void APCMenu::PreSessionSearch()
-{
-	if (WidgetMultMenu)
-	{
-		auto Scroll = WidgetMultMenu->GetScrollServer();
-		WidgetMultMenu->PreSessionSearch();
-	}
-}
-
 void APCMenu::AddSessionRow(UHUDServerRow* row)
 {
-	if (WidgetMultMenu)
-	{
-		auto Scroll = WidgetMultMenu->GetScrollServer();
-		Scroll->AddChild(row);
-	}
+	if (WidgetMultMenu) WidgetMultMenu->AddSessionRow(row);
+}
+
+void APCMenu::FailedSearch()
+{
+	if (WidgetMultMenu) WidgetMultMenu->FailedSessionSearch();
 }

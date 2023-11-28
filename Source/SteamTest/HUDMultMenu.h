@@ -28,12 +28,6 @@ protected:
 	class UTextBlock* TxtSearchGame;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnConnection;
-
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UTextBlock* TxtConnection;
-
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UButton* BtnBack;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
@@ -45,21 +39,67 @@ protected:
 protected:
 	virtual void NativeOnInitialized();
 
-private:
-	UFUNCTION(BlueprintCallable)
-	void HostGameClicked();
+	//!----------Anim----------------
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* BtnHostHover;
 
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* BtnSearchHover;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* BtnBackHover;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* MessageAnim;
+
+	//!----------SFX----------------
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USoundBase* FailedSound;
+
+private:
+	//!----------Host----------------
+	UFUNCTION(BlueprintCallable)
+	void HostGameClicked();	
+	
+	UFUNCTION()
+	void HostGameHovered();
+
+	UFUNCTION()
+	void HostGameLeaved();
+
+	//!----------Search----------------
 	UFUNCTION(BlueprintCallable)
 	void SearchGameClicked();
 
+	UFUNCTION()
+	void SearchGameHovered();
+
+	UFUNCTION()
+	void SearchGameLeaved();
+
+
+	//!----------Back----------------
 	UFUNCTION(BlueprintCallable)
 	void BackClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void SetConnectionText();
+	void BackHovered();
+
+	UFUNCTION(BlueprintCallable)
+	void BackLeaved();
+
+
+	//!----------ETC----------------
+	UFUNCTION()
+	void PreSessionSearch();
+
+	UFUNCTION()
+	void RenderMessage();
 
 public:
-	class UScrollBox* GetScrollServer() { return SclServerList;	}
+	UFUNCTION()
+	void AddSessionRow(class UHUDServerRow* row);
 
-	void PreSessionSearch();
+	UFUNCTION()
+	void FailedSessionSearch();
 };

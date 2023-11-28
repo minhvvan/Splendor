@@ -18,10 +18,16 @@ void UHUDMultMenu::NativeOnInitialized()
 	Super::NativeOnInitialized();
 	
 	BtnHostGame->OnClicked.AddDynamic(this, &UHUDMultMenu::HostGameClicked);
-	BtnSearchGame->OnClicked.AddDynamic(this, &UHUDMultMenu::SearchGameClicked);
-	BtnBack->OnClicked.AddDynamic(this, &UHUDMultMenu::BackClicked);
+	BtnHostGame->OnHovered.AddDynamic(this, &UHUDMultMenu::HostGameHovered);
+	BtnHostGame->OnUnhovered.AddDynamic(this, &UHUDMultMenu::HostGameLeaved);
 
-	SetConnectionText();
+	BtnSearchGame->OnClicked.AddDynamic(this, &UHUDMultMenu::SearchGameClicked);
+	BtnSearchGame->OnHovered.AddDynamic(this, &UHUDMultMenu::SearchGameHovered);
+	BtnSearchGame->OnUnhovered.AddDynamic(this, &UHUDMultMenu::SearchGameLeaved);
+
+	BtnBack->OnClicked.AddDynamic(this, &UHUDMultMenu::BackClicked);
+	BtnBack->OnHovered.AddDynamic(this, &UHUDMultMenu::BackHovered);
+	BtnBack->OnUnhovered.AddDynamic(this, &UHUDMultMenu::BackLeaved);
 }
 
 void UHUDMultMenu::HostGameClicked()
@@ -32,12 +38,34 @@ void UHUDMultMenu::HostGameClicked()
 	}
 }
 
+void UHUDMultMenu::HostGameHovered()
+{
+	if (BtnHostHover) PlayAnimation(BtnHostHover);
+}
+
+void UHUDMultMenu::HostGameLeaved()
+{
+	if (BtnHostHover) PlayAnimationReverse(BtnHostHover);
+}
+
 void UHUDMultMenu::SearchGameClicked()
 {
+	PreSessionSearch();
+
 	if (auto GameInstance = Cast<USteamTestGameInstance>(GetGameInstance()))
 	{
 		GameInstance->FindSession();
 	}
+}
+
+void UHUDMultMenu::SearchGameHovered()
+{
+	if (BtnSearchHover) PlayAnimation(BtnSearchHover);
+}
+
+void UHUDMultMenu::SearchGameLeaved()
+{
+	if (BtnSearchHover) PlayAnimationReverse(BtnSearchHover);
 }
 
 void UHUDMultMenu::BackClicked()
@@ -50,9 +78,14 @@ void UHUDMultMenu::BackClicked()
 	RemoveFromParent();
 }
 
-void UHUDMultMenu::SetConnectionText()
+void UHUDMultMenu::BackHovered()
 {
-	TxtConnection->SetText(FText::FromString("Online"));
+	if (BtnBackHover) PlayAnimation(BtnBackHover);
+}
+
+void UHUDMultMenu::BackLeaved()
+{
+	if (BtnBackHover) PlayAnimationReverse(BtnBackHover);
 }
 
 void UHUDMultMenu::PreSessionSearch()
@@ -63,4 +96,25 @@ void UHUDMultMenu::PreSessionSearch()
 	TxtSearchGame->SetText(FText::FromString("Searching...."));
 
 	SclServerList->ClearChildren();
+}
+
+void UHUDMultMenu::RenderMessage()
+{
+	if (MessageAnim) PlayAnimation(MessageAnim);
+	if (FailedSound) PlaySound(FailedSound);
+}
+
+void UHUDMultMenu::AddSessionRow(UHUDServerRow* row)
+{
+	if(SclServerList) SclServerList->AddChild(row);
+}
+
+void UHUDMultMenu::FailedSessionSearch()
+{
+	RenderMessage();
+
+	BorderServerList->SetVisibility(ESlateVisibility::Hidden);
+	BorderMenuBtn->SetIsEnabled(true);
+
+	TxtSearchGame->SetText(FText::FromString("Search Game"));
 }
