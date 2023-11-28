@@ -19,6 +19,9 @@ class STEAMTEST_API UHUDRoyal : public UUserWidget
 protected:
 	virtual void NativeOnInitialized();
 
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UTileView* TileItem;
 
@@ -30,6 +33,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UBorder* BorderFrame;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* HoverSound;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* HoverCardAnim;
 	
 public:
 	//!-----------Setter--------------

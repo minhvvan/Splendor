@@ -8,6 +8,6 @@ public class SteamTest : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput", "UMG", "GameplayTasks", "Slate", "SlateCore", "OnlineSubsystemSteam", "OnlineSubsystem" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput", "UMG", "GameplayTasks", "Slate", "SlateCore", "OnlineSubsystemSteam", "OnlineSubsystem", "Niagara" });
 	}
 }

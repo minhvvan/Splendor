@@ -21,11 +21,21 @@ public:
 	UFUNCTION()
 	void BeginPlay() override;
 
+	//!----------Base--------
 	UFUNCTION()
-	void Click();
+	void Click();	
+	
+	UFUNCTION()
+	void BindState();	
+	
+	UFUNCTION()
+	void PopupRivalInfo();	
 
 	UFUNCTION()
-	void BindState();
+	void CloseRivalInfo();
+
+	UFUNCTION(Client, Reliable)
+	void EndGame(const FString& winnerName, bool bWin);
 
 	//!----------Turn--------
 	UFUNCTION(Server, Reliable)
@@ -47,14 +57,17 @@ public:
 	UFUNCTION()
 	const TArray<FTokenIdxColor>& GetSelectedTokens() { return SelectedTokenIdx; };
 	
+	UFUNCTION(Client, Reliable)
+	void SpawnToken(const TArray<FTokenIdxColor>& Tokens);
+	
 	UFUNCTION()
 	void PossessTokens();
 
 	UFUNCTION(Server, Reliable)
 	void SRPossessTokens(const TArray<FTokenIdxColor>& selcted);
 
-	UFUNCTION(NetMulticast, Reliable)
-	void RemoveTokens(const TArray<FTokenIdxColor>& SelectedTokens);
+	UFUNCTION(Client, Reliable)
+	void RemoveTokens(const TArray<int>& DestroyTokenIdx, bool bOwn);
 
 	UFUNCTION(Client, Reliable)
 	void ClearSelectedTokens();
@@ -64,9 +77,6 @@ public:
 
 	UFUNCTION()
 	bool IsNear(int a, int b);
-
-	//UFUNCTION(Server, Reliable)
-	//void SRClickToken(int idx, ETokenColor color, bool bInsert);
 
 	UFUNCTION()
 	void TokenClicked(AToken* ClickedToken);
@@ -109,8 +119,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SRRestoreToken(const FTokenCountList& Restore);
 
-	UFUNCTION()
-	void SendMessage(FString msg);
+	UFUNCTION(Client, Reliable)
+	void SendMessage(const FString& msg);
 
 	UFUNCTION(Server, Reliable)
 	void SRAddBonus(ETokenColor color);
@@ -121,8 +131,17 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SRAddScroll();
 
+	UFUNCTION(Server, Reliable)
+	void SRUseScroll();
+
 	UFUNCTION()
 	void GetCardToHand(FCardInfo Info);
+
+	UFUNCTION(Client, Reliable)
+	void SetTurnText(const FString& playerName);
+
+	UFUNCTION(Client, Reliable)
+	void FailFillToken();
 
 	//!-----------------Item-------------
 	UFUNCTION(Client, Reliable)
@@ -165,6 +184,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* ClickAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* TabAction;
 
 	UPROPERTY(replicated)
 	TArray<FTokenIdxColor> SelectedTokenIdx;

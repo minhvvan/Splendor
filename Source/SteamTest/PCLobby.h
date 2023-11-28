@@ -26,23 +26,26 @@ public:
 	UFUNCTION()
 	void ShowLobby();
 
-	UFUNCTION()
-	void FirstPlayerClicked();
-
-	UFUNCTION()
-	void SecondPlayerClicked();
-
 	UFUNCTION(Server, Reliable)
 	void SRFirstPlayerClicked();
 
 	UFUNCTION(Server, Reliable)
 	void SRSecondPlayerClicked();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MarkFirst(const FString& name, bool bEnableFirst);
+	UFUNCTION(Client, Reliable)
+	void MarkFirst(const FString& name);
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MarkSecond(const FString& name, bool bEnableSecond);
+	UFUNCTION(Client, Reliable)
+	void MarkSecond(const FString& name);
+
+	UFUNCTION(Client, Reliable)
+	void SuccessSelect();
+
+	UFUNCTION(Client, Reliable)
+	void CancelSelect();
+
+	UFUNCTION(Client, Reliable)
+	void FailSelect();
 
 	UFUNCTION(Client, Reliable)
 	void Init();
@@ -58,6 +61,13 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void DetachLobbyWidget();
 
+	UFUNCTION()
+	void CheckCanStart();
+
+	UFUNCTION()
+	void EnableCanStart(bool bStart);
+
+private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> LobbyClass;
 

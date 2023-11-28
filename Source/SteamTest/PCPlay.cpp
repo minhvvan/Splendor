@@ -52,15 +52,18 @@ void APCPlay::BeginPlay()
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
 
-	TileManager = GetWorld()->SpawnActor<ATileManager>();
-	TokenManager = GetWorld()->SpawnActor<ATokenManager>();
-
-	if (TokenManager)
+	if (IsLocalController())
 	{
-		TokenManager->OnGoldPossessed.AddUObject(this, &APCPlay::AddCardToHand);
+		TileManager = GetWorld()->SpawnActor<ATileManager>();
+		TokenManager = GetWorld()->SpawnActor<ATokenManager>();
+		InitGameBase();
 	}
 
-	InitGameBase();
+	//role check 해서 client만 실행하게 하면 될거 같기도 
+	if (IsLocalController())
+	{
+		SRSetTurn();
+	}
 }
 
 
@@ -100,8 +103,9 @@ void APCPlay::SetupInputComponent()
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
-		// Setup mouse input events
 		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &APCPlay::Click);
+		EnhancedInputComponent->BindAction(TabAction, ETriggerEvent::Started, this, &APCPlay::PopupRivalInfo);
+		EnhancedInputComponent->BindAction(TabAction, ETriggerEvent::Completed, this, &APCPlay::CloseRivalInfo);
 	}
 }
 
@@ -125,20 +129,45 @@ void APCPlay::BindState()
 	}
 }
 
+void APCPlay::PopupRivalInfo()
+{
+	if (IsLocalController())
+	{
+		if (WidgetDesk)
+		{
+			WidgetDesk->PopUpRivalInfo();
+		}
+	}
+}
+
+void APCPlay::CloseRivalInfo()
+{
+	if (IsLocalController())
+	{
+		if (WidgetDesk)
+		{
+			WidgetDesk->CloseRivalInfo();
+		}
+	}
+}
+
+void APCPlay::EndGame_Implementation(const FString& winnerName, bool bWin)
+{
+	if (WidgetDesk)
+	{
+		SetInputMode(FInputModeGameAndUI());
+		WidgetDesk->PopUpEndPage(winnerName, bWin);
+	}
+}
+
 //!------------Turn----------------
 void APCPlay::SRSetTurn_Implementation()
 {
-	auto PS = GetPlayerState<APSPlayerInfo>();
+	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 
-	if (PS)
+	if (GM)
 	{
-		auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
-
-		//GS Update
-		if (GM)
-		{
-			GM->InitPlayerTurn(this, PS->GetBFirst());
-		}
+		GM->InitPlayerTurn(this);
 	}
 }
 
@@ -164,34 +193,31 @@ void APCPlay::InitGameBase()
 	TileManager->SetTokenLocs(Tokens);
 }
 
+void APCPlay::SpawnToken_Implementation(const TArray<FTokenIdxColor>& Tokens)
+{
+	check(IsValid(TokenManager) && IsValid(TileManager));
+
+	auto Spawned = TokenManager->SpawnTokens(Tokens);
+	TileManager->SetTokenLocs(Spawned);
+}
+
 void APCPlay::PossessTokens()
 {
 	SRPossessTokens(SelectedTokenIdx);
 }
 
-void APCPlay::RemoveTokens_Implementation(const TArray<FTokenIdxColor>& SelectedTokens)
+void APCPlay::RemoveTokens_Implementation(const TArray<int>& DestroyTokenIdx, bool bOwn)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("RemoveTokens")));
-
 	if (TileManager)
 	{
-		TileManager->ClearSeletedTiles(SelectedTokens);
+		TileManager->ClearSeletedTiles(DestroyTokenIdx);
 	}
 
 	if (TokenManager)
 	{
-		TokenManager->DestroyTokens(SelectedTokens);
+		TokenManager->DestroyTokens(DestroyTokenIdx, bOwn);
 	}
 }
-
-//void APCPlay::SRClickToken_Implementation(AToken* ClickedToken, int cnt, bool bAble)
-//{
-//	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
-//	if (GM)
-//	{
-//		GM->TokenClicked(ClickedToken, cnt, bAble);
-//	}
-//}
 
 void APCPlay::SRPossessTokens_Implementation(const TArray<FTokenIdxColor>& selcted)
 {
@@ -293,9 +319,6 @@ void APCPlay::TokenClicked(AToken* ClickedToken)
 
 		SelectedTokenIdx.Add({tokenIdx, tokenColor});
 
-		check(IsValid(TokenManager));
-		TokenManager->SelectedToken(ClickedToken, true);
-
 		check(IsValid(TileManager));
 		TileManager->Clicked(tokenIdx, true);
 
@@ -305,10 +328,6 @@ void APCPlay::TokenClicked(AToken* ClickedToken)
 	else
 	{
 		if (ClickedToken->GetTokenType() == ETokenColor::E_Gold) GoldCnt--;
-
-		//해제
-		check(IsValid(TokenManager));
-		TokenManager->SelectedToken(ClickedToken, false);
 
 		check(IsValid(TileManager));
 		TileManager->Clicked(tokenIdx, false);
@@ -321,6 +340,7 @@ void APCPlay::TakeTokenFromOpp(ETokenColor color)
 	//창닫기
 	if (WidgetDesk)
 	{
+		SetInputMode(FInputModeGameAndUI());
 		WidgetDesk->CloseItemWidget(EItem::I_TakeToken);
 	}
 
@@ -332,6 +352,7 @@ void APCPlay::GetTokenByIdx(int idx)
 {
 	check(IsValid(WidgetDesk));
 
+	SetInputMode(FInputModeGameAndUI());
 	WidgetDesk->CloseItemWidget(EItem::I_GetToken);
 
 	SRGetToken(idx);
@@ -362,6 +383,13 @@ void APCPlay::SRFillToken_Implementation()
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 	check(IsValid(GM));
 
+	auto GS = GM->GetGameState<AGSPlay>();
+	if (GS->GetPouch().Num() == 0)
+	{
+		FailFillToken();
+		return;
+	}
+
 	GM->FillToken(this);
 }
 
@@ -390,6 +418,7 @@ TArray<FTokenCount> APCPlay::GetOppTokens()
 void APCPlay::AddCardToHand_Implementation()
 {
 	check(IsValid(WidgetDesk));
+	SetInputMode(FInputModeUIOnly());
 	WidgetDesk->PopUpSelectCard();
 }
 
@@ -401,6 +430,7 @@ void APCPlay::CardClicked(ACard* ClickedCard)
 		if (WidgetDesk)
 		{
 			auto info = ClickedCard->GetInfo();
+			SetInputMode(FInputModeUIOnly());
 			WidgetDesk->PopUpDetailCard(info);
 		}
 	}
@@ -446,11 +476,12 @@ void APCPlay::PopUpOverToken_Implementation()
 {
 	if (WidgetDesk)
 	{
+		SetInputMode(FInputModeUIOnly());
 		WidgetDesk->NotifyOverToken();
 	}
 }
 
-void APCPlay::SendMessage(FString msg)
+void APCPlay::SendMessage_Implementation(const FString& msg)
 {
 	if (WidgetDesk)
 	{
@@ -462,6 +493,7 @@ void APCPlay::GetCardToHand(FCardInfo Info)
 {
 	check(IsValid(WidgetDesk));
 
+	SetInputMode(FInputModeGameAndUI());
 	WidgetDesk->CloseCardWidget();
 	WidgetDesk->AddCardToHand(Info);
 
@@ -469,18 +501,40 @@ void APCPlay::GetCardToHand(FCardInfo Info)
 	SRChangeCard(Info);
 }
 
+void APCPlay::SetTurnText_Implementation(const FString& playerName)
+{
+	if (WidgetDesk)
+	{
+		WidgetDesk->IntSetTurnBegin(playerName);
+	}
+}
+
+void APCPlay::FailFillToken_Implementation()
+{
+	if (WidgetDesk)
+	{
+		WidgetDesk->FailAnimPlay(EFailWidget::E_FillToken);
+	}
+}
+
+
 //!------------Item-----------
 void APCPlay::UseItemGetToken_Implementation(const FCardInfo& cardInfo)
 {
 	check(IsValid(WidgetDesk));
 
-	WidgetDesk->PopUpItemGetToken(cardInfo);
+	TArray<ETokenColor> colors;
+	colors.Add(cardInfo.color);
+
+	SetInputMode(FInputModeUIOnly());
+	WidgetDesk->PopUpItemGetToken(colors, true);
 }
 
 void APCPlay::UseItemTakeToken_Implementation()
 {
 	check(IsValid(WidgetDesk));
 
+	SetInputMode(FInputModeUIOnly());
 	WidgetDesk->PopUpItemTakeToken();
 }
 
@@ -488,6 +542,7 @@ void APCPlay::UseItemAnyColor_Implementation(const FCardInfo& cardInfo)
 {
 	check(IsValid(WidgetDesk));
 
+	SetInputMode(FInputModeUIOnly());
 	WidgetDesk->PopUpItemAnyColor(cardInfo);
 }
 
@@ -497,6 +552,7 @@ void APCPlay::CloseCrownWidget(bool bReplay)
 {
 	check(IsValid(WidgetDesk));
 
+	SetInputMode(FInputModeGameAndUI());
 	WidgetDesk->CloseCrownWidget();
 
 	if (!bReplay)
@@ -508,10 +564,9 @@ void APCPlay::CloseCrownWidget(bool bReplay)
 void APCPlay::SRPossessRoyal_Implementation(int key)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
-	auto PS = GetPlayerState<APSPlayerInfo>();
 
-	check(IsValid(GM) && IsValid(PS));
-	GM->UpdateRoyal(key, PS->GetBFirst());
+	check(IsValid(GM));
+	GM->UpdateRoyal(key, this);
 }
 
 //!------------Util--------------
@@ -586,5 +641,14 @@ void APCPlay::SRAddScroll_Implementation()
 	if (GM)
 	{
 		GM->GetScroll(this);
+	}
+}
+
+void APCPlay::SRUseScroll_Implementation()
+{
+	auto PS = GetPlayerState<APSPlayerInfo>();
+	if (PS)
+	{
+		PS->AddScroll(-1);
 	}
 }

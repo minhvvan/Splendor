@@ -22,41 +22,64 @@ void ASTGameModePlay::SwapPlayerControllers(APlayerController* OldPC, APlayerCon
 	Super::SwapPlayerControllers(OldPC, NewPC);
 }
 
+void ASTGameModePlay::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+}
+
 void ASTGameModePlay::HandleSeamlessTravelPlayer(AController*& C)
 {
 	Super::HandleSeamlessTravelPlayer(C);
 
-	Cast<APCPlay>(C)->SRSetTurn();
+	auto PS = C->GetPlayerState<APSPlayerInfo>();
+	PS->OnWinGame.AddUObject(this, &ASTGameModePlay::EndGame);
+}
+
+void ASTGameModePlay::PostSeamlessTravel()
+{
+	Super::PostSeamlessTravel();
+
+	TurnManager = GetWorld()->SpawnActor<ATurnManager>();
+	CardManager = GetWorld()->SpawnActor<ACardManager>();
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("PostSeamlessTravel")));
 }
 
 void ASTGameModePlay::StartPlay()
 {
 	Super::StartPlay();
-}
+
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("StartPlay")));
+}	
 
 void ASTGameModePlay::StartMatch()
 {
 	Super::StartMatch();
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("StartMatch")));
+
+	//TurnManager = GetWorld()->SpawnActor<ATurnManager>();
+	//CardManager = GetWorld()->SpawnActor<ACardManager>();
+}
+
+void ASTGameModePlay::InitGameState()
+{
+	Super::InitGameState();
 
 	auto GS = GetGameState<AGSPlay>();
-	if (GS && IsValid(GS))
+	if (IsValid(GS))
 	{
 		GS->InitState();
 	}
+}
 
-	//TileManager = GetWorld()->SpawnActor<ATileManager>();
-	//TokenManager = GetWorld()->SpawnActor<ATokenManager>();
-	TurnManager = GetWorld()->SpawnActor<ATurnManager>();
-	CardManager = GetWorld()->SpawnActor<ACardManager>();
+void ASTGameModePlay::HandleMatchHasEnded()
+{
+	//매치 종료
 
-	//if (TokenManager)
-	//{
-	//	TokenManager->AddScroll.AddUObject(this, &ASTGameModePlay::GiveScroll);
-	//}
+
 }
 
 //!-------------Turn-------------------
-void ASTGameModePlay::InitPlayerTurn(APlayerController* Player, bool bFirst)
+void ASTGameModePlay::InitPlayerTurn(APlayerController* Player)
 {
 	if (TurnManager)
 	{
@@ -64,9 +87,18 @@ void ASTGameModePlay::InitPlayerTurn(APlayerController* Player, bool bFirst)
 		
 		if (GS)
 		{
+			FString firstPlayerName;
+
 			for (auto PS : GS->PlayerArray)
 			{
-				TurnManager->InitPlayerTurn(PS->GetPlayerController(), Cast<APSPlayerInfo>(PS)->GetBFirst());
+				auto castedPS = Cast<APSPlayerInfo>(PS);
+				if (castedPS->GetBFirst()) firstPlayerName = castedPS->GetPName();
+				if (!castedPS->GetBFirst()) castedPS->AddScroll(1);
+			}
+
+			for (auto PS : GS->PlayerArray)
+			{
+				TurnManager->InitPlayerTurn(PS->GetPlayerController(), Cast<APSPlayerInfo>(PS)->GetBFirst(), firstPlayerName);
 			}
 		}
 	}
@@ -79,6 +111,25 @@ void ASTGameModePlay::EndCurrentTurn()
 	TurnManager->EndCurrentTurn();
 }
 
+void ASTGameModePlay::EndGame(APSPlayerInfo* winner)
+{
+	//Noti End Match to All
+	FString WinnerName = winner->GetPName();
+	auto GS = GetGameState<AGSPlay>();
+
+	for (auto PS : GS->PlayerArray)
+	{
+		auto casted = Cast<APSPlayerInfo>(PS);
+		auto PC = Cast<APCPlay>(PS->GetPlayerController());
+		if (PC)
+		{
+			PC->EndGame(WinnerName, WinnerName.Equals(casted->GetPName()));
+		}
+	}
+
+	EndMatch();
+}
+
 //!-------------Token-------------------
 void ASTGameModePlay::SetTokenSpawnLoc(TArray<class AToken*>& Tokens)
 {
@@ -88,39 +139,31 @@ void ASTGameModePlay::SetTokenSpawnLoc(TArray<class AToken*>& Tokens)
 	}
 }
 
-void ASTGameModePlay::TokenClicked(AToken* ClickedToken, int cnt, bool bAble)
-{
-	//if (ClickedToken)
-	//{
-	//	int boardIdx = ClickedToken->GetIndex();
-
-	//	if (TileManager)
-	//	{
-	//		TileManager->Clicked(boardIdx, cnt, bAble);
-	//	}
-
-	//	if (TokenManager)
-	//	{
-	//		TokenManager->SelectedToken(ClickedToken, bAble);
-	//	}
-	//}
-}
-
 void ASTGameModePlay::PossessTokens(APlayerController* PC, const TArray<FTokenIdxColor>& SelectedTokens)
 {
 	//PS Update
 	auto PS = PC->GetPlayerState<APSPlayerInfo>();
 	auto GS = GetGameState<AGSPlay>();
-	bool bFrist = PS->GetBFirst();
-
 	check(IsValid(PS) && IsValid(GS));
-	
+
 	bool bGiveScroll = CheckGiveScroll(SelectedTokens);
 	if (bGiveScroll) GiveScroll(PC);
 
+	bool bGold = false;
+
+	TArray<int> DestroyTokenIdx;
 	for (auto token : SelectedTokens)
 	{
+		if (token.Color == ETokenColor::E_Gold) bGold = true;
 		PS->AddToken(token.Color, 1);
+	}
+
+	PS->checkOverToken();
+
+	//gold check
+	if (bGold)
+	{
+		Cast<APCPlay>(PS->GetPlayerController())->AddCardToHand();
 	}
 
 	//GS Update
@@ -129,10 +172,15 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC, const TArray<FTokenId
 		GS->RemoveTokenIdx(token.Idx);
 	}
 
+	for (auto token : SelectedTokens)
+	{
+		DestroyTokenIdx.Add(token.Idx);
+	}
+
 	for (auto ps : GS->PlayerArray)
 	{
-		auto PC = Cast<APCPlay>(ps->GetPlayerController());
-		PC->RemoveTokens(SelectedTokens);
+		auto Controller = Cast<APCPlay>(ps->GetPlayerController());
+		Controller->RemoveTokens(DestroyTokenIdx, PC == Controller);
 	}
 
 	//턴 변경
@@ -158,21 +206,18 @@ void ASTGameModePlay::RestoreTokens(const FTokenCountList& Restore, APlayerContr
 
 void ASTGameModePlay::TakeToken(APlayerController* PC, ETokenColor color)
 {
-	if (TokenManager)
+	//PS update
+	bool bFirst = PC->GetPlayerState<APSPlayerInfo>()->GetBFirst();
+	for (auto ps : GetGameState<AGSPlay>()->PlayerArray)
 	{
-		//PS update
-		bool bFirst = PC->GetPlayerState<APSPlayerInfo>()->GetBFirst();
-		for (auto ps : GetGameState<AGSPlay>()->PlayerArray)
+		auto casted = Cast<APSPlayerInfo>(ps);
+		if (casted->GetBFirst() == bFirst)
 		{
-			auto casted = Cast<APSPlayerInfo>(ps);
-			if (casted->GetBFirst() == bFirst)
-			{
-				casted->AddToken(color, 1);
-			}
-			else
-			{
-				casted->AddToken(color, -1);
-			}
+			casted->AddToken(color, 1);
+		}
+		else
+		{
+			casted->AddToken(color, -1);
 		}
 	}
 }
@@ -186,28 +231,51 @@ void ASTGameModePlay::GetTokenByIdx(APlayerController* PC, int idx)
 	auto CurrentState = GS->GetCurrentTileState();
 	auto color = CurrentState[idx];
 
-	TArray<FTokenIdxColor> temp;
-	temp.Add({ idx, color });
+	TArray<int> temp;
+	temp.Add(idx);
 
 	for (auto ps : GS->PlayerArray)
 	{
-		auto PC = Cast<APCPlay>(ps->GetPlayerController());
-		PC->RemoveTokens(temp);
+		auto Controller = Cast<APCPlay>(ps->GetPlayerController());
+		Controller->RemoveTokens(temp, PC == Controller);
 	}
 
 	//ps update
 	PS->AddToken(color, 1);
+
+	//GS update
+	GS->RemoveTokenIdx(idx);
 }
 
 void ASTGameModePlay::FillToken(APlayerController* PC)
 {
 	//GS에서 pouch받아서 다시 스폰
 	auto GS = GetGameState<AGSPlay>();
-	check(IsValid(TokenManager) && IsValid(GS));
-	auto pouch = GS->GetPouch();
+	check(IsValid(GS));
 
-	TokenManager->SpawnTokensByList(pouch);
+	auto pouch = GS->GetPouch();
+	if (pouch.Num() == 0) return;
+
 	GS->ClearPouch();
+
+	TArray<FTokenIdxColor> Tokens;
+
+	//GS에 Add
+	for (auto token : pouch)
+	{
+		for (int i = 0; i < token.Value; i++)
+		{
+			int idx = GS->AddToken(token.Key);
+			Tokens.Add({ idx, token.Key });
+		}
+	}
+
+	//All PC Spawn
+	for (auto ps : GS->PlayerArray)
+	{
+		auto PC = Cast<APCPlay>(ps->GetPlayerController());
+		PC->SpawnToken(Tokens);
+	}
 
 	//상대에게 특권하나
 	GiveScroll(PC);
@@ -248,12 +316,12 @@ void ASTGameModePlay::BuyCard(APlayerController* player, FCardInfo cardInfo, con
 	auto PS = player->GetPlayerState<APSPlayerInfo>();
 	if (PS)
 	{
+		//토큰 소비
+		RestoreTokens(UseTokens, player);
+
 		PS->AddBonus(cardInfo.color);
 		PS->AddScore(cardInfo.color, cardInfo.score);
 		PS->AddCrown(cardInfo.crown);
-		
-		//토큰 소비
-		RestoreTokens(UseTokens, player);
 	}
 
 	//아이템, crown 처리
@@ -269,6 +337,8 @@ void ASTGameModePlay::BuyCard(APlayerController* player, FCardInfo cardInfo, con
 	{
 		EndCurrentTurn();
 	}
+
+	PS->CheckWin();
 }
 
 void ASTGameModePlay::ChangeCard(FCardInfo cardInfo)
@@ -282,6 +352,7 @@ void ASTGameModePlay::ChangeCard(FCardInfo cardInfo)
 void ASTGameModePlay::GiveScroll(APlayerController* player)
 {
 	int minus = 0;
+	int ScrollNum = player->GetPlayerState<APSPlayerInfo>()->GetScroll();
 
 	auto GS = GetGameState<AGSPlay>();
 	if (GS && IsValid(GS))
@@ -290,6 +361,7 @@ void ASTGameModePlay::GiveScroll(APlayerController* player)
 
 		if (scroll == 0)
 		{
+			if (ScrollNum == 0) return;
 			minus = -1;
 		}
 		else
@@ -414,12 +486,15 @@ void ASTGameModePlay::AddScore(ETokenColor color, int score, APlayerController* 
 }
 
 //!-----------Crown----------------------
-void ASTGameModePlay::UpdateRoyal(int key, bool bFirst)
+void ASTGameModePlay::UpdateRoyal(int key, APlayerController* player)
 {
 	auto GS = GetGameState<AGSPlay>();
+	auto PS = player->GetPlayerState<APSPlayerInfo>();
 	check(IsValid(GS));
 
-	GS->UpdateRoyalOwner(key, bFirst);
+	GS->UpdateRoyalOwner(key, PS->GetBFirst());
+
+	PS->CheckWin();
 }
 
 void ASTGameModePlay::PrintBonus()

@@ -33,10 +33,10 @@ public:
 	void SpawnPlayer(APlayerController* PlayerController);
 
 	UFUNCTION()
-	void FirstPlayerMark(FString name, bool bEnableFirst);
+	void FirstPlayerMark(FString name);
 
 	UFUNCTION()
-	void SecondPlayerMark(FString name, bool bEnableSecond);
+	void SecondPlayerMark(FString name);
 
 	UFUNCTION()
 	void StartGame();

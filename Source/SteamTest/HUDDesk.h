@@ -8,9 +8,18 @@
 #include "GlobalStruct.h"
 #include "HUDDesk.generated.h"
 
-/**
- * 
- */
+UENUM(BlueprintType)
+enum class EFailWidget : uint8
+{
+	E_GetToken = 0		UMETA(DisplayName = "GetToken"),
+	E_FillToken			UMETA(DisplayName = "FillToken"),
+	E_UseScroll			UMETA(DisplayName = "UseScroll"),
+	E_TwiceUseScroll	UMETA(DisplayName = "TwiceUseScroll"),
+
+	E_End,
+};
+
+
 UCLASS()
 class STEAMTEST_API UHUDDesk : public UUserWidget
 {
@@ -22,7 +31,10 @@ protected:
 	class UButton* BtnGetToken;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnFillToken;
+	class UButton* BtnFillToken;	
+	
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UButton* BtnUseScroll;
 	
 	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
 	class UHUDPopUpPannel* PUPannel;
@@ -64,14 +76,21 @@ protected:
 	class UTextBlock* TxtMessage;
 
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
-	class UWidgetAnimation* FailedGetAnim;
+	class UWidgetAnimation* FailedGetAnim;	
+	
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* FailedFillAnim;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* FailedUseScrollAnim;
 
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* MessageAnim;
 
 	virtual void NativeOnInitialized();
+
 public:
-	void SetTurnTxt(FString turn);
+	void IntSetTurnBegin(const FString& turn);
 
 	UFUNCTION()
 	void BindState(class APSPlayerInfo* ps);
@@ -104,6 +123,9 @@ public:
 	UFUNCTION()
 	void OnHandCardClicked(FCardInfo cardInfo);
 
+	UFUNCTION()
+	void OnBuyCard(int key);
+
 	//!---------PopUp--------------
 	UFUNCTION()
 	void CrownEvent();
@@ -115,7 +137,7 @@ public:
 	void PopUpDetailCard(const FCardInfo& cardInfo);
 
 	UFUNCTION()
-	void PopUpItemGetToken(const FCardInfo& cardInfo);
+	void PopUpItemGetToken(const TArray<ETokenColor>& colors, bool bEndturn);
 
 	UFUNCTION()
 	void PopUpItemTakeToken();
@@ -125,6 +147,12 @@ public:
 
 	UFUNCTION()
 	void PopUpSelectCard();
+
+	UFUNCTION()
+	void PopUpRivalInfo();
+
+	UFUNCTION()
+	void PopUpEndPage(const FString& winnerName, bool bWin);
 
 	UFUNCTION()
 	UHUDCardHolder* GetBonusWidget(ETokenColor color);
@@ -138,12 +166,23 @@ public:
 	UFUNCTION()
 	void CloseCardWidget();
 
+	UFUNCTION()
+	void CloseRivalInfo();
+
+	//!---------Util--------------
+	UFUNCTION()
+	void FailAnimPlay(EFailWidget failWidget);
+
 private:
 	UFUNCTION(BlueprintCallable)
 	void GetTokenClicked();
 
 	UFUNCTION(BlueprintCallable)
-	void FilTokenClicked();	
+	void FilTokenClicked();		
+	
+	UFUNCTION(BlueprintCallable)
+	void UseScrollClicked();
+
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	USoundBase* FailSound;
@@ -172,6 +211,12 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> SelectCardWidgetClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> RivalInfoClass;	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> EndGameClass;
+
 	UPROPERTY()
 	TWeakObjectPtr<class UHUDTakeToken> TakeWidget;
 
@@ -183,4 +228,14 @@ private:
 
 	UPROPERTY()
 	TWeakObjectPtr<class UHUDSelectCard> CardWidget;
+
+	UPROPERTY()
+	TWeakObjectPtr<class UHudRivalInfo> RivalInfoWidget;	
+
+	UPROPERTY()
+	TWeakObjectPtr<class UHUDDetailCard> DetailCardWidget;
+	
+	//!---------Data--------------
+	UPROPERTY()
+	bool bUsedScroll = false;
 };

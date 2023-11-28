@@ -66,18 +66,56 @@ void AGSPlay::InitState()
 	}
 
 	Algo::RandomShuffle(TileState);
+
+	//!------------Tile Idx Init-----------
+	{
+		FillIdx.Add(12);
+		FillIdx.Add(17);
+		FillIdx.Add(16);
+		FillIdx.Add(11);
+		FillIdx.Add(6);
+		FillIdx.Add(7);
+		FillIdx.Add(8);
+		FillIdx.Add(13);
+		FillIdx.Add(18);
+		FillIdx.Add(23);
+		FillIdx.Add(22);
+		FillIdx.Add(21);
+		FillIdx.Add(20);
+		FillIdx.Add(15);
+		FillIdx.Add(10);
+		FillIdx.Add(5);
+		FillIdx.Add(0);
+		FillIdx.Add(1);
+		FillIdx.Add(2);
+		FillIdx.Add(3);
+		FillIdx.Add(4);
+		FillIdx.Add(9);
+		FillIdx.Add(14);
+		FillIdx.Add(19);
+		FillIdx.Add(24);
+	}
 }
 
 void AGSPlay::RemoveTokenIdx(int idx)
 {
-	//RemainTokenIdx.Remove({ idx, color });
 	TileState[idx] = ETokenColor::E_End;
 }
 
-void AGSPlay::AddTokenIdx(int idx, ETokenColor color)
+int AGSPlay::AddToken(ETokenColor color)
 {
-	//RemainTokenIdx.Add({ idx, color });
-	
+	int result = -1;
+	for (int i = 0; i < FillIdx.Num(); i++)
+	{
+		if (TileState[FillIdx[i]] == ETokenColor::E_End)
+		{
+			TileState[FillIdx[i]] = color;
+			result = FillIdx[i];
+			break;
+		}
+	}
+
+	return result;
 }
 
 void AGSPlay::AddPouch(ETokenColor color, int cnt)
@@ -92,15 +130,6 @@ void AGSPlay::ClearPouch()
 
 void AGSPlay::UpdateRoyalOwner(int key, bool bFirst)
 {
-	if (bFirst)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("First UpdateRoyalOwner: %d"), key));
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Second UpdateRoyalOwner: %d"), key));
-	}
-
 	for (auto& royal : Royals)
 	{
 		if (royal.Key == key)

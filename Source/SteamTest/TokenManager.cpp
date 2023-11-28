@@ -4,12 +4,15 @@
 #include "TokenManager.h"
 #include "PCPlay.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
 #include "STGameModePlay.h"
 #include "Algo/RandomShuffle.h"
 #include "PSPlayerInfo.h"
 #include "GSPlay.h"
 #include "GlobalStruct.h"
 #include "GlobalEnum.h"
+#include "Sound/SoundCue.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ATokenManager::ATokenManager()
@@ -21,6 +24,12 @@ ATokenManager::ATokenManager()
 	if (TOKEN.Succeeded())
 	{
 		TokenClass = TOKEN.Class;
+	}	
+	
+	ConstructorHelpers::FObjectFinder<USoundBase> SFX(TEXT("/Script/Engine.SoundWave'/Game/Resources/Sound/GetTokenSound.GetTokenSound'"));
+	if (SFX.Succeeded())
+	{
+		GetSound = SFX.Object;
 	}
 }
 
@@ -30,16 +39,18 @@ void ATokenManager::BeginPlay()
 	Super::BeginPlay();
 	//RemainTokens.Init(nullptr, 25);
 	
-	SpawnTokens();
+	InitTokens();
 }
 
 // Called every frame
 void ATokenManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
 }
 
-void ATokenManager::SpawnTokens()
+void ATokenManager::InitTokens()
 {
 	UWorld* world = GetWorld();
 	auto GS = GetWorld()->GetGameState<AGSPlay>();
@@ -67,39 +78,36 @@ void ATokenManager::SpawnTokens()
 				token->SetIndex(i);
 			}
 		}
-
-		//PlaceTokens(RemainTokens);
 	}
 }
 
-void ATokenManager::SpawnTokensByList(FTokenCountList countList)
+const TArray<AToken*>& ATokenManager::SpawnTokens(const TArray<FTokenIdxColor>& Tokens)
 {
 	UWorld* world = GetWorld();
 
 	check(IsValid(world));
+	SpawnedTokens.Empty();
+
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	FRotator rotator;
 	FVector loc = FVector(-210, -200, 0);
 
-	TArray<AToken*> Temp;
-	for (auto count : countList)
+	for (auto info : Tokens)
 	{
-		for (int i = 0; i < count.Value; i++)
-		{
-			auto token = Cast<AToken>(world->SpawnActor<AActor>(TokenClass, loc, rotator, SpawnParams));
+		auto token = Cast<AToken>(world->SpawnActor<AActor>(TokenClass, loc, rotator, SpawnParams));
 
-			if (token)
-			{
-				token->SetActorScale3D(FVector(0.35f));
-				RemainTokens.Add(token);
-				Temp.Add(token);
-				token->SetTokenType(count.Key);
-			}
+		if (token)
+		{
+			token->SetActorScale3D(FVector(0.35f));
+			RemainTokens.Add(token);
+			SpawnedTokens.Add(token);
+			token->SetTokenType(info.Color);
+			token->SetIndex(info.Idx);
 		}
 	}
 
-	PlaceTokens(Temp);
+	return SpawnedTokens;
 }
 
 void ATokenManager::PlaceTokens(TArray<AToken*>& Tokens)
@@ -114,42 +122,26 @@ void ATokenManager::PlaceTokens(TArray<AToken*>& Tokens)
 	}
 }
 
-void ATokenManager::SelectedToken(AToken* token, bool bSelected)
+void ATokenManager::DestroyTokens(const TArray<int>& DestroyTokenIdx, bool bOwn)
 {
-	//if (bSelected)
-	//{
-	//	SelectedTokens.Add(token);
-	//}
-	//else
-	//{
-	//	SelectedTokens.Remove(token);
-	//}
-}
+	FVector TokenPos = bOwn ? UGlobalConst::OwnTokenPos : UGlobalConst::RivalTokenPos;
 
-void ATokenManager::DestroyTokens(const TArray<FTokenIdxColor>& SelectedTokens)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("DestroyTokens")));
-
-	bool bGold = false;
-	for (auto selected : SelectedTokens)
+	if (GetSound && bOwn)
 	{
-		if (selected.Color == ETokenColor::E_Gold) bGold = true;
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), GetSound, FVector::ZeroVector);
+	}
 
+	for (auto idx : DestroyTokenIdx)
+	{
 		for (auto token : RemainTokens)
 		{
-			if (token->GetIndex() == selected.Idx)
+			if (token->GetIndex() == idx)
 			{
 				RemainTokens.Remove(token);
-				token->Destroy();
+				token->MoveAndDestory(TokenPos);
 				break;
 			}
 		}
-	}
-
-	//Delegate
-	if (bGold) 
-	{
-		OnGoldPossessed.Broadcast();
 	}
 }
 

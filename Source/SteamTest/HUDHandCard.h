@@ -39,7 +39,6 @@ protected:
 	UFUNCTION()
 	FWidgetTransform IterpolateWidgetPos(float Delta);
 
-
 	UPROPERTY()
 	FWidgetTransform DestPos;
 

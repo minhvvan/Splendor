@@ -66,23 +66,23 @@ void ASTGameModeLobby::SpawnPlayer(APlayerController* PlayerController)
 	//GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("spawn palyer")));
 }
 
-void ASTGameModeLobby::FirstPlayerMark(FString name, bool bEnableFirst)
+void ASTGameModeLobby::FirstPlayerMark(FString name)
 {
 	auto GS = GetGameState<AGSLobby>();
 
 	for (auto PlayerState : GS->PlayerArray)
 	{
-		Cast<APCLobby>(PlayerState->GetPlayerController())->MarkFirst(name, bEnableFirst);
+		Cast<APCLobby>(PlayerState->GetPlayerController())->MarkFirst(name);
 	}
 }
 
-void ASTGameModeLobby::SecondPlayerMark(FString name, bool bEnableSecond)
+void ASTGameModeLobby::SecondPlayerMark(FString name)
 {
 	auto GS = GetGameState<AGSLobby>();
 
 	for (auto PlayerState : GS->PlayerArray)
 	{
-		Cast<APCLobby>(PlayerState->GetPlayerController())->MarkSecond(name, bEnableSecond);
+		Cast<APCLobby>(PlayerState->GetPlayerController())->MarkSecond(name);
 	}
 }
 

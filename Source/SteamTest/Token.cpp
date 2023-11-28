@@ -26,6 +26,10 @@ AToken::AToken()
 	NetUpdateFrequency = 10;
 
 	Index = 25;
+
+	bMoveComplete = true;
+	LerpSpeed = 0.8f;
+	PitchValue = 0.f;
 }
 
 // Called when the game starts or when spawned
@@ -67,6 +71,21 @@ void AToken::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!bMoveComplete)
+	{
+		auto NewPos = InterpolatePos(DeltaTime);
+
+		PitchValue = rand() % 3;
+		FQuat QuatRotation = FQuat(InterpolateRot(DeltaTime));
+
+		SetActorLocation(NewPos);
+		AddActorLocalRotation(QuatRotation, false, 0, ETeleportType::None);
+
+		if (NewPos.Equals(Destination))
+		{
+			this->Destroy();
+		}
+	}
 }
 
 void AToken::OnHover(UPrimitiveComponent* Target)
@@ -80,4 +99,31 @@ void AToken::OnHover(UPrimitiveComponent* Target)
 void AToken::OnLeave(UPrimitiveComponent* Target)
 {
 	Mesh->SetRenderCustomDepth(false);
+}
+
+void AToken::MoveAndDestory(FVector dest)
+{
+	Destination = dest;
+	bMoveComplete = false;
+}
+
+FVector AToken::InterpolatePos(float delta)
+{
+	FVector CurrentPos = GetActorLocation();
+
+	auto NewPos = FMath::VInterpTo(CurrentPos, Destination, delta, LerpSpeed);
+
+	return NewPos;
+}
+
+FRotator AToken::InterpolateRot(float delta)
+{
+	FRotator CurrentRot = GetActorRotation();
+
+	FRotator DestRot = GetActorRotation();
+	DestRot.Pitch += PitchValue;
+
+	auto NewRot = FMath::RInterpTo(CurrentRot, DestRot, delta, .3f);
+
+	return NewRot;
 }

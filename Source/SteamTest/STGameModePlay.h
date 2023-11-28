@@ -9,6 +9,8 @@
 /**
  * 
  */
+class APSPlayerInfo;
+
 UCLASS()
 class STEAMTEST_API ASTGameModePlay : public AGameMode
 {
@@ -19,13 +21,18 @@ public:
 
 	UFUNCTION()
 	void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC) override;
+	
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 
-	UFUNCTION()
-	void InitPlayerTurn(APlayerController* Player, bool bFirst);
+	virtual void PostSeamlessTravel() override;
 
 	virtual void StartPlay() override;
 
 	virtual void StartMatch() override;
+
+	virtual void InitGameState() override;
+
+	virtual void HandleMatchHasEnded() override;
 
 	UFUNCTION()
 	void PrintBonus();
@@ -35,14 +42,17 @@ public:
 
 	//!-----------Turn-----------------------
 	UFUNCTION()
+	void InitPlayerTurn(APlayerController* Player);
+
+	UFUNCTION()
 	void EndCurrentTurn();
+
+	UFUNCTION()
+	void EndGame(APSPlayerInfo* winner);
 
 	//!-----------Token-----------------------
 	UFUNCTION()
 	void SetTokenSpawnLoc(TArray<class AToken*>& Tokens);
-
-	UFUNCTION()
-	void TokenClicked(class AToken* ClickedToken, int cnt, bool bAble);
 
 	UFUNCTION()
 	void PossessTokens(APlayerController* PC, const TArray<FTokenIdxColor>& SelectedTokens);
@@ -91,7 +101,7 @@ public:
 	void AddScore(ETokenColor color, int score, APlayerController* player);
 
 	//!-----------Crown----------------------
-	void UpdateRoyal(int key, bool bFirst);
+	void UpdateRoyal(int key, APlayerController* player);
 
 
 protected:

@@ -28,6 +28,9 @@ protected:
 	class UTextBlock* TxtSecondPlayer;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UTextBlock* TxtMessage;
+
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UButton* BtnStartGame;	
 	
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
@@ -36,41 +39,88 @@ protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UMultiLineEditableText* EdtChat;
 
+	//!--------------SFX-----------
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USoundBase* ClickSound;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USoundBase* CancelSound;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USoundBase* FailSound;
+
+	//!--------------Anim-----------
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* ShakeFirstBtn;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* FirstHoverAnim;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* ShakeSecondBtn;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* SecondHoverAnim;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* StartGameAnim;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* MessageAnim;
+
 protected:
 	virtual void NativeOnInitialized();
 
 private:
+	//!--------------First-----------
 	UFUNCTION(BlueprintCallable)
 	void FirstPlayerClicked();
 
+	UFUNCTION()
+	void OnHoveredFirst();
+
+	UFUNCTION()
+	void OnLeavedFirst();
+
+	//!--------------Second-----------
 	UFUNCTION(BlueprintCallable)
 	void SecondPlayerClicked();
 
+	UFUNCTION()
+	void OnHoveredSecond();
+
+	UFUNCTION()
+	void OnLeavedSecond();
+
+	//!--------------Game-----------
 	UFUNCTION(BlueprintCallable)
-	void StartGameClicked();
+	void StartGameClicked();	
+	
+	UFUNCTION()
+	void StartGameHovered();	
+	
+	UFUNCTION()
+	void StartGameLeaved();
 
 	UFUNCTION(BlueprintCallable)
 	void OnChatTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
-	UPROPERTY()
-	class APCLobby* MainPC;
-
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	bool bEnableFirst = true;
-
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	bool bEnableSecond = true;
-
 public:
-	void SetPC(APlayerController* PC);
-
+	UFUNCTION()
 	void SetFirstText(FString text);
+
+	UFUNCTION()
 	void SetSecondText(FString text);
 
-	void SetFirstEnable(bool bEnable) { bEnableFirst = bEnable; };
-	void SetSecondEnable(bool bEnable) { bEnableSecond = bEnable; };
-
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty >& OutLifetimeProps);
-
+	UFUNCTION()
 	void SetCanStart(bool bCanStart);
+
+	UFUNCTION()
+	void SuccessSelect();
+
+	UFUNCTION()
+	void CancelSelect();
+
+	UFUNCTION()
+	void FailSelect();
 };

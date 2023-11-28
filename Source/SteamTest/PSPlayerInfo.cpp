@@ -65,9 +65,21 @@ void APSPlayerInfo::ClientInitialize(AController* C)
 {
 	Super::ClientInitialize(C);
 
-	Cast<APCPlay>(GetOwningController())->BindState();
+	//Called Client PS Replicated
+	auto PC = Cast<APCPlay>(GetOwningController());
+	if(PC) PC->BindState();
 }
 
+void APSPlayerInfo::CheckWin()
+{
+	if (20 <= TotalScore) OnWinGame.Broadcast(this);
+	if (10 <= Crown) OnWinGame.Broadcast(this);
+
+	for (auto color : TEnumRange<ETokenColor>())
+	{
+		if (10 <= ColorScore[color]) OnWinGame.Broadcast(this);
+	}
+}
 
 //!-----------------Token---------------------
 //Single Uipdate
@@ -86,11 +98,6 @@ void APSPlayerInfo::AddTokenByList(FTokenCountList& tokens)
 	}
 
 	OnChangeToken.Broadcast();
-
-	if (OwnTokens.Num() > 10)
-	{
-		OnOverToken.Broadcast();
-	}
 }
 
 void APSPlayerInfo::SetToken(ETokenColor type, int num)
@@ -118,17 +125,22 @@ int APSPlayerInfo::GetTokenNum(ETokenColor color)
 void APSPlayerInfo::OnRep_Tokens()
 {
 	OnChangeToken.Broadcast();
-
-	if (OwnTokens.Num() > 10)
-	{
-		OnOverToken.Broadcast();
-	}
+	checkOverToken();
 }
 
 const TArray<FTokenCount>& APSPlayerInfo::GetOwnTokens()
 {
 	return OwnTokens.Get();
 }
+
+void APSPlayerInfo::checkOverToken()
+{
+	if (OwnTokens.Num() > 10)
+	{
+		OnOverToken.Broadcast();
+	}
+}
+
 
 //!-----------------Bonus---------------------
 void APSPlayerInfo::AddBonus(ETokenColor color)
@@ -166,6 +178,7 @@ void APSPlayerInfo::AddColorScore(ETokenColor color, int s)
 {
 	ColorScore[color] += s;
 	OnChangeColorScore.Broadcast();
+
 }
 
 void APSPlayerInfo::OnRep_TotalScore()

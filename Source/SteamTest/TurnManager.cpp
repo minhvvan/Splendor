@@ -3,6 +3,10 @@
 
 #include "TurnManager.h"
 #include "PCPlay.h"
+#include "PSPlayerInfo.h"
+#include "STGameModePlay.h"
+#include "Kismet/GameplayStatics.h"
+#include "GSPlay.h"
 
 // Sets default values
 ATurnManager::ATurnManager()
@@ -27,22 +31,23 @@ void ATurnManager::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ATurnManager::InitPlayerTurn(APlayerController* Player, bool bFirst)
+void ATurnManager::InitPlayerTurn(APlayerController* Player, bool bFirst, const FString& playerName)
 {
-	if (bFirst)
-	{
-		auto FirstPlayer = Cast<APCPlay>(Player);
-		FirstPlayer->SetTurn(true);
-		Players[0] = FirstPlayer;
+	auto CastedPC = Cast<APCPlay>(Player);
 
-		CurrentPlayer = FirstPlayer;
-	}
-	else
+	if (CastedPC == nullptr) return;
+
+	CastedPC->SetTurn(bFirst);
+
+	if (bFirst) CurrentPlayer = CastedPC;
+
+	if (Players.Num() == 2)
 	{
-		auto SecondPlayer = Cast<APCPlay>(Player);
-		SecondPlayer->SetTurn(false);
-		Players[1] = SecondPlayer;
+		if(bFirst) Players[0] = CastedPC;
+		else Players[1] = CastedPC;
 	}
+
+	CastedPC->SetTurnText(playerName);
 }
 
 
@@ -57,6 +62,18 @@ void ATurnManager::EndCurrentTurn()
 		if (CurrentPlayer)
 		{
 			CurrentPlayer->SetTurn(true);
+		}
+
+		auto CurrentPlayerName = CurrentPlayer->GetPlayerState<APSPlayerInfo>()->GetPName();
+		auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+		if (GM)
+		{
+			auto GS = GM->GetGameState<AGSPlay>();
+
+			for (auto PS : GS->PlayerArray)
+			{
+				Cast<APCPlay>(PS->GetPlayerController())->SetTurnText(CurrentPlayerName);
+			}
 		}
 	}
 }

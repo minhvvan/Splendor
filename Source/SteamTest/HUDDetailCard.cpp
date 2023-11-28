@@ -10,6 +10,7 @@
 #include "Components/TextBlock.h"
 #include "GlobalEnum.h"
 #include "GlobalConst.h"
+#include "Sound/SoundCue.h"
 
 void UHUDDetailCard::NativeOnInitialized()
 {
@@ -18,6 +19,11 @@ void UHUDDetailCard::NativeOnInitialized()
 	UseTokens.Init();
 
 	BtnBuy->OnClicked.AddDynamic(this, &UHUDDetailCard::BuyClicked);
+	BtnBuy->OnHovered.AddDynamic(this, &UHUDDetailCard::BuyHovered);
+	BtnBuy->OnUnhovered.AddDynamic(this, &UHUDDetailCard::BuyLeaved);
+
+	BtnBack->OnHovered.AddDynamic(this, &UHUDDetailCard::BackHovered);
+	BtnBack->OnUnhovered.AddDynamic(this, &UHUDDetailCard::BackLeaved);
 	BtnBack->OnClicked.AddDynamic(this, &UHUDDetailCard::BackClicked);
 }
 
@@ -68,11 +74,18 @@ void UHUDDetailCard::SetCardInfo(const FCardInfo& info_)
 
 void UHUDDetailCard::BuyClicked()
 {
-	if (!CheckCanBuy() && FailedBuy)
+	if (!CheckCanBuy())
 	{
-		PlayAnimation(FailedBuy);
+		if(FailedBuy) PlayAnimation(FailedBuy);
+		if (FailSound) PlaySound(FailSound);
 		RenderMessage(UGlobalConst::MsgUnableBuy);
 		return;
+	}
+
+	//sfx
+	if (BuySound)
+	{
+		PlaySound(BuySound);
 	}
 
 	auto PC = Cast<APCPlay>(GetOwningPlayer());
@@ -81,12 +94,48 @@ void UHUDDetailCard::BuyClicked()
 		PC->SRBuyCard(Info, UseTokens);
 	}
 
+	GetOwningPlayer()->SetInputMode(FInputModeGameAndUI());
 	RemoveFromParent();
+
+	OnBuyCard.Broadcast(Info.key);
 }
 
 void UHUDDetailCard::BackClicked()
 {
+	GetOwningPlayer()->SetInputMode(FInputModeGameAndUI());
 	RemoveFromParent();
+}
+
+void UHUDDetailCard::BackHovered()
+{
+	if (HoverBacKBtnAnim)
+	{
+		PlayAnimation(HoverBacKBtnAnim);
+	}
+}
+
+void UHUDDetailCard::BackLeaved()
+{
+	if (HoverBacKBtnAnim)
+	{
+		PlayAnimationReverse(HoverBacKBtnAnim);
+	}
+}
+
+void UHUDDetailCard::BuyHovered()
+{
+	if (HoverBuyBtnAnim)
+	{
+		PlayAnimation(HoverBuyBtnAnim);
+	}
+}
+
+void UHUDDetailCard::BuyLeaved()
+{
+	if (HoverBuyBtnAnim)
+	{
+		PlayAnimationReverse(HoverBuyBtnAnim);
+	}
 }
 
 bool UHUDDetailCard::CheckCanBuy()
@@ -97,6 +146,21 @@ bool UHUDDetailCard::CheckCanBuy()
 		bool flag = true;
 		auto costs = Info.cost;
 
+		//AnyColor Check
+		auto item = Info.item;
+		if (item.Find(EItem::I_AnyColor) != INDEX_NONE)
+		{
+			int totalBonus = 0;
+
+			for (auto color : TEnumRange<ETokenColor>())
+			{
+				totalBonus += PS->GetBonusNum(color);
+			}
+
+			if (totalBonus == 0) flag = false;
+		}
+
+		//Cost Check
 		FTokenCountList OwnTokens;
 		OwnTokens.Init();
 
@@ -111,9 +175,8 @@ bool UHUDDetailCard::CheckCanBuy()
 		for (auto cost : costs)
 		{
 			int ownToken = OwnTokens[cost.Key];
-			int ownBonus = PS->GetBonusNum(cost.Key);
 
-			int diff = cost.Value - (ownToken + ownBonus);
+			int diff = cost.Value - ownToken;
 			if (diff > 0)
 			{
 				//gold »ç¿ë
@@ -129,7 +192,7 @@ bool UHUDDetailCard::CheckCanBuy()
 			}
 			else
 			{
-				UseTokens[cost.Key] += (cost.Value - ownBonus);
+				UseTokens[cost.Key] += cost.Value;
 			}
 		}
 

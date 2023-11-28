@@ -21,10 +21,10 @@ public:
 	void ShowMultMenu();
 
 	UFUNCTION()
-	void PreSessionSearch();
+	void AddSessionRow(class UHUDServerRow* row);
 
 	UFUNCTION()
-	void AddSessionRow(class UHUDServerRow* row);
+	void FailedSearch();
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> MultMenuClass;

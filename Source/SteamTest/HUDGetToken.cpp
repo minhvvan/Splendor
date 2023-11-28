@@ -5,7 +5,7 @@
 #include "TileData.h"
 #include "Components/TileView.h"
 
-void UHUDGetToken::SetTiles(const TArray<ETokenColor>& tokens, const FCardInfo& cardInfo)
+void UHUDGetToken::SetTiles(const TArray<ETokenColor>& tokens, const TArray<ETokenColor>& colors)
 {
 	check(IsValid(TileDataClass));
 
@@ -14,7 +14,7 @@ void UHUDGetToken::SetTiles(const TArray<ETokenColor>& tokens, const FCardInfo& 
 		auto TileData = NewObject<UTileData>(this, TileDataClass);
 		TileData->SetColor(tokens[i]);
 		TileData->SetIdx(i);
-		TileData->SetEnable(tokens[i] == cardInfo.color);
+		TileData->SetEnable(colors.Find(tokens[i]) != INDEX_NONE);
 
 		if (i < 5)
 		{

@@ -5,20 +5,25 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "GlobalStruct.h"
+#include "Blueprint/IUserObjectListEntry.h"
 #include "HUDCard.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEAMTEST_API UHUDCard : public UUserWidget
+class STEAMTEST_API UHUDCard : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 	
 protected:
 	virtual void NativeOnInitialized();
 
-	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+
+	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UBorder* BorderFrame;
@@ -49,6 +54,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UImage* ImgToken;
+
 public:
 	//!-----------Setter--------------
 	UFUNCTION(BlueprintCallable)
@@ -69,6 +75,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetItem(TArray<EItem> items);
 
+	UFUNCTION(BlueprintCallable)
+	const FCardInfo& GetInfo() { return Info; };
+
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UCostData> CostDataClass;
 
@@ -80,4 +89,12 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	FCardInfo Info;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	USoundBase* HoverSound;
+
+private:
+	//!-----------Anim--------------
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim, AllowPrivateAccess = "true"))
+	class UWidgetAnimation* HoverCardAnim;
 };

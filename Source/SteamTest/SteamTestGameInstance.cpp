@@ -131,9 +131,11 @@ void USteamTestGameInstance::CreateSession()
 		SessionSettings->bUsesPresence = true;			// 정확하지 않음 - Steam 사용자와 같은 지역에서 세션을 찾을 수 있는 여부
 		SessionSettings->bUseLobbiesIfAvailable = true; // Lobby API를 지원할 경우 Lobby 사용 여부
 		SessionSettings->Set(FName("MatchType"), FString("FreeForAll"), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing); // 세션의 MatchType을 모두에게 열림, 온라인서비스와 핑을 통해 세션 홍보 옵션으로 설정
-		
+
 		const ULocalPlayer* Localplayer = GetWorld()->GetFirstLocalPlayerFromController();
 		OnlineSessionInterface->CreateSession(*Localplayer->GetPreferredUniqueNetId(), NAME_GameSession, *SessionSettings);
+
+		OnlineSessionInterface->RegisterPlayer(NAME_GameSession, *Localplayer->GetPreferredUniqueNetId(), false);
 	}
 }
 
@@ -144,7 +146,6 @@ void USteamTestGameInstance::FindSession()
 	{
 		// OnlineSubsystem Interface 받아오기
 		OnlineSessionInterface = OnlineSubsystem->GetSessionInterface();
-
 		if (OnlineSessionInterface)
 		{
 			// Find Session Complete Delegate 등록
@@ -175,10 +176,25 @@ void USteamTestGameInstance::JoinSession(int32 idx)
 			OnlineSessionInterface->AddOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
 
 			const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-			auto SessionName = FName(SessionSearch->SearchResults[idx].Session.OwningUserName);
+			JoinedSessionName = FName(SessionSearch->SearchResults[idx].Session.OwningUserName);
 			auto Result = SessionSearch->SearchResults[idx];
-			OnlineSessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), SessionName, Result);
+			OnlineSessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, Result);
 		}
+	}
+}
+
+void USteamTestGameInstance::LeaveSession()
+{
+	if (OnlineSessionInterface)
+	{
+		//NOT WORK
+		if (!OnlineSessionInterface->DestroySession(NAME_GameSession))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("Fail Destory: %s"), *(JoinedSessionName.ToString())));
+		}
+
+		APlayerController* const PlayerController = GetFirstLocalPlayerController();
+		PlayerController->ClientTravel("/Game/Splendor/Maps/Menu/MainMenu", ETravelType::TRAVEL_Absolute);
 	}
 }
 
@@ -193,6 +209,10 @@ void USteamTestGameInstance::OnCreateSessionComplete(FName SessionName, bool bWa
 			Controller->WidgetMultMenu->RemoveFromParent();
 		}
 
+		JoinedSessionName = SessionName;
+		auto CreatedSession = OnlineSessionInterface->GetNamedSession(SessionName);
+		CreatedSession->OwningUserName = Controller->GetPlayerState<APSPlayerInfo>()->GetPName();
+
 		EnableListenServer(true, 7777);
 		auto World = GetWorld();
 		if (World)
@@ -202,15 +222,7 @@ void USteamTestGameInstance::OnCreateSessionComplete(FName SessionName, bool bWa
 	}
 	else	// 세션 생성 실패
 	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(
-				-1,
-				15,
-				FColor::Red,
-				FString::Printf(TEXT("fail session crate")));
-		}
-
+		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("fail session crate")));
 		OnCreateSessionCompleteDelegate.Unbind();
 		//! 오류 메시지 팝업
 	}
@@ -221,28 +233,26 @@ void USteamTestGameInstance::OnFindSessionComplete(bool bWasSuccessful)
 	OnFindSessionCompleteDelegate.Unbind();
 
 	auto Controller = Cast<APCMenu>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (Controller)
+
+	if (bWasSuccessful)
 	{
-		Controller->PreSessionSearch();
-	}
-
-	for (auto Result : SessionSearch->SearchResults)
-	{
-		auto ServerRow = Cast<UHUDServerRow>(CreateWidget(GetWorld(), ServerRowClass));
-
-		int max = Result.Session.SessionSettings.NumPublicConnections;
-		int current = max - Result.Session.NumOpenPublicConnections;
-
-		
-		//!TODO: 이름, 인원 변경
-		ServerRow->SetServerName("aa");
-		ServerRow->SetNumPlayer(current, max);
-		ServerRow->SetPing(Result.PingInMs);
-
-		if (Controller)
+		for (auto Result : SessionSearch->SearchResults)
 		{
+			auto ServerRow = Cast<UHUDServerRow>(CreateWidget(GetWorld(), ServerRowClass));
+
+			int max = Result.Session.SessionSettings.NumPublicConnections;
+			int current = Result.Session.NumOpenPublicConnections;
+
+			ServerRow->SetServerName(Result.Session.OwningUserName);
+			ServerRow->SetNumPlayer(current, max);
+			ServerRow->SetPing(Result.PingInMs);
+
 			Controller->AddSessionRow(ServerRow);
 		}
+	}
+	else
+	{
+		Controller->FailedSearch();
 	}
 }
 

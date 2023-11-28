@@ -38,9 +38,16 @@ public:
 	static const FString MsgNotSelect;
 	static const FString MsgUnableBuy;
 	static const FString MsgCanNotTake;
+	static const FString MsgNoPouch;
+	static const FString MsgCanNotUseScroll;
+	static const FString MsgUsedScroll;
 
 	//!------------------util----------------------
 	static const int FirstPlayer;
 	static const int SecondPlayer;
+	static const FString SuffixTurnText;
 
+	//!------------------Position----------------------
+	static const FVector RivalTokenPos;
+	static const FVector OwnTokenPos;
 };

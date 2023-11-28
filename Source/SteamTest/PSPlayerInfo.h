@@ -15,6 +15,7 @@ DECLARE_MULTICAST_DELEGATE(FDeleChangeScore)
 DECLARE_MULTICAST_DELEGATE(FDeleChangeColorScore)
 DECLARE_MULTICAST_DELEGATE(FDeleChangeCrown)
 DECLARE_MULTICAST_DELEGATE(FDeleCrownEvent)
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeleWinGame, APSPlayerInfo*)
 
 UCLASS()
 class STEAMTEST_API APSPlayerInfo : public APlayerState
@@ -38,6 +39,9 @@ public:
 	UFUNCTION()
 	bool GetBFirst() { return bFirst; };
 
+	UFUNCTION()
+	void CheckWin();
+
 	//!------------------------token--------------------------------
 	UFUNCTION()
 	void AddToken(enum ETokenColor type, int cnt);
@@ -59,6 +63,9 @@ public:
 
 	UFUNCTION()
 	const TArray<FTokenCount>& GetOwnTokens();
+
+	UFUNCTION()
+	void checkOverToken();
 
 	//!---------------Scroll---------------
 	UFUNCTION()
@@ -118,6 +125,7 @@ public:
 	FDeleChangeColorScore OnChangeColorScore;
 	FDeleChangeCrown OnChangeCrown;
 	FDeleCrownEvent OnCrownEvent;
+	FDeleWinGame OnWinGame;
 
 protected:
 	UFUNCTION()

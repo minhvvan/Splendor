@@ -45,54 +45,37 @@ void APCLobby::SRSpawnPlayer_Implementation()
 
 void APCLobby::ShowLobby()
 {
-	if (!WidgetLobby)
-	{
-		WidgetLobby = Cast<UHUDLobby>(CreateWidget(GetWorld(), LobbyClass));
-		WidgetLobby->SetPC(this);
-	}
-
-	WidgetLobby->AddToViewport();
-	SetInputMode(FInputModeUIOnly());
-	SetShowMouseCursor(true);
-}
-
-void APCLobby::FirstPlayerClicked()
-{
 	if (IsLocalController())
 	{
-		SRFirstPlayerClicked();
+		if (!WidgetLobby)
+		{
+			WidgetLobby = Cast<UHUDLobby>(CreateWidget(GetWorld(), LobbyClass));
+		}
+
+		WidgetLobby->AddToViewport();
+		SetInputMode(FInputModeUIOnly());
+		SetShowMouseCursor(true);
 	}
 }
 
-void APCLobby::SecondPlayerClicked()
-{
-	if (IsLocalController())
-	{
-		SRSecondPlayerClicked();
-	}
-}
-
-
-void APCLobby::MarkFirst_Implementation(const FString& name, bool bEnableFirst)
+void APCLobby::MarkFirst_Implementation(const FString& name)
 {
 	if (IsLocalController())
 	{
 		if (WidgetLobby)
 		{
 			WidgetLobby->SetFirstText(name);
-			WidgetLobby->SetFirstEnable(bEnableFirst);
 		}
 	}
 }
 
-void APCLobby::MarkSecond_Implementation(const FString& name, bool bEnableSecond)
+void APCLobby::MarkSecond_Implementation(const FString& name)
 {
 	if (IsLocalController())
 	{
 		if (WidgetLobby)
 		{
 			WidgetLobby->SetSecondText(name);
-			WidgetLobby->SetSecondEnable(bEnableSecond);
 		}
 	}
 }
@@ -101,62 +84,67 @@ void APCLobby::SRFirstPlayerClicked_Implementation()
 {
 	ASTGameModeLobby* GMLobby = Cast<ASTGameModeLobby>(UGameplayStatics::GetGameMode(GetWorld()));
 	auto GS = GetWorld()->GetGameState<AGSLobby>();
+	auto PS = GetPlayerState<APSPlayerInfo>();
+
+	if (GS->GetFirstPlayer() != nullptr && GS->GetFirstPlayer() != this)
+	{
+		FailSelect();
+		return;
+	}
+
 	FString PlayerName;
-	bool bEnableFirst;
+
+	//등록 성공
 	if (GS->SetFirstPlayer(this))
 	{
-		auto PS = GetPlayerState<APSPlayerInfo>();
-		if (PS)
-		{
-			PS->SetBFirst(true);
-			PlayerName = PS->GetPName();
-			bEnableFirst = false;
-		}
+		PS->SetBFirst(true);
+		PlayerName = PS->GetPName();
+
+		Cast<APCLobby>(PS->GetPlayerController())->SuccessSelect();
 	}
 	else
 	{
-		auto PS = GetPlayerState<APSPlayerInfo>();
 		PS->SetBFirst(false);
 		PlayerName = "";
-		bEnableFirst = true;
+
+		Cast<APCLobby>(PS->GetPlayerController())->CancelSelect();
 	}
 
-	if (WidgetLobby)
-	{
-		WidgetLobby->SetCanStart(GS->GetCanStart());
-	}
-
-	GMLobby->FirstPlayerMark(PlayerName, bEnableFirst);
+	CheckCanStart();
+	GMLobby->FirstPlayerMark(PlayerName);
 }
 
 void APCLobby::SRSecondPlayerClicked_Implementation()
 {
 	ASTGameModeLobby* GMLobby = Cast< ASTGameModeLobby>(UGameplayStatics::GetGameMode(GetWorld()));
 	auto GS = GetWorld()->GetGameState<AGSLobby>();
+	auto PS = GetPlayerState<APSPlayerInfo>();
+
+	if (GS->GetSecondPlayer() != nullptr && GS->GetSecondPlayer() != this)
+	{
+		FailSelect();
+		return;
+	}
+
 	FString PlayerName;
-	bool bEnableSecond;
 
 	if (GS->SetSecondPlayer(this))
 	{
-		auto PS = GetPlayerState<APSPlayerInfo>();
 		if (PS)
 		{
 			PlayerName = PS->GetPName();
-			bEnableSecond = false;
+			Cast<APCLobby>(PS->GetPlayerController())->SuccessSelect();
 		}
 	}
 	else
 	{
 		PlayerName = "";
-		bEnableSecond = true;
+		Cast<APCLobby>(PS->GetPlayerController())->CancelSelect();
 	}
 
-	if (WidgetLobby)
-	{
-		WidgetLobby->SetCanStart(GS->GetCanStart());
-	}
+	CheckCanStart();
 
-	GMLobby->SecondPlayerMark(PlayerName, bEnableSecond);
+	GMLobby->SecondPlayerMark(PlayerName);
 }
 
 void APCLobby::Init_Implementation()
@@ -186,6 +174,24 @@ void APCLobby::OnRep_PlayerState()
 	Init();
 }
 
+void APCLobby::CheckCanStart()
+{
+	auto GS = GetWorld()->GetGameState<AGSLobby>();
+	for (auto PS : GS->PlayerArray)
+	{
+		auto PC = Cast<APCLobby>(PS->GetPlayerController());
+		PC->EnableCanStart(GS->GetCanStart());
+	}
+}
+
+void APCLobby::EnableCanStart(bool bStart)
+{
+	if (WidgetLobby)
+	{
+		WidgetLobby->SetCanStart(bStart);
+	}
+}
+
 void APCLobby::SRStartGame_Implementation()
 {
 	ASTGameModeLobby* GMLobby = Cast< ASTGameModeLobby>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -198,7 +204,6 @@ void APCLobby::SRStartGame_Implementation()
 	if (World)
 	{
 		World->ServerTravel("/Game/Splendor/Maps/Game/Splendor");
-		//World->ServerTravel("/Game/Splendor/Maps/ThirdPersonMap");
 	}
 }
 
@@ -208,4 +213,19 @@ void APCLobby::DetachLobbyWidget_Implementation()
 	{
 		WidgetLobby->RemoveFromParent();
 	}
+}
+
+void APCLobby::SuccessSelect_Implementation()
+{
+	if (WidgetLobby) WidgetLobby->SuccessSelect();
+}
+
+void APCLobby::CancelSelect_Implementation()
+{
+	if (WidgetLobby) WidgetLobby->CancelSelect();
+}
+
+void APCLobby::FailSelect_Implementation()
+{
+	if (WidgetLobby) WidgetLobby->FailSelect();
 }

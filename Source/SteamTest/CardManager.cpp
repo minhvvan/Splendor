@@ -197,16 +197,12 @@ void ACardManager::ChangeCard(FCardInfo cardInfo)
 	auto GS = GetWorld()->GetGameState<AGSPlay>();
 	check(IsValid(GS));
 
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("ChangeCard")));
-
 	auto& CardList = GetCardListByTier(cardInfo.tier);
 
 	for (auto card : CardList)
 	{
 		//key °ª ºñ±³
 		auto info = card->GetInfo();
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("selected: %d"), cardInfo.key));
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("card: %d"), info.key));
 		if (info == cardInfo)
 		{
 			auto loc = card->GetActorLocation();

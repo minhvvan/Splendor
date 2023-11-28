@@ -3,18 +3,28 @@
 
 #include "GSLobby.h"
 #include "Net/UnrealNetwork.h"
+#include "PCLobby.h"
+#include "PSPlayerInfo.h"
 
 bool AGSLobby::SetFirstPlayer(APCLobby* pc)
 {
+	if (SecondPlayer == pc)
+	{
+		SecondPlayer = nullptr;
+		FirstPlayer = pc;
+
+		for (auto PS : PlayerArray)
+		{
+			Cast<APCLobby>(PS->GetPlayerController())->MarkSecond(FString(""));
+		}
+		return true;
+	}
+
 	if (FirstPlayer)
 	{
 		if (FirstPlayer == pc)
 		{
 			FirstPlayer = nullptr;
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Blue, FString::Printf(TEXT("First: other player clicked")));
 		}
 	}
 	else
@@ -28,17 +38,23 @@ bool AGSLobby::SetFirstPlayer(APCLobby* pc)
 
 bool AGSLobby::SetSecondPlayer(APCLobby* pc)
 {
+	if (FirstPlayer == pc)
+	{
+		FirstPlayer = nullptr;
+		SecondPlayer = pc;
+
+		for (auto PS : PlayerArray)
+		{
+			Cast<APCLobby>(PS->GetPlayerController())->MarkFirst(FString(""));
+		}
+		return true;
+	}
+
 	if (SecondPlayer)
 	{
 		if (SecondPlayer == pc)
 		{
 			SecondPlayer = nullptr;
-		}
-		else
-		{
-			// 다른 player가 이미 선택한 상황
-			//pop up 띄우면 좋을 듯
-			GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Blue, FString::Printf(TEXT("Second: other player clicked")));
 		}
 	}
 	else

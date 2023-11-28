@@ -7,7 +7,7 @@
 #include "GlobalStruct.h"
 #include "HUDDetailCard.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FBuyCard);
+DECLARE_MULTICAST_DELEGATE_OneParam(FBuyCard, int);
 
 UCLASS()
 class STEAMTEST_API UHUDDetailCard : public UUserWidget
@@ -58,9 +58,22 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* MessageAnim;
 
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* HoverBacKBtnAnim;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* HoverBuyBtnAnim;
+
+	//!---------SFX-------------------
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	USoundBase* BuySound;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	USoundBase* FailSound;
+
 public:
 	//!-----Dele----------
-	//FBuyCard OnBuyCard;
+	FBuyCard OnBuyCard;
 
 private:
 	UPROPERTY()
@@ -74,11 +87,26 @@ public:
 	UFUNCTION()
 	void SetCardInfo(const FCardInfo& info_);
 
+	//!--------Buy-------
 	UFUNCTION()
 	void BuyClicked();
 
 	UFUNCTION()
+	void BuyHovered();
+
+	UFUNCTION()
+	void BuyLeaved();
+
+	//!--------Back-------
+	UFUNCTION()
 	void BackClicked();
+
+	UFUNCTION()
+	void BackHovered();
+
+	UFUNCTION()
+	void BackLeaved();	
+
 
 	UFUNCTION()
 	bool CheckCanBuy();

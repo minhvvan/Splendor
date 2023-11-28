@@ -15,6 +15,8 @@
 #include "HUDSelectRoyal.h"
 #include "HUDSelectCard.h"
 #include "HUDHand.h"
+#include "HudRivalInfo.h"
+#include "HUDEndGame.h"
 #include "PCPlay.h"
 #include "PSPlayerInfo.h"
 #include "GSPlay.h"
@@ -25,7 +27,6 @@
 #include "GlobalConst.h"
 #include "HUDTakeToken.h"
 #include "HUDAnyColor.h"
-
 #include "STGameModePlay.h"
 
 
@@ -41,12 +42,20 @@ void UHUDDesk::NativeOnInitialized()
 
 	BtnGetToken->OnClicked.AddDynamic(this, &UHUDDesk::GetTokenClicked);
 	BtnFillToken->OnClicked.AddDynamic(this, &UHUDDesk::FilTokenClicked);
+	BtnUseScroll->OnClicked.AddDynamic(this, &UHUDDesk::UseScrollClicked);
 
 	Hand->OnCard.AddUObject(this, &UHUDDesk::OnHandCardClicked);
 }
 
-void UHUDDesk::SetTurnTxt(FString turn)
+void UHUDDesk::IntSetTurnBegin(const FString& turn)
 {
+	FString newText = turn;
+	newText.Append(UGlobalConst::SuffixTurnText);
+
+	TxtTurn->SetText(FText::FromString(newText));
+	bUsedScroll = false;
+
+	//anim도 있으면 좋을듯
 }
 
 void UHUDDesk::BindState(APSPlayerInfo* ps)
@@ -107,10 +116,13 @@ UHUDCardHolder* UHUDDesk::GetBonusWidget(ETokenColor color)
 
 void UHUDDesk::CloseItemWidget(EItem itemType)
 {
+	bool bEndTurn = true;
+
 	switch (itemType)
 	{
 	case EItem::I_GetToken:
 		check(GetWidget.IsValid());
+		bEndTurn = GetWidget->GetBEndTurn();
 		GetWidget->RemoveFromParent();
 		GetWidget.Reset();
 		break;
@@ -121,7 +133,7 @@ void UHUDDesk::CloseItemWidget(EItem itemType)
 		break;
 	}
 
-	Cast<APCPlay>(GetOwningPlayer())->SREndTurn();
+	if(bEndTurn) Cast<APCPlay>(GetOwningPlayer())->SREndTurn();
 }
 
 void UHUDDesk::CloseCrownWidget()
@@ -138,6 +150,14 @@ void UHUDDesk::CloseCardWidget()
 
 	CardWidget->RemoveFromParent();
 	CardWidget.Reset();
+}
+
+void UHUDDesk::CloseRivalInfo()
+{
+	if (!RivalInfoWidget.Get()) return;
+
+	RivalInfoWidget->RemoveFromParent();
+	RivalInfoWidget.Reset();
 }
 
 void UHUDDesk::ChangedBonus()
@@ -195,13 +215,17 @@ void UHUDDesk::CrownEvent()
 		CrownWidget = Cast<UHUDSelectRoyal>(CreateWidget(GetWorld(), RoyalWidgetClass));
 		check(CrownWidget.IsValid());
 
-		auto PS = GetOwningPlayer()->GetPlayerState<APSPlayerInfo>();
-		CrownWidget->SetScore(PS->GetScore());
+		auto PC = GetOwningPlayer();
+		auto PS = PC->GetPlayerState<APSPlayerInfo>();
+		CrownWidget->SetScore(PS->GetTotalScore());
 		CrownWidget->SetCrown(PS->GetCrown());
 		CrownWidget->SetScroll(PS->GetScroll());
 
 		CrownWidget->SetRoyal();
 		CrownWidget->AddToViewport();
+
+
+		PC->SetInputMode(FInputModeUIOnly());
 	}
 }
 
@@ -230,6 +254,11 @@ void UHUDDesk::OnHandCardClicked(FCardInfo cardInfo)
 	PopUpDetailCard(cardInfo);
 }
 
+void UHUDDesk::OnBuyCard(int key)
+{
+	Hand->RemoveFromHands(key);
+}
+
 void UHUDDesk::GetTokenClicked()
 {
 	auto PC = Cast<APCPlay>(GetOwningPlayer());
@@ -240,18 +269,7 @@ void UHUDDesk::GetTokenClicked()
 
 		if (Tokens.Num() == 0)
 		{
-			if (FailedGetAnim)
-			{
-				PlayAnimation(FailedGetAnim);
-				
-				RenderMessage(UGlobalConst::MsgNotSelect);
-
-				if (FailSound)
-				{
-					PlaySound(FailSound);
-				}
-			}
-
+			FailAnimPlay(EFailWidget::E_GetToken);
 			return;
 		}
 
@@ -262,6 +280,77 @@ void UHUDDesk::GetTokenClicked()
 void UHUDDesk::FilTokenClicked()
 {
 	Cast<APCPlay>(GetOwningPlayer())->SRFillToken();
+}
+
+void UHUDDesk::UseScrollClicked()
+{
+	if (bUsedScroll)
+	{
+		FailAnimPlay(EFailWidget::E_TwiceUseScroll);
+		return;
+	}
+
+	auto PS = GetOwningPlayer()->GetPlayerState<APSPlayerInfo>();
+	if (PS)
+	{
+		auto ScrollNum = PS->GetScroll();
+		
+		if (ScrollNum == 0)
+		{
+			FailAnimPlay(EFailWidget::E_UseScroll);
+			return;
+		}
+	}
+
+	TArray<ETokenColor> colors;
+	for (ETokenColor color : TEnumRange<ETokenColor>())
+	{
+		if (color == ETokenColor::E_End || color == ETokenColor::E_Gold) continue;
+		colors.Add(color);
+	}
+
+	PopUpItemGetToken(colors, false);
+	Cast<APCPlay>(GetOwningPlayer())->SRUseScroll();
+	bUsedScroll = true;
+}
+
+void UHUDDesk::FailAnimPlay(EFailWidget failWidget)
+{
+	switch (failWidget)
+	{
+	case EFailWidget::E_GetToken:
+		if (FailedGetAnim)
+		{
+			PlayAnimation(FailedGetAnim);
+			RenderMessage(UGlobalConst::MsgNotSelect);
+		}
+		break;
+	case EFailWidget::E_FillToken:
+		if (FailedFillAnim)
+		{
+			PlayAnimation(FailedFillAnim);
+			RenderMessage(UGlobalConst::MsgNoPouch);
+		}
+		break;
+	case EFailWidget::E_UseScroll:
+		if (FailedUseScrollAnim)
+		{
+			PlayAnimation(FailedUseScrollAnim);
+			RenderMessage(UGlobalConst::MsgCanNotUseScroll);
+		}	
+	case EFailWidget::E_TwiceUseScroll:
+		if (FailedUseScrollAnim)
+		{
+			PlayAnimation(FailedUseScrollAnim);
+			RenderMessage(UGlobalConst::MsgUsedScroll);
+		}
+		break;
+	}
+
+	if (FailSound)
+	{
+		PlaySound(FailSound);
+	}
 }
 
 void UHUDDesk::NotifyOverToken()
@@ -280,19 +369,22 @@ void UHUDDesk::PopUpDetailCard(const FCardInfo& cardInfo)
 {
 	check(IsValid(DetailCardClass));
 
-	auto widget = Cast<UHUDDetailCard>(CreateWidget(GetWorld(), DetailCardClass));
-	if (widget)
+	DetailCardWidget = Cast<UHUDDetailCard>(CreateWidget(GetWorld(), DetailCardClass));
+	if (DetailCardWidget.IsValid())
 	{
-		widget->SetCardInfo(cardInfo);
-		widget->AddToViewport();
+		DetailCardWidget->SetCardInfo(cardInfo);
+		DetailCardWidget->AddToViewport();
+
+		DetailCardWidget->OnBuyCard.AddUObject(this, &UHUDDesk::OnBuyCard);
 	}
 }
 
-void UHUDDesk::PopUpItemGetToken(const FCardInfo& cardInfo)
+void UHUDDesk::PopUpItemGetToken(const TArray<ETokenColor>& colors, bool bEndturn)
 {
 	GetWidget = Cast<UHUDGetToken>(CreateWidget(GetWorld(), GetTokenWidgetClass));
 	auto& TileIdxs = GetWorld()->GetGameState<AGSPlay>()->GetCurrentTileState();
-	GetWidget->SetTiles(TileIdxs, cardInfo);
+	GetWidget->SetTiles(TileIdxs, colors);
+	GetWidget->SetBEndTurn(bEndturn);
 	GetWidget->AddToViewport();
 }
 
@@ -327,7 +419,22 @@ void UHUDDesk::PopUpItemAnyColor(const FCardInfo& cardInfo)
 
 void UHUDDesk::PopUpSelectCard()
 {
-	//popup
 	CardWidget = Cast<UHUDSelectCard>(CreateWidget(GetWorld(), SelectCardWidgetClass));
 	CardWidget->AddToViewport();
+}
+
+void UHUDDesk::PopUpRivalInfo()
+{
+	RivalInfoWidget = Cast<UHudRivalInfo>(CreateWidget(GetWorld(), RivalInfoClass));
+	RivalInfoWidget->AddToViewport();
+}
+
+void UHUDDesk::PopUpEndPage(const FString& winnerName, bool bWin)
+{
+	auto Widget = Cast<UHUDEndGame>(CreateWidget(GetWorld(), EndGameClass));
+	
+	if (Widget)
+	{
+		Widget->AddToViewport();
+	}
 }

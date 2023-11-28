@@ -16,40 +16,13 @@ class STEAMTEST_API UHUDAnyColor : public UUserWidget
 	
 protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnRed;
-
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnGreen;
-
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnBlue;
-
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnWhite;
-
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UButton* BtnBlack;
+	class UTileView* TVColor;
 
 protected:
 	virtual void NativeOnInitialized();
 
 
 public:
-	UFUNCTION()
-	void RedClicked();
-
-	UFUNCTION()
-	void GreenClicked();
-
-	UFUNCTION()
-	void BlueClicked();
-
-	UFUNCTION()
-	void WhiteClicked();
-
-	UFUNCTION()
-	void BlackClicked();
-
 	UFUNCTION()
 	void SetInfo(const FCardInfo& cardInfo);
 
@@ -59,4 +32,7 @@ public:
 private:
 	UPROPERTY()
 	int score;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UCostData> DataClass;
 };

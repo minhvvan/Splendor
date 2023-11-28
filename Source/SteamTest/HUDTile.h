@@ -4,27 +4,34 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/IUserObjectListEntry.h"
+#include "GlobalEnum.h"
 #include "HUDTile.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEAMTEST_API UHUDTile : public UUserWidget
+class STEAMTEST_API UHUDTile : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget))
-	class UBorder* BorderInner;
+	class UButton* BtnToken;
 
 public:
 	UFUNCTION()
-	void OnClicked(const FGeometry& Geometry, const FPointerEvent& MouseEvent);
+	void OnClicked();
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	class UTileData* TileData;
 
 protected:
+	UPROPERTY(EditAnywhere)
+	TMap<ETokenColor, UTexture2D*> TokenImg;
+
 	virtual void NativeOnInitialized();
+
+	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 };

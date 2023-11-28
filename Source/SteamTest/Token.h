@@ -48,6 +48,9 @@ public:
 
 	UFUNCTION()
 	void OnLeave(UPrimitiveComponent* Target);
+	
+	UFUNCTION()
+	void MoveAndDestory(FVector dest);
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
@@ -67,4 +70,22 @@ private:
 
 	UPROPERTY(replicated)
 	ETokenColor TokenType;
+
+	UPROPERTY()
+	FVector Destination;
+
+	UPROPERTY()
+	bool bMoveComplete;
+
+	UFUNCTION()
+	FVector InterpolatePos(float delta);
+
+	UFUNCTION()
+	FRotator InterpolateRot(float delta);
+
+	UPROPERTY(BlueprintReadWrite, EditAnyWhere, meta = (AllowPrivateAccess = "true"))
+	float LerpSpeed;
+
+	UPROPERTY()
+	float PitchValue;
 };

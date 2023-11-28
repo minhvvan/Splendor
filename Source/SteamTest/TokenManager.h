@@ -80,7 +80,6 @@ struct FTokenList
 	}
 };
 
-DECLARE_MULTICAST_DELEGATE(FGoldPosess);
 
 UCLASS()
 class STEAMTEST_API ATokenManager : public AActor
@@ -100,19 +99,16 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	void SpawnTokens();	
+	void InitTokens();	
 	
 	UFUNCTION()
-	void SpawnTokensByList(FTokenCountList countList);
+	const TArray<AToken*>& SpawnTokens(const TArray<FTokenIdxColor>& Tokens);
 	
 	UFUNCTION()
 	void PlaceTokens(TArray<AToken*>& Tokens);
 
 	UFUNCTION()
-	void SelectedToken(AToken* token, bool bSelected);
-
-	UFUNCTION()
-	void DestroyTokens(const TArray<FTokenIdxColor>& SelectedTokens);
+	void DestroyTokens(const TArray<int>& DestroyTokenIdx, bool bOwn);
 	
 	UFUNCTION()
 	void GetTokenByIdx(APlayerController* PC, int idx);
@@ -120,11 +116,15 @@ public:
 	UFUNCTION()
 	const TArray<AToken*>& GetRemainTokens(){ return RemainTokens; };
 
-	FGoldPosess	OnGoldPossessed;
-
 private:
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	USoundBase* GetSound;
+
 	UPROPERTY()
 	TArray<AToken*> RemainTokens;
+
+	UPROPERTY()
+	TArray<AToken*> SpawnedTokens;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AToken> TokenClass;

@@ -23,14 +23,11 @@ public:
 	UFUNCTION()
 	void AddGlobalScroll(int num) { GlobalScroll += num; };
 
-	//UFUNCTION()
-	//TArray<FTokenIdxColor>& GetRemainTokenIdx() { return RemainTokenIdx; };
-
 	UFUNCTION()
 	void RemoveTokenIdx(int idx);
 
 	UFUNCTION()
-	void AddTokenIdx(int idx, ETokenColor color);
+	int AddToken(ETokenColor color);
 
 	UFUNCTION()
 	void AddPouch(ETokenColor color, int cnt);
@@ -68,9 +65,6 @@ protected:
 	UPROPERTY()
 	int GlobalScroll;
 
-	//UPROPERTY(Replicated)
-	//TArray<FTokenIdxColor> RemainTokenIdx;
-
 	UPROPERTY(Replicated)
 	FTokenCountList Pouch;
 
@@ -102,9 +96,10 @@ protected:
 	UPROPERTY(Replicated)
 	TArray<FCardInfo> TierThreeInfos;
 
-
-	//!----------Card-------------
+	//!----------Tile-------------
 	UPROPERTY(Replicated)
-	TArray<ETokenColor> TileState;
-
+	TArray<ETokenColor> TileState;	
+	
+	UPROPERTY(Replicated)
+	TArray<int> FillIdx;
 };
