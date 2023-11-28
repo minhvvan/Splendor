@@ -56,7 +56,6 @@ void UHUDDesk::InitSetTurnBegin(const FString& turn)
 	TxtTurn->SetText(FText::FromString(newText));
 	bUsedScroll = false;
 
-	//anim도 있으면 좋을듯
 	if (TurnAlert) TurnAlert->AlertChangedTurn(turn);
 }
 

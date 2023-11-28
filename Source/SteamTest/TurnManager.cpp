@@ -51,29 +51,36 @@ void ATurnManager::InitPlayerTurn(APlayerController* Player, bool bFirst, const 
 
 void ATurnManager::EndCurrentTurn()
 {
-	if (CurrentPlayer)
-	{
-		CurrentPlayer->SetTurn(false);
-
-		PlayerTurn = (PlayerTurn + 1) % 2;
-		CurrentPlayer = Players[PlayerTurn];
-		if (CurrentPlayer)
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([=]
 		{
-			CurrentPlayer->SetTurn(true);
-		}
-
-		auto CurrentPlayerName = CurrentPlayer->GetPlayerState<APSPlayerInfo>()->GetPName();
-		auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
-		if (GM)
-		{
-			auto GS = GM->GetGameState<AGSPlay>();
-
-			for (auto PS : GS->PlayerArray)
+			if (CurrentPlayer)
 			{
-				Cast<APCPlay>(PS->GetPlayerController())->SetTurnText(CurrentPlayerName);
+				CurrentPlayer->SetTurn(false);
+
+				PlayerTurn = (PlayerTurn + 1) % 2;
+				CurrentPlayer = Players[PlayerTurn];
+				if (CurrentPlayer)
+				{
+					CurrentPlayer->SetTurn(true);
+				}
+
+				auto CurrentPlayerName = CurrentPlayer->GetPlayerState<APSPlayerInfo>()->GetPName();
+				auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+				if (GM)
+				{
+					auto GS = GM->GetGameState<AGSPlay>();
+
+					for (auto PS : GS->PlayerArray)
+					{
+						Cast<APCPlay>(PS->GetPlayerController())->SetTurnText(CurrentPlayerName);
+					}
+				}
 			}
-		}
-	}
+		});
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 1.5, false);
 }
 
 bool ATurnManager::IsFirstPlayer(APlayerController* PC)
