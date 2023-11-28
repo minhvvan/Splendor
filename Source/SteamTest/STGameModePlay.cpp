@@ -11,6 +11,7 @@
 #include "TurnManager.h"
 #include "PCPlay.h"
 #include "GlobalStruct.h"
+#include "SteamTestGameInstance.h"
 
 ASTGameModePlay::ASTGameModePlay()
 {
@@ -83,24 +84,13 @@ void ASTGameModePlay::InitPlayerTurn(APlayerController* Player)
 {
 	if (TurnManager)
 	{
-		auto GS = GetGameState<AGSPlay>();
-		
-		if (GS)
-		{
-			FString firstPlayerName;
+		auto GI = Cast<USteamTestGameInstance>(GetGameInstance());
 
-			for (auto PS : GS->PlayerArray)
-			{
-				auto castedPS = Cast<APSPlayerInfo>(PS);
-				if (castedPS->GetBFirst()) firstPlayerName = castedPS->GetPName();
-				if (!castedPS->GetBFirst()) castedPS->AddScroll(1);
-			}
+		FString firstPlayerName = GI->GetFirstPlayerName();
+		auto castedPS = Player->GetPlayerState<APSPlayerInfo>();
+		if (!castedPS->GetBFirst()) castedPS->AddScroll(1);
 
-			for (auto PS : GS->PlayerArray)
-			{
-				TurnManager->InitPlayerTurn(PS->GetPlayerController(), Cast<APSPlayerInfo>(PS)->GetBFirst(), firstPlayerName);
-			}
-		}
+		TurnManager->InitPlayerTurn(Player, Player->GetPlayerState<APSPlayerInfo>()->GetBFirst(), firstPlayerName);
 	}
 }
 

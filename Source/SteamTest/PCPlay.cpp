@@ -503,9 +503,11 @@ void APCPlay::GetCardToHand(FCardInfo Info)
 
 void APCPlay::SetTurnText_Implementation(const FString& playerName)
 {
+	if (!IsLocalController()) return;
+
 	if (WidgetDesk)
 	{
-		WidgetDesk->IntSetTurnBegin(playerName);
+		WidgetDesk->InitSetTurnBegin(playerName);
 	}
 }
 

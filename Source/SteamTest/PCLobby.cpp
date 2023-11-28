@@ -62,6 +62,9 @@ void APCLobby::MarkFirst_Implementation(const FString& name)
 {
 	if (IsLocalController())
 	{
+		auto GI = Cast<USteamTestGameInstance>(GetGameInstance());
+		GI->SetFirstPlayerName(name);
+
 		if (WidgetLobby)
 		{
 			WidgetLobby->SetFirstText(name);

@@ -77,9 +77,18 @@ public:
 
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 
+	UFUNCTION()
+	void SetFirstPlayerName(FString name) { FirstPlayerName = name; };
+
+	UFUNCTION()
+	FString GetFirstPlayerName() { return FirstPlayerName; };
+
 private:
 	UPROPERTY()
 	FString PlayerProfileSlot = "PlayerProfileSlot";
+
+	UPROPERTY()
+	FString FirstPlayerName;
 
 	IOnlineSessionPtr OnlineSessionInterface;
 

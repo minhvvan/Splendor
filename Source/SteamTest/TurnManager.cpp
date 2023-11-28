@@ -14,15 +14,14 @@ ATurnManager::ATurnManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	Players.SetNum(2);
+	PlayerTurn = 0;
 }
 
 // Called when the game starts or when spawned
 void ATurnManager::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Players.SetNum(2);
-	PlayerTurn = 0;
 }
 
 // Called every frame
@@ -34,7 +33,6 @@ void ATurnManager::Tick(float DeltaTime)
 void ATurnManager::InitPlayerTurn(APlayerController* Player, bool bFirst, const FString& playerName)
 {
 	auto CastedPC = Cast<APCPlay>(Player);
-
 	if (CastedPC == nullptr) return;
 
 	CastedPC->SetTurn(bFirst);

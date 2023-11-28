@@ -60,6 +60,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
 	class UHUDHand* Hand;
 
+	UPROPERTY(VisibleAnywhere, meta = (BindWidgetOptional))
+	class UHUDTurnAlert* TurnAlert;
+
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UTextBlock* TxtScore;
 
@@ -90,7 +93,7 @@ protected:
 	virtual void NativeOnInitialized();
 
 public:
-	void IntSetTurnBegin(const FString& turn);
+	void InitSetTurnBegin(const FString& turn);
 
 	UFUNCTION()
 	void BindState(class APSPlayerInfo* ps);

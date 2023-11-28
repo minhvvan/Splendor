@@ -17,6 +17,7 @@
 #include "HUDHand.h"
 #include "HudRivalInfo.h"
 #include "HUDEndGame.h"
+#include "HUDTurnAlert.h"
 #include "PCPlay.h"
 #include "PSPlayerInfo.h"
 #include "GSPlay.h"
@@ -47,7 +48,7 @@ void UHUDDesk::NativeOnInitialized()
 	Hand->OnCard.AddUObject(this, &UHUDDesk::OnHandCardClicked);
 }
 
-void UHUDDesk::IntSetTurnBegin(const FString& turn)
+void UHUDDesk::InitSetTurnBegin(const FString& turn)
 {
 	FString newText = turn;
 	newText.Append(UGlobalConst::SuffixTurnText);
@@ -56,6 +57,7 @@ void UHUDDesk::IntSetTurnBegin(const FString& turn)
 	bUsedScroll = false;
 
 	//anim도 있으면 좋을듯
+	if (TurnAlert) TurnAlert->AlertChangedTurn(turn);
 }
 
 void UHUDDesk::BindState(APSPlayerInfo* ps)
