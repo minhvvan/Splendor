@@ -9,6 +9,7 @@
 #include "PCPlay.generated.h"
 
 class ATile;
+class APing;
 
 UCLASS()
 class STEAMTEST_API APCPlay : public APlayerController
@@ -160,6 +161,19 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SRPossessRoyal(int key);
 
+	//!-----------------Ping-------------
+	UFUNCTION()
+	void CalculatePingSpawnLoc();
+	
+	UFUNCTION(Server, Reliable)
+	void SRSpawnPing(const FVector& SpawnLoc);
+	
+	UFUNCTION(Client, Reliable)
+	void SpawnPing(const FVector& SpawnLoc);
+
+	UFUNCTION()
+	void DestroyedPing(AActor* DestroyedActor);
+
 protected:
 	virtual void SetupInputComponent() override;
 
@@ -177,10 +191,16 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<ATile> TileClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<APing> PingClass;
+
 	const FString CAM_TAG = TEXT("GameCam");
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputMappingContext* PingMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* ClickAction;
@@ -188,14 +208,26 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* TabAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* PingAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* ControlDownAction;
+
 	UPROPERTY(replicated)
 	TArray<FTokenIdxColor> SelectedTokenIdx;
 
-	UPROPERTY(replicated)
-	bool IsTurn = false;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USoundBase* PingSound;
 
 	UPROPERTY(replicated)
-	int GoldCnt = 0;
+	bool IsTurn;
+
+	UPROPERTY(replicated)
+	int GoldCnt;
+
+	UPROPERTY(replicated)
+	int PingCnt;
 
 	//!-----------------Manager-------------
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

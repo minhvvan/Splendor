@@ -13,11 +13,12 @@
 #include "Tile.h"
 #include "Token.h"
 #include "Card.h"
+#include "Ping.h"
 #include "GlobalConst.h"
 #include "TileManager.h"
 #include "TokenManager.h"
 
-APCPlay::APCPlay()
+APCPlay::APCPlay() : IsTurn(false), GoldCnt(0), PingCnt(5)
 {
 	EnableInput(this);
 
@@ -50,6 +51,7 @@ void APCPlay::BeginPlay()
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		Subsystem->AddMappingContext(PingMappingContext, 1);
 	}
 
 	if (IsLocalController())
@@ -66,6 +68,18 @@ void APCPlay::BeginPlay()
 	}
 }
 
+void APCPlay::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
+	{
+		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Triggered, this, &APCPlay::Click);
+		EnhancedInputComponent->BindAction(TabAction, ETriggerEvent::Started, this, &APCPlay::PopupRivalInfo);
+		EnhancedInputComponent->BindAction(TabAction, ETriggerEvent::Completed, this, &APCPlay::CloseRivalInfo);
+		EnhancedInputComponent->BindAction(PingAction, ETriggerEvent::Triggered, this, &APCPlay::CalculatePingSpawnLoc);
+	}
+}
 
 void APCPlay::Click()
 {
@@ -97,17 +111,6 @@ void APCPlay::Click()
 	}
 }
 
-void APCPlay::SetupInputComponent()
-{
-	Super::SetupInputComponent();
-
-	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
-	{
-		EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &APCPlay::Click);
-		EnhancedInputComponent->BindAction(TabAction, ETriggerEvent::Started, this, &APCPlay::PopupRivalInfo);
-		EnhancedInputComponent->BindAction(TabAction, ETriggerEvent::Completed, this, &APCPlay::CloseRivalInfo);
-	}
-}
 
 void APCPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -115,6 +118,7 @@ void APCPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 
 	DOREPLIFETIME(APCPlay, IsTurn);
 	DOREPLIFETIME(APCPlay, GoldCnt);
+	DOREPLIFETIME(APCPlay, PingCnt);
 	DOREPLIFETIME(APCPlay, SelectedTokenIdx);
 }
 
@@ -563,12 +567,70 @@ void APCPlay::CloseCrownWidget(bool bReplay)
 	}
 }
 
+
 void APCPlay::SRPossessRoyal_Implementation(int key)
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	check(IsValid(GM));
 	GM->UpdateRoyal(key, this);
+}
+
+//!-----------------Ping-------------
+void APCPlay::CalculatePingSpawnLoc()
+{
+	if (PingCnt <= 0) return;
+
+	PingCnt--;
+
+	FHitResult HitResult;
+	GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
+
+	auto SpawnLoc = HitResult.Location;
+	SpawnLoc.Z += 50;
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	FVector SpawnDir;
+	FRotator rotator;
+
+	auto Ping = Cast<APing>(GetWorld()->SpawnActor<AActor>(PingClass, SpawnLoc, rotator, SpawnParams));
+	Ping->OnDestroyed.AddDynamic(this, &APCPlay::DestroyedPing);
+
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), PingSound, SpawnLoc);
+
+	SRSpawnPing(SpawnLoc);
+}
+
+void APCPlay::SRSpawnPing_Implementation(const FVector& SpawnLoc)
+{
+	auto GS = GetWorld()->GetGameState<AGSPlay>();
+	for (auto PS : GS->PlayerArray)
+	{
+		auto PC = Cast<APCPlay>(PS->GetPlayerController());
+		if (PC != this)
+		{
+			PC->SpawnPing(SpawnLoc);
+		}
+	}
+}
+
+void APCPlay::SpawnPing_Implementation(const FVector& SpawnLoc)
+{
+	//Ping Acor Spawn
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	FVector SpawnDir;
+	FRotator rotator;
+
+	auto Ping = Cast<APing>(GetWorld()->SpawnActor<AActor>(PingClass, SpawnLoc, rotator, SpawnParams));
+
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), PingSound, SpawnLoc);
+}
+
+void APCPlay::DestroyedPing(AActor* DestroyedActor)
+{
+	PingCnt++;
 }
 
 //!------------Util--------------

@@ -31,7 +31,15 @@ void APCLobby::BeginPlay()
 		auto name = GetWorld()->GetMapName();
 		if (name == "Lobby")
 		{
-			ShowLobby();
+			FTimerDelegate TimerDelegate;
+			TimerDelegate.BindLambda([=]
+				{
+					ShowLobby();
+				}
+			);
+
+			FTimerHandle TimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 1, false);
 		}
 	}
 }
@@ -56,9 +64,18 @@ void APCLobby::ShowLobby()
 		SetInputMode(FInputModeUIOnly());
 		SetShowMouseCursor(true);
 
-		auto PlayerName = GetPlayerState<APSPlayerInfo>()->GetPName();
+		FString NewStr;
+		if (GetPlayerState<APSPlayerInfo>()->GetPName().IsEmpty())
+		{
+			NewStr = FString("Player");
+			GetPlayerState<APSPlayerInfo>()->SetPName(NewStr);
+		}
+		else
+		{
+			NewStr = GetPlayerState<APSPlayerInfo>()->GetPName();
+		}
 
-		SRNotifyEnter(PlayerName);
+		SRNotifyEnter(NewStr);
 	}
 }
 
@@ -232,17 +249,7 @@ void APCLobby::SRNotifyEnter_Implementation(const FString& pName)
 	ASTGameModeLobby* GMLobby = Cast< ASTGameModeLobby>(UGameplayStatics::GetGameMode(GetWorld()));
 	auto GS = GMLobby->GetGameState<AGSLobby>();
 
-	FString NewStr;
-	if (pName.IsEmpty())
-	{
-		NewStr = FString("Player");
-		GetPlayerState<APSPlayerInfo>()->SetPName(NewStr);
-	}
-	else
-	{
-		NewStr = pName;
-	}
-
+	auto NewStr = pName;
 	NewStr.Append(UGlobalConst::SuffixEnter);
 
 	if (GS)
