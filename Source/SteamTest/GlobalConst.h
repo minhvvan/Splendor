@@ -46,6 +46,7 @@ public:
 	static const int FirstPlayer;
 	static const int SecondPlayer;
 	static const FString SuffixTurnText;
+	static const FString SuffixEnter;
 
 	//!------------------Position----------------------
 	static const FVector RivalTokenPos;

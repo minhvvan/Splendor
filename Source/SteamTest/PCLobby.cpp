@@ -55,6 +55,10 @@ void APCLobby::ShowLobby()
 		WidgetLobby->AddToViewport();
 		SetInputMode(FInputModeUIOnly());
 		SetShowMouseCursor(true);
+
+		auto PlayerName = GetPlayerState<APSPlayerInfo>()->GetPName();
+
+		SRNotifyEnter(PlayerName);
 	}
 }
 
@@ -192,6 +196,70 @@ void APCLobby::EnableCanStart(bool bStart)
 	if (WidgetLobby)
 	{
 		WidgetLobby->SetCanStart(bStart);
+	}
+}
+
+void APCLobby::SRSendChat_Implementation(const FString& ChatMsg)
+{
+	ASTGameModeLobby* GMLobby = Cast< ASTGameModeLobby>(UGameplayStatics::GetGameMode(GetWorld()));
+	auto GS = GMLobby->GetGameState<AGSLobby>();
+
+	if (GS)
+	{
+		for (auto PS : GS->PlayerArray)
+		{
+			auto PC = Cast<APCLobby>(PS->GetPlayerController());
+
+			if (PC != this)
+			{
+				PC->RecvChat(ChatMsg);
+				break;
+			}
+		}
+	}
+}
+
+void APCLobby::RecvChat_Implementation(const FString& ChatMsg)
+{
+	if (IsLocalController())
+	{
+		if (WidgetLobby) WidgetLobby->RecvChat(ChatMsg);
+	}
+}
+
+void APCLobby::SRNotifyEnter_Implementation(const FString& pName)
+{
+	ASTGameModeLobby* GMLobby = Cast< ASTGameModeLobby>(UGameplayStatics::GetGameMode(GetWorld()));
+	auto GS = GMLobby->GetGameState<AGSLobby>();
+
+	FString NewStr;
+	if (pName.IsEmpty())
+	{
+		NewStr = FString("Player");
+		GetPlayerState<APSPlayerInfo>()->SetPName(NewStr);
+	}
+	else
+	{
+		NewStr = pName;
+	}
+
+	NewStr.Append(UGlobalConst::SuffixEnter);
+
+	if (GS)
+	{
+		for (auto PS : GS->PlayerArray)
+		{
+			auto PC = Cast<APCLobby>(PS->GetPlayerController());
+			PC->NotifyEnter(NewStr);
+		}
+	}
+}
+
+void APCLobby::NotifyEnter_Implementation(const FString& pName)
+{
+	if (IsLocalController())
+	{
+		if (WidgetLobby) WidgetLobby->RecvNoti(pName);
 	}
 }
 

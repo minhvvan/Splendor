@@ -34,6 +34,7 @@ const FString UGlobalConst::MsgUsedScroll = FString::Printf(TEXT("해당 턴에 
 const int UGlobalConst::FirstPlayer = 100;
 const int UGlobalConst::SecondPlayer = 200;
 const FString UGlobalConst::SuffixTurnText = FString::Printf(TEXT(" 차례"));
+const FString UGlobalConst::SuffixEnter = FString::Printf(TEXT(" 님이 입장하였습니다."));
 
 //!----------------Position-------------------
 const FVector UGlobalConst::RivalTokenPos = FVector(800.f, 0.f, 0.f);

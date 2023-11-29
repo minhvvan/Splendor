@@ -67,6 +67,18 @@ public:
 	UFUNCTION()
 	void EnableCanStart(bool bStart);
 
+	UFUNCTION(Server, Reliable)
+	void SRSendChat(const FString& ChatMsg);
+
+	UFUNCTION(Client, Reliable)
+	void RecvChat(const FString& ChatMsg);
+
+	UFUNCTION(Server, Reliable)
+	void SRNotifyEnter(const FString& pName);	
+	
+	UFUNCTION(Client, Reliable)
+	void NotifyEnter(const FString& pName);
+
 private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> LobbyClass;

@@ -37,7 +37,10 @@ protected:
 	class UButton* BtnSubmit;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
-	class UMultiLineEditableText* EdtChat;
+	class UEditableText* EdtChat;	
+	
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UScrollBox* ScrollChat;
 
 	//!--------------SFX-----------
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
@@ -105,6 +108,25 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void OnChatTextCommitted(const FText& Text, ETextCommit::Type CommitMethod);
 
+	//!--------------Chat-----------
+	UPROPERTY()
+	FString ChatMsg;
+
+	UFUNCTION()
+	void SendChat();
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> ChatRowClass;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> NotiRowClass;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USoundBase* SendChatSound;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USoundBase* RecvChatSound;
+
 public:
 	UFUNCTION()
 	void SetFirstText(FString text);
@@ -114,6 +136,12 @@ public:
 
 	UFUNCTION()
 	void SetCanStart(bool bCanStart);
+
+	UFUNCTION()
+	void RecvChat(const FString& msg);	
+	
+	UFUNCTION()
+	void RecvNoti(const FString& msg);
 
 	UFUNCTION()
 	void SuccessSelect();

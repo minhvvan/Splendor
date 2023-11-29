@@ -1,10 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "HUDLobby.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
-#include "Components/MultiLineEditableText.h"
+#include "Components/EditableText.h"
+#include "Components/ScrollBox.h"
+#include "Components/ScrollBoxSlot.h"
 #include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -12,6 +13,8 @@
 #include "PCLobby.h"
 #include "PSPlayerInfo.h"
 #include "GSLobby.h"
+#include "HUDChatRow.h"
+#include "HUDNotifyRow.h"
 
 void UHUDLobby::NativeOnInitialized()
 {
@@ -28,7 +31,7 @@ void UHUDLobby::NativeOnInitialized()
 	BtnStartGame->OnClicked.AddDynamic(this, &UHUDLobby::StartGameClicked);
 	BtnStartGame->OnHovered.AddDynamic(this, &UHUDLobby::StartGameHovered);
 	BtnStartGame->OnUnhovered.AddDynamic(this, &UHUDLobby::StartGameLeaved);
-	//BtnSubmit->OnClicked.AddDynamic(this, &UHUDLobby::BackClicked);
+	BtnSubmit->OnClicked.AddDynamic(this, &UHUDLobby::SendChat);
 
 	EdtChat->OnTextCommitted.AddDynamic(this, &UHUDLobby::OnChatTextCommitted);
 }
@@ -66,6 +69,8 @@ void UHUDLobby::OnLeavedSecond()
 	if (SecondHoverAnim) PlayAnimationReverse(SecondHoverAnim);
 }
 
+
+//!--------------StartGame-----------
 void UHUDLobby::StartGameClicked()
 {
 	//GM에게 Widget 떼라고 말해야 함
@@ -83,11 +88,64 @@ void UHUDLobby::StartGameLeaved()
 	if (StartGameAnim) PlayAnimationReverse(StartGameAnim);
 }
 
+
+//!--------------Chat-----------
 void UHUDLobby::OnChatTextCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
 	//String 최신화
+	ChatMsg = Text.ToString();
+
+	if (CommitMethod == ETextCommit::OnEnter)
+	{
+		EdtChat->SetFocus();
+
+		//전송
+		SendChat();
+	}
 }
 
+void UHUDLobby::SendChat()
+{
+	if (ChatMsg.Len() == 0) return;
+
+	auto Row = Cast<UHUDChatRow>(CreateWidget(GetWorld(), ChatRowClass));
+	Row->SetText(ChatMsg);
+
+	auto AddedSlot = ScrollChat->AddChild(Row);
+	Cast<UScrollBoxSlot>(AddedSlot)->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Right);
+
+	auto PC = Cast<APCLobby>(GetOwningPlayer());
+	PC->SRSendChat(ChatMsg);
+
+	EdtChat->SetText(FText::FromString(""));
+	ChatMsg.Empty();
+
+	if (SendChatSound) PlaySound(SendChatSound);
+}
+
+void UHUDLobby::RecvChat(const FString& msg)
+{
+	auto Row = Cast<UHUDChatRow>(CreateWidget(GetWorld(), ChatRowClass));
+	Row->SetText(msg);
+
+	auto AddedSlot = ScrollChat->AddChild(Row);
+	Cast<UScrollBoxSlot>(AddedSlot)->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Left);
+
+	if (RecvChatSound) PlaySound(RecvChatSound);
+}
+
+void UHUDLobby::RecvNoti(const FString& msg)
+{
+	auto Row = Cast<UHUDNotifyRow>(CreateWidget(GetWorld(), NotiRowClass));
+	Row->SetText(msg);
+
+	auto AddedSlot = ScrollChat->AddChild(Row);
+	Cast<UScrollBoxSlot>(AddedSlot)->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
+
+	if (RecvChatSound) PlaySound(RecvChatSound);
+}
+
+//!--------------Util-----------
 void UHUDLobby::SetFirstText(FString text)
 {
 	TxtFirstPlayer->SetText(FText::FromString(text));
