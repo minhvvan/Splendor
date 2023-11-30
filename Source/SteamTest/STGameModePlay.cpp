@@ -251,7 +251,7 @@ void ASTGameModePlay::FillToken(APlayerController* PC)
 	TArray<FTokenIdxColor> Tokens;
 
 	//GS¿¡ Add
-	for (auto token : pouch)
+	for (auto token : pouch.Get())
 	{
 		for (int i = 0; i < token.Value; i++)
 		{

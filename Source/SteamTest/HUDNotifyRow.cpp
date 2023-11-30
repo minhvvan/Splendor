@@ -4,7 +4,7 @@
 #include "HUDNotifyRow.h"
 #include "Components/TextBlock.h"
 
-FORCEINLINE void UHUDNotifyRow::SetText(const FString& Chat)
+void UHUDNotifyRow::SetText(const FString& Chat)
 {
 	TxtName->SetText(FText::FromString(Chat));
 }

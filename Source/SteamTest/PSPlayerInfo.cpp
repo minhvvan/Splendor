@@ -8,7 +8,7 @@
 #include "PCPlay.h"
 #include "GlobalEnum.h"
 
-APSPlayerInfo::APSPlayerInfo(): PName(""), bFirst(false), ScrollNum(0), TotalScore(0), Crown(0)
+APSPlayerInfo::APSPlayerInfo(): PName(""), bFirst(false), TotalScore(0), ScrollNum(0), Crown(0)
 {
 	OwnTokens.Init();
 	OwnBonus.Init();
@@ -92,7 +92,7 @@ void APSPlayerInfo::AddToken(ETokenColor type, int cnt)
 //Multi Uipdate
 void APSPlayerInfo::AddTokenByList(FTokenCountList& tokens)
 {
-	for (auto token : tokens)
+	for (FTokenCount token : tokens.Get())
 	{
 		OwnTokens[token.Key] += token.Value;
 	}

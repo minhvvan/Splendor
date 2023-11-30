@@ -9,7 +9,7 @@
 #include "GlobalConst.h"
 #include "GlobalStruct.generated.h"
 
-USTRUCT(BlueprintType)
+USTRUCT(Atomic, BlueprintType)
 struct FTokenCount
 {
 	GENERATED_USTRUCT_BODY()
@@ -26,22 +26,12 @@ public:
 	int Value;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(Atomic, BlueprintType)
 struct FTokenCountList
 {
 	GENERATED_USTRUCT_BODY()
-
+	
 public:
-	TCheckedPointerIterator<FTokenCount,int32> begin()
-	{
-		return TokenCnt.begin();
-	}
-
-	TCheckedPointerIterator<FTokenCount, int32> end()
-	{
-		return TokenCnt.end();
-	}
-
 	void Init()
 	{
 		for (ETokenColor color : TEnumRange<ETokenColor>())

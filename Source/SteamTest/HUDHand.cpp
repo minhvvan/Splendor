@@ -128,7 +128,7 @@ void UHUDHand::OnCardClicked(FCardInfo cardInfo)
 }
 
 
-FORCEINLINE float UHUDHand::GetHoverYOffset(int idx)
+float UHUDHand::GetHoverYOffset(int idx)
 {
 	return idx == HoveredCardIdx ? HoverYOffset : 0;
 }

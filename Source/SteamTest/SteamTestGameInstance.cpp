@@ -114,13 +114,14 @@ void USteamTestGameInstance::CreateSession()
 			OnlineSessionInterface = OnlineSubsystem->GetSessionInterface();
 		}
 
-		const auto ExistingSession = OnlineSessionInterface->GetNamedSession(NAME_GameSession); // 
+		const auto ExistingSession = OnlineSessionInterface->GetNamedSession(NAME_GameSession);
 		if (ExistingSession != nullptr)
 		{
 			OnlineSessionInterface->DestroySession(NAME_GameSession);
 		}
 
 		OnlineSessionInterface->AddOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegate);
+		GEngine->AddOnScreenDebugMessage(-1, 15, FColor::Red, FString::Printf(TEXT("Name: %s"), *OnlineSubsystem->GetSubsystemName().ToString()));
 
 		TSharedPtr<FOnlineSessionSettings> SessionSettings = MakeShareable(new FOnlineSessionSettings());
 		SessionSettings->bIsLANMatch = false;			// Steam을 사용할 것이기 때문에 LanMatch = false
@@ -134,6 +135,7 @@ void USteamTestGameInstance::CreateSession()
 
 		const ULocalPlayer* Localplayer = GetWorld()->GetFirstLocalPlayerFromController();
 		OnlineSessionInterface->CreateSession(*Localplayer->GetPreferredUniqueNetId(), NAME_GameSession, *SessionSettings);
+
 
 		OnlineSessionInterface->RegisterPlayer(NAME_GameSession, *Localplayer->GetPreferredUniqueNetId(), false);
 	}
