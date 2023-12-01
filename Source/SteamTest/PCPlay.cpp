@@ -178,6 +178,7 @@ void APCPlay::SRSetTurn_Implementation()
 void APCPlay::SetTurn(bool flag)
 {
 	IsTurn = flag;
+	if(flag) GoldCnt = 0;
 }
 
 void APCPlay::SREndTurn_Implementation()
@@ -225,7 +226,6 @@ void APCPlay::RemoveTokens_Implementation(const TArray<int>& DestroyTokenIdx, bo
 
 void APCPlay::SRPossessTokens_Implementation(const TArray<FTokenIdxColor>& selcted)
 {
-	GoldCnt = 0;
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	if (GM)
@@ -503,6 +503,9 @@ void APCPlay::GetCardToHand(FCardInfo Info)
 
 	//카드 변경
 	SRChangeCard(Info);
+
+	//턴 변경
+	SREndTurn();
 }
 
 void APCPlay::SetTurnText_Implementation(const FString& playerName)

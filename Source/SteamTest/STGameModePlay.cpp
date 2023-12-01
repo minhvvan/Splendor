@@ -150,12 +150,6 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC, const TArray<FTokenId
 
 	PS->checkOverToken();
 
-	//gold check
-	if (bGold)
-	{
-		Cast<APCPlay>(PS->GetPlayerController())->AddCardToHand();
-	}
-
 	//GS Update
 	for (auto token : SelectedTokens)
 	{
@@ -173,10 +167,18 @@ void ASTGameModePlay::PossessTokens(APlayerController* PC, const TArray<FTokenId
 		Controller->RemoveTokens(DestroyTokenIdx, PC == Controller);
 	}
 
-	//턴 변경
-	if (TurnManager)
+	//gold check
+	if (bGold)
 	{
-		TurnManager->EndCurrentTurn();
+		Cast<APCPlay>(PS->GetPlayerController())->AddCardToHand();
+	}
+	else
+	{
+		//턴 변경
+		if (TurnManager)
+		{
+			TurnManager->EndCurrentTurn();
+		}
 	}
 }
 
