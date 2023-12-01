@@ -40,9 +40,9 @@ public:
 
 	//!----------Turn--------
 	UFUNCTION(Server, Reliable)
-	void SRSetTurn();
+	void SRInitTurn();
 
-	UFUNCTION()
+	UFUNCTION(NetMulticast, Reliable)
 	void SetTurn(bool flag);
 
 	UFUNCTION()
@@ -224,7 +224,7 @@ private:
 	bool IsTurn;
 
 	UPROPERTY(replicated)
-	int GoldCnt;
+	bool bGoldSelected;
 
 	UPROPERTY(replicated)
 	int PingCnt;

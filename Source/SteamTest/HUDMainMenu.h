@@ -16,6 +16,9 @@ class STEAMTEST_API UHUDMainMenu : public UUserWidget
 
 protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UTextBlock* TxtMessage;
+
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UButton* BtnPlay;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
@@ -23,6 +26,13 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UEditableText* EdtPlayerName;
+
+	UPROPERTY(VisibleAnywhere, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* MessageAnim;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	class USoundBase* FailedSound;
+
 protected:
 	virtual void NativeOnInitialized();
 
@@ -35,6 +45,9 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void ChangedPlayerName(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION(BlueprintCallable)
+	void RenderMessage();
 
 public:
 	void SetPlayerName(FString& name);

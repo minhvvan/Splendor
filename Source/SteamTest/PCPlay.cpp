@@ -18,7 +18,7 @@
 #include "TileManager.h"
 #include "TokenManager.h"
 
-APCPlay::APCPlay() : IsTurn(false), GoldCnt(0), PingCnt(5)
+APCPlay::APCPlay() : IsTurn(false), bGoldSelected(false), PingCnt(5)
 {
 	EnableInput(this);
 
@@ -64,7 +64,7 @@ void APCPlay::BeginPlay()
 	//role check 해서 client만 실행하게 하면 될거 같기도 
 	if (IsLocalController())
 	{
-		SRSetTurn();
+		SRInitTurn();
 	}
 }
 
@@ -117,7 +117,7 @@ void APCPlay::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APCPlay, IsTurn);
-	DOREPLIFETIME(APCPlay, GoldCnt);
+	DOREPLIFETIME(APCPlay, bGoldSelected);
 	DOREPLIFETIME(APCPlay, PingCnt);
 	DOREPLIFETIME(APCPlay, SelectedTokenIdx);
 }
@@ -165,7 +165,7 @@ void APCPlay::EndGame_Implementation(const FString& winnerName, bool bWin)
 }
 
 //!------------Turn----------------
-void APCPlay::SRSetTurn_Implementation()
+void APCPlay::SRInitTurn_Implementation()
 {
 	auto GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
 
@@ -175,10 +175,12 @@ void APCPlay::SRSetTurn_Implementation()
 	}
 }
 
-void APCPlay::SetTurn(bool flag)
+void APCPlay::SetTurn_Implementation(bool flag)
 {
+	bGoldSelected = false;
 	IsTurn = flag;
-	if(flag) GoldCnt = 0;
+
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("SetTurn")));
 }
 
 void APCPlay::SREndTurn_Implementation()
@@ -298,7 +300,7 @@ void APCPlay::TokenClicked(AToken* ClickedToken)
 		//황금토큰 check
 		if (ClickedToken->GetTokenType() == ETokenColor::E_Gold)
 		{
-			if (GoldCnt > 0)
+			if (bGoldSelected)
 			{
 				SendMessage(UGlobalConst::MsgOneGold);
 				return;
@@ -310,11 +312,11 @@ void APCPlay::TokenClicked(AToken* ClickedToken)
 				return;
 			}
 
-			GoldCnt++;
+			bGoldSelected = true;
 		}
 		else
 		{
-			if (GoldCnt > 0)
+			if (bGoldSelected)
 			{
 				SendMessage(UGlobalConst::MsgOneGold);
 				return;
@@ -325,13 +327,10 @@ void APCPlay::TokenClicked(AToken* ClickedToken)
 
 		check(IsValid(TileManager));
 		TileManager->Clicked(tokenIdx, true);
-
-		//!TODO: 다른 PC Update
-		//SRClickToken();
 	}
 	else
 	{
-		if (ClickedToken->GetTokenType() == ETokenColor::E_Gold) GoldCnt--;
+		if (ClickedToken->GetTokenType() == ETokenColor::E_Gold) bGoldSelected = false;
 
 		check(IsValid(TileManager));
 		TileManager->Clicked(tokenIdx, false);

@@ -43,6 +43,7 @@ void UHUDAnyColor::CallUpdate(ETokenColor color)
 	{
 		PC->SRAddBonus(color);
 		PC->SRAddScore(color, score);
+		PC->SREndTurn();
 	}
 
 	RemoveFromParent();

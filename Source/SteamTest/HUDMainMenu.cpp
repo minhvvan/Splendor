@@ -4,6 +4,7 @@
 #include "HUDMainMenu.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "Components/EditableText.h"
 #include "SteamTestGameInstance.h"
 #include "Types/SlateEnums.h"
@@ -21,6 +22,13 @@ void UHUDMainMenu::NativeOnInitialized()
 
 void UHUDMainMenu::PlayGameClicked()
 {
+	if (EdtPlayerName->GetText().ToString() == "")
+	{
+		//fail
+		RenderMessage();
+		return;
+	}
+
 	Cast<APCMenu>(GetOwningPlayer())->ShowMultMenu();
 
 	RemoveFromParent();
@@ -46,4 +54,10 @@ void UHUDMainMenu::ChangedPlayerName(const FText& Text, ETextCommit::Type Commit
 void UHUDMainMenu::SetPlayerName(FString& name)
 {
 	EdtPlayerName->SetText(FText::FromString(name));
+}
+
+void UHUDMainMenu::RenderMessage()
+{
+	if (MessageAnim) PlayAnimation(MessageAnim);
+	if (FailedSound) PlaySound(FailedSound);
 }
