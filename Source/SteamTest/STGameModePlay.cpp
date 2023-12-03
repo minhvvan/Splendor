@@ -4,14 +4,13 @@
 #include "STGameModePlay.h"
 #include "PSPlayerInfo.h"
 #include "GSPlay.h"
-#include "TileManager.h"
-#include "TokenManager.h"
 #include "CardManager.h"
-#include "Kismet/GameplayStatics.h"
 #include "TurnManager.h"
-#include "PCPlay.h"
-#include "GlobalStruct.h"
+#include "Kismet/GameplayStatics.h"
 #include "SteamTestGameInstance.h"
+#include "GlobalStruct.h"
+#include "Algo/RandomShuffle.h"
+#include "PCPlay.h"
 
 ASTGameModePlay::ASTGameModePlay()
 {
@@ -261,6 +260,8 @@ void ASTGameModePlay::FillToken(APlayerController* PC)
 			Tokens.Add({ idx, token.Key });
 		}
 	}
+
+	Algo::RandomShuffle(Tokens);
 
 	//All PC Spawn
 	for (auto ps : GS->PlayerArray)
