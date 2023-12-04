@@ -28,7 +28,7 @@
 ![HostGame](https://github.com/minhvvan/Splendor/assets/59609086/41dc8bec-2bdc-4f7d-8892-f6ffa25eab8b)
 
 #### Join Game
-![JoinSession](https://github.com/minhvvan/SteamTest/assets/59609086/645b350a-1d28-471f-bef7-5c30e2b9d7d4)
+![JoinGame](https://github.com/minhvvan/Splendor/assets/59609086/aa6876ce-d25f-4638-979b-1dd4dc09641c)
 
 
 
@@ -69,14 +69,20 @@
 #### Add Crown
 ![GetCrown](https://github.com/minhvvan/SteamTest/assets/59609086/cb16f96c-6e31-428c-a79a-d643db0ba787)
 
+#### Crown Event
+![CrownEvent](https://github.com/minhvvan/Splendor/assets/59609086/8435cc53-60d6-4a99-8422-05d932615d9a)
+
+
+
+### Util
+### Check Rival Info
+![Tab](https://github.com/minhvvan/Splendor/assets/59609086/16fb76ea-f208-4c63-9e1b-e2278848adb8)
+
+
 
 
 ## Performance
 
 
 ## Bug / Feature Request
-
-If you find a bug (the website couldn't handle the query and / or gave undesired results), kindly open an issue [here](https://github.com/iharsh234/WebApp/issues/new) by including your search query and the expected result.
-
-If you'd like to request a new function, feel free to do so by opening an issue [here](https://github.com/iharsh234/WebApp/issues/new). Please include sample queries and their corresponding results.
 
