@@ -12,6 +12,13 @@
 </table>
 
 
+
+## Architecture
+![Struct](https://github.com/minhvvan/Splendor/assets/59609086/743e0d95-7c0d-4816-a742-6584930df4bb)
+
+
+
+
 ## Demo
 1. Launch Steam App
 2. execute /BuildGame/Splendor/Splendor.exe
