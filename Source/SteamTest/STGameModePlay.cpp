@@ -74,8 +74,6 @@ void ASTGameModePlay::InitGameState()
 void ASTGameModePlay::HandleMatchHasEnded()
 {
 	//매치 종료
-
-
 }
 
 //!-------------Turn-------------------
@@ -120,13 +118,13 @@ void ASTGameModePlay::EndGame(APSPlayerInfo* winner)
 }
 
 //!-------------Token-------------------
-void ASTGameModePlay::SetTokenSpawnLoc(TArray<class AToken*>& Tokens)
-{
-	if (TileManager)
-	{
-		TileManager->SetTokenLocs(Tokens);
-	}
-}
+//void ASTGameModePlay::SetTokenSpawnLoc(TArray<class AToken*>& Tokens)
+//{
+//	if (TileManager)
+//	{
+//		TileManager->SetTokenLocs(Tokens);
+//	}
+//}
 
 void ASTGameModePlay::PossessTokens(APlayerController* PC, const TArray<FTokenIdxColor>& SelectedTokens)
 {

@@ -104,8 +104,8 @@ public:
 	UFUNCTION()
 	const TArray<AToken*>& SpawnTokens(const TArray<FTokenIdxColor>& Tokens);
 	
-	UFUNCTION()
-	void PlaceTokens(TArray<AToken*>& Tokens);
+	//UFUNCTION()
+	//void PlaceTokens(TArray<AToken*>& Tokens);
 
 	UFUNCTION()
 	void DestroyTokens(const TArray<int>& DestroyTokenIdx, bool bOwn);

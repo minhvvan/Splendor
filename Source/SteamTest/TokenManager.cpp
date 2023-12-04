@@ -110,17 +110,17 @@ const TArray<AToken*>& ATokenManager::SpawnTokens(const TArray<FTokenIdxColor>& 
 	return SpawnedTokens;
 }
 
-void ATokenManager::PlaceTokens(TArray<AToken*>& Tokens)
-{
-	ASTGameModePlay* GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GM)
-	{
-		//shuffle
-		Algo::RandomShuffle(Tokens);
-
-		GM->SetTokenSpawnLoc(Tokens);
-	}
-}
+//void ATokenManager::PlaceTokens(TArray<AToken*>& Tokens)
+//{
+//	ASTGameModePlay* GM = Cast<ASTGameModePlay>(UGameplayStatics::GetGameMode(GetWorld()));
+//	if (GM)
+//	{
+//		//shuffle
+//		Algo::RandomShuffle(Tokens);
+//
+//		GM->SetTokenSpawnLoc(Tokens);
+//	}
+//}
 
 void ATokenManager::DestroyTokens(const TArray<int>& DestroyTokenIdx, bool bOwn)
 {

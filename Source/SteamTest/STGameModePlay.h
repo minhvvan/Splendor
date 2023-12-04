@@ -51,8 +51,8 @@ public:
 	void EndGame(APSPlayerInfo* winner);
 
 	//!-----------Token-----------------------
-	UFUNCTION()
-	void SetTokenSpawnLoc(TArray<class AToken*>& Tokens);
+	//UFUNCTION()
+	//void SetTokenSpawnLoc(TArray<class AToken*>& Tokens);
 
 	UFUNCTION()
 	void PossessTokens(APlayerController* PC, const TArray<FTokenIdxColor>& SelectedTokens);
@@ -108,12 +108,6 @@ protected:
 	virtual void HandleSeamlessTravelPlayer(AController*& C) override;
 
 private:
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class ATileManager* TileManager;
-
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class ATokenManager* TokenManager;
-
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class ATurnManager* TurnManager;
 
