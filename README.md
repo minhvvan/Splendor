@@ -27,6 +27,32 @@
 
 
 
+## Rule
+1. 선택 액션(행동해도 턴이 넘어가지 않음):
+  - 특권 1개 사용: 황금 토큰을 제외한 토큰 1개를 가져옴
+  - 토큰 채우기: 보드에 사용한 토큰들을 채움(상대가 특권 1개를 가져감)
+2. 필수 액션:
+  - 가로나 세로, 대각선으로 한 줄로 이어진 토큰 최대 3개 가져오기
+    - 황금 토큰 가져오기(카드 하나를 선택해 손으로 가져옴 최대 3개까지 가능)
+    - 같은 색깔 3개나 진주 2개를 가져오면 상대는 특권을 1개 얻음
+  - 열려있는 카드나 손에 있는 카드를 구매함
+    - 자신이 가진 보너스만큼 비용을 적게 지불
+3. 아이템:
+
+  | Before        | After         |
+  | ------------- | ------------- |
+  |<img src = "https://github.com/minhvvan/Splendor/assets/59609086/210e9882-89a9-4495-bfba-518650e1de20" width="30" height="30"> | 차례가 끝난 뒤, 추가 차례 한 번 진행 |
+  |<img src = "https://github.com/minhvvan/Splendor/assets/59609086/39c89933-e981-41d9-8485-896112b80d32" width="30" height="30"> | 특권 1개 가져옴 |
+  |<img src = "https://github.com/minhvvan/Splendor/assets/59609086/1c423397-7abf-4192-923f-62be6cf0257d" width="30" height="30"> | 게임판에서 색깔이 동일한 토큰 1개를 가져옴 |
+  |<img src = "https://github.com/minhvvan/Splendor/assets/59609086/a53af04f-67ed-404f-99af-83e8e0586e9a" width="30" height="30"> | 상대에게서 황금 토큰을 제외한 토큰 1개를 가져옴 |
+  |<img src = "https://github.com/minhvvan/Splendor/assets/59609086/1906ac06-3b56-464f-80f8-390cfe01391e" width="30" height="30"> | 내가 이미 갖고 있는 보너스 색깔 중 하나를 복 |
+4. 왕관을 3개째 / 6개째 모을 시: 왕족 카드 1장 가져옴
+5. 차례 종료 시 토큰을 10개까지만 남기고 버림
+6. 게임 종료 조건
+  - 승점 20점
+  - 완관 10개
+  - 한 색깔의 카드들로 승점 10점
+
 
 ## Preview
 
