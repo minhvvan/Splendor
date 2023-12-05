@@ -90,6 +90,25 @@
 
 ## Performance
 
+- 어두운 배경에 핀조명같은 연출을 위해 spotLight 두 개를 교차하게 배치하였지만 라이팅 복잡도 증가
+- 제거하여도 게임 내 화면에 변화가 크지 않아 제거
+
+| Before        | After         |
+| ------------- | ------------- |
+| ![Splendor - 언리얼 에디터 2023-12-05 오후 1_47_43](https://github.com/minhvvan/Splendor/assets/59609086/c28a47bf-465a-4b25-a980-f9a07f644910) | ![Splendor - 언리얼 에디터 2023-12-05 오후 1_48_03](https://github.com/minhvvan/Splendor/assets/59609086/8d694dc7-6538-4c54-bef9-6d56ad38081f) |
+|  ![Splendor (64 비트, Development PCD3D_SM6)  2023-12-05 오후 1_51_09](https://github.com/minhvvan/Splendor/assets/59609086/8626d445-44ec-4779-9104-720c7e86929f) | ![Splendor (64 비트, Development PCD3D_SM6)  2023-12-05 오후 1_52_12](https://github.com/minhvvan/Splendor/assets/59609086/de0c581d-ce84-465a-bb31-9d962a8c476f)  |
+| <img width="503" alt="image" src="https://github.com/minhvvan/Splendor/assets/59609086/581a5734-0f11-459c-9cb1-03a69caffe44"> | <img width="503" alt="image" src="https://github.com/minhvvan/Splendor/assets/59609086/120aad51-7077-4792-8845-9ba349c68e67"> |
+
+
+
 
 ## Bug / Feature Request
+
+- Card Cost 가시성 업데이트
+
+| Before        | After         |
+| ------------- | ------------- |
+|<img width="351" alt="image" src="https://github.com/minhvvan/Splendor/assets/59609086/edb3144c-bf58-4bce-b135-b92fb2a09fda"> | <img width="344" alt="image" src="https://github.com/minhvvan/Splendor/assets/59609086/49ccdb99-3521-481a-9d89-1e2818ebeadc"> |
+
+
 
